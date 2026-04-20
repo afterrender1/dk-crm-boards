@@ -20,11 +20,11 @@ const Client = sequelize.define("Client", {
 }, {
     tableName: "clients_data",
 
-    // FIX: In 3 lines ko update karein
-    timestamps: true,        // Enable timestamps
-    underscored: true,      // Tells Sequelize to use created_at instead of createdAt
-    createdAt: "created_at", // Explicitly mapping (Safest way)
-    updatedAt: "updated_at"  // Explicitly mapping
+    
+    timestamps: true,        
+    underscored: true,      
+    createdAt: "created_at", 
+    updatedAt: "updated_at"  
 });
 
 export default Client;
