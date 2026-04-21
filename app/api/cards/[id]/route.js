@@ -1,0 +1,68 @@
+import { NextResponse } from "next/server";
+import { Card } from "@/models";
+import { connectDB } from "@/config/sequelize";
+
+export async function DELETE(req, { params }) {
+    try {
+        await connectDB();
+        const { id } = await params;
+        const deletedCard = await Card.destroy({
+            where: { card_id: id }
+        })
+        if (deletedCard === 0) {
+            return NextResponse.json({
+                success: false,
+                message: "card doesnt exists"
+            }, { status: 404 })
+        }
+        return NextResponse.json({
+            success: true,
+            message: "card deleted successfully",
+            deletedCard: deletedCard
+        }, { status: 200 })
+    } catch (error) {
+        console.error("server error or", error)
+        return NextResponse.json({
+            success: false,
+            message: "card no deletd",
+            error
+        }, { status: 500 })
+    }
+}
+
+
+export async function PATCH(req, { params }) {
+    try {
+        await connectDB();
+        const { id } = await params;
+        const data = await req.json();
+        const card = await Card.findByPk(id);
+
+        if (!card) {
+            return NextResponse.json({
+                success: false,
+                message: "Card nahi mila!"
+            }, { status: 404 });
+        }
+
+
+        await card.update({
+            title: data.title || card.title,
+            description: data.description !== undefined ? data.description : card.description,
+            list_id: data.list_id || card.list_id,
+            order_index: data.order_index !== undefined ? data.order_index : card.order_index,
+            priority: data.priority || card.priority
+        });
+
+        return NextResponse.json({
+            success: true,
+            message: "Card updated successfully! ✨",
+            card: card,
+        }, { status: 200 });
+
+    } catch (error) {
+        console.error("Update Error:", error);
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+}
+
