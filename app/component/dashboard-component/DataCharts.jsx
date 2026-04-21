@@ -14,26 +14,26 @@ const data = [
 
 export default function DataCharts() {
   return (
-    <div className={` h-100 bg-white p-6 rounded-lg border border-gray-100  ${inter.className}`}>
+    <div className={`h-96 bg-white p-6 rounded-lg border border-gray-100 ${inter.className}`}>
       <h3 className="text-lg font-bold text-gray-800 mb-6">Revenue Overview</h3>
-      
+
       <ResponsiveContainer width="100%" height="90%">
         <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
           {/* Grid Lines - Tailwind Gray 100 */}
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-          
+
           {/* Axes - Tailwind Gray 400 */}
-          <XAxis 
-            dataKey="name" 
-            axisLine={false} 
-            tickLine={false} 
-            tick={{ fill: '#9ca3af', fontSize: 12 }} 
+          <XAxis
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#9ca3af', fontSize: 12 }}
             dy={10}
           />
-          <YAxis 
-            axisLine={false} 
-            tickLine={false} 
-            tick={{ fill: '#9ca3af', fontSize: 12 }} 
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#9ca3af', fontSize: 12 }}
           />
 
           {/* Custom Tooltip - Tailwind Styled */}
@@ -47,14 +47,14 @@ export default function DataCharts() {
             }}
             itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
           />
-          
+
           <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '12px', fontWeight: '600' }} />
 
           {/* Line 1 - Tailwind Blue 500 */}
           <Line
             type="monotone"
             dataKey="pv"
-            stroke="#3b82f6" 
+            stroke="#3b82f6"
             strokeWidth={3}
             dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }}
             activeDot={{ r: 6, strokeWidth: 0 }}
@@ -64,7 +64,7 @@ export default function DataCharts() {
           <Line
             type="monotone"
             dataKey="uv"
-            stroke="#10b981" 
+            stroke="#10b981"
             strokeWidth={3}
             dot={{ r: 4, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }}
             activeDot={{ r: 6, strokeWidth: 0 }}

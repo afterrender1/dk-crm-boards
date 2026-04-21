@@ -57,7 +57,7 @@ export default function CircleCharts() {
   }
 
   return (
-    <div className={`w-full h-100 bg-white p-6 rounded-lg border border-gray-100 shadow-sm ${inter.className}`}>
+    <div className={`w-full h-96 bg-white p-6 rounded-lg border border-gray-100 shadow-sm ${inter.className}`}>
       <div className="mb-6">
         <h3 className="text-lg font-bold text-gray-800 tracking-tight">Lead Distribution</h3>
         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Real-time status breakdown</p>
