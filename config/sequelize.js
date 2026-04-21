@@ -12,11 +12,17 @@ const sequelize = new Sequelize(
   }
 );
 
-// 🔥 Test connection function
+// 🔥 Test connection AND Sync tables
 export const connectDB = async () => {
   try {
     await sequelize.authenticate();
     console.log("✅ Database connected successfully");
+
+    // ✨ YEH LINE ADD KAREIN: 
+    // Ye line model check karegi aur boards table bana degi
+    await sequelize.sync({ alter: true });
+    console.log("✅ Database synced & Tables created");
+
   } catch (error) {
     console.error("❌ DB connection failed:", error);
   }
