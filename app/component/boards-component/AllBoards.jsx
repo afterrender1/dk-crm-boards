@@ -306,7 +306,7 @@ const handleDelete = async (boardId) => {
                         bg-neutral-50/50 hover:bg-white hover:border-[#1fd6ee] hover:shadow-2xl hover:shadow-[#1fd6ee]/10
                         flex flex-col items-center justify-center gap-4 transition-all duration-500 group-hover:-translate-y-1">
                             <div className="w-16 h-16 rounded-3xl bg-white shadow-xl shadow-neutral-200/50 flex items-center justify-center 
-                            group-hover:scale-110 group-hover:rotate-90 transition-all duration-500 border border-neutral-50">
+                            group-hover:scale-110 border border-neutral-50">
                                 <Plus className="w-8 h-8 text-[#49bac9]" strokeWidth={2.5} />
                             </div>
                             <div className="text-center">
