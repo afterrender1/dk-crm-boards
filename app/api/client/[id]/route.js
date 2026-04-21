@@ -9,12 +9,12 @@ export async function GET(req, { params }) {
     const client = await Client.findByPk(id);
 
     if (!client) {
-      return NextResponse.json({ message: "Client not found",}, { status: 404 });
+      return NextResponse.json({ message: "Client not found", }, { status: 404 });
     }
 
     const notes = await ClientNote.findAll({
       where: { client_id: id },
-      order: [["created_at", "DESC"]],
+      // order: [["created_at", "DESC"]],
     });
 
     return NextResponse.json({ client, notes });

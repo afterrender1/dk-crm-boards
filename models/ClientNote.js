@@ -9,6 +9,8 @@ const ClientNote = sequelize.define("ClientNote", {
 }, {
   tableName: "client_notes",
   timestamps: false,
+  underscored: true
+
 });
 
 export default ClientNote;

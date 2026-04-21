@@ -1,7 +1,7 @@
 import Board from "@/models/Board";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/config/sequelize";
-import { Triangle } from "lucide-react";
+
 
 export async function POST(req) {
     try {
@@ -14,7 +14,7 @@ export async function POST(req) {
 
         const newBoard = await Board.create({
             name,
-            bg_color: bg_color || "#F8FAFC",
+            bg_color: bg_color || "#57C9D8",
             description
         });
 

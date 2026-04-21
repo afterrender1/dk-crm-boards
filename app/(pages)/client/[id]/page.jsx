@@ -30,6 +30,7 @@ const ClientProfile = () => {
 
   const { id } = useParams();
   const router = useRouter();
+console.log(id);
 
   const fetchClient = useCallback(async (showLoading = true) => {
     if (showLoading) setLoading(true);

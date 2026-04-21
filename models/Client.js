@@ -19,8 +19,6 @@ const Client = sequelize.define("Client", {
     profile_image_url: DataTypes.TEXT,
 }, {
     tableName: "clients_data",
-
-    
     timestamps: true,        
     underscored: true,      
     createdAt: "created_at", 
