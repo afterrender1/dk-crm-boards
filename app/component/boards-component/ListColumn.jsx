@@ -4,7 +4,7 @@ import { Droppable } from '@hello-pangea/dnd';
 import { Trash2 } from 'lucide-react';
 import TaskCard from "./TaskCard";
 
-const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0 }) => {
+const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDragging = false }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [title, setTitle] = useState("");
     const [visible, setVisible] = useState(false);

@@ -37,7 +37,44 @@ export async function POST(req, { params }) {
 }
 
 
+export async function PATCH(req, { params }) {
+    try {
+        await connectDB();
+        const { id } = await params; // List ID
+        const body = await req.json();
 
+        // List dhoondo
+        const list = await List.findByPk(id);
+
+        if (!list) {
+            return NextResponse.json({
+                success: false,
+                message: "List not found",
+            }, { status: 404 });
+        }
+
+        // Database update
+        // Ye name aur index_order dono ko handle karega
+        await list.update({
+            name: body.name || list.name,
+            index_order: body.index_order !== undefined ? body.index_order : list.index_order
+        });
+
+        return NextResponse.json({
+            success: true,
+            message: "List updated successfully",
+            list
+        });
+
+    } catch (error) {
+        console.error("Error while updating list:", error.message);
+        return NextResponse.json({
+            success: false,
+            message: "Error while updating list",
+            error: error.message
+        }, { status: 500 });
+    }
+}
 
 
 export async function DELETE(req, { params }) {

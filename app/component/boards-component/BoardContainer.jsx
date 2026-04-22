@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { DragDropContext } from '@hello-pangea/dnd';
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import ListColumn from "./ListColumn";
 
 const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) => {
@@ -73,13 +73,43 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
             destination.index === source.index
         ) return;
 
-        // Create deep copy of lists
+        // Handle LIST drag
+        if (type === 'LIST') {
+            const newLists = [...localLists];
+            const [movedList] = newLists.splice(source.index, 1);
+            newLists.splice(destination.index, 0, movedList);
+
+            // Update local state
+            setLocalLists(newLists);
+
+            // Persist to API
+            try {
+                const listId = parseInt(draggableId);
+                const res = await fetch(`/api/lists/${listId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        order_index: destination.index
+                    })
+                });
+
+                if (!res.ok) {
+                    console.error('Failed to update list order');
+                    onUpdate?.();
+                }
+            } catch (err) {
+                console.error("List drag update failed, reverting", err);
+                onUpdate?.();
+            }
+            return;
+        }
+
+        // Handle CARD drag (existing logic)
         const newLists = localLists.map(l => ({
             ...l,
             cards: l.cards ? [...l.cards] : []
         }));
 
-        // Find source and destination lists
         const srcList = newLists.find(l => l.list_id.toString() === source.droppableId);
         const destList = newLists.find(l => l.list_id.toString() === destination.droppableId);
 
@@ -116,7 +146,7 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
             console.error("Drag update failed, reverting", err);
             onUpdate?.();
         }
-    }, [localLists, onUpdate]);
+    }, [localLists, boardId, onUpdate]);
 
     const handleAddList = useCallback(async () => {
         if (!listName.trim()) return;
@@ -150,97 +180,129 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
             onDragEnd={onDragEnd}
             nonce="unique-app-nonce"
         >
-            <div
-                ref={scrollRef}
-                className="
-                    flex gap-3 h-full
-                    items-start
-                    overflow-x-auto overflow-y-hidden
-                    px-4 py-4
-                    select-none
-                "
-                style={{
-                    scrollbarWidth: 'none',
-                    msOverflowStyle: 'none',
-                    WebkitOverflowScrolling: 'touch',
-                }}
-            >
-                {/* Hide webkit scrollbar */}
-                <style>{`div::-webkit-scrollbar { display: none; }`}</style>
-
-                {localLists.map((list, i) => (
-                    <ListColumn
-                        key={list.list_id}
-                        list={list}
-                        onCardAdded={columnCallbacks[list.list_id] ?? onUpdate}
-                        animationDelay={i * 60}
-                    />
-                ))}
-
-                {/* Add List Panel */}
-                {isAddingList ? (
+            <Droppable droppableId="lists-container" type="LIST" direction="horizontal">
+                {(provided, snapshot) => (
                     <div
-                        className="min-w-68 w-68 shrink-0 rounded-xl p-3"
-                        style={{ background: '#282e33' }}
-                    >
-                        <input
-                            autoFocus
-                            className="
-                                w-full rounded-lg px-3 py-2
-                                text-sm font-semibold text-[#b6c2cf]
-                                outline-none border-2 border-[#579dff]
-                                placeholder:text-[#9fadbc]/40
-                            "
-                            style={{ background: '#22272b' }}
-                            placeholder="Enter list title…"
-                            value={listName}
-                            onChange={(e) => setListName(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                        />
-                        <div className="flex gap-2 mt-2.5 items-center">
-                            <button
-                                onClick={handleAddList}
-                                className="
-                                    text-sm font-semibold px-4 py-1.5 rounded-md
-                                    text-[#1d2125] bg-[#579dff]
-                                    hover:bg-[#85b8ff]
-                                    active:scale-95
-                                    transition-all duration-150
-                                "
-                            >
-                                Add list
-                            </button>
-                            <button
-                                onClick={() => setIsAddingList(false)}
-                                className="text-[#9fadbc] hover:text-[#b6c2cf] text-xl leading-none px-1 transition-colors"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <button
-                        onClick={() => setIsAddingList(true)}
+                        {...provided.droppableProps}
+                        ref={(el) => {
+                            provided.innerRef(el);
+                            scrollRef.current = el;
+                        }}
                         className="
-                            min-w-68 w-68 shrink-0
-                            flex items-center gap-2
-                            px-4 py-3 rounded-xl
-                            text-sm font-semibold text-[#b6c2cf]
-                            hover:bg-white/10
-                            active:scale-[0.98]
-                            transition-all duration-200
-                            whitespace-nowrap
+                            flex gap-3 h-full
+                            items-start
+                            overflow-x-auto overflow-y-hidden
+                            px-4 py-4
+                            select-none
                         "
-                        style={{ background: 'rgba(255,255,255,0.08)' }}
+                        style={{
+                            scrollbarWidth: 'none',
+                            msOverflowStyle: 'none',
+                            WebkitOverflowScrolling: 'touch',
+                            background: snapshot.isDraggingOver
+                                ? 'rgba(87,157,255,0.04)'
+                                : 'transparent',
+                            transition: 'background 0.2s ease',
+                        }}
                     >
-                        <span className="text-lg leading-none">+</span>
-                        Add another list
-                    </button>
-                )}
+                        {/* Hide webkit scrollbar */}
+                        <style>{`div::-webkit-scrollbar { display: none; }`}</style>
 
-                {/* Right buffer so last column isn't flush against edge */}
-                <div className="min-w-2 shrink-0" />
-            </div>
+                        {localLists.map((list, i) => (
+                            <Draggable key={list.list_id} draggableId={list.list_id.toString()} index={i} type="LIST">
+                                {(provided, snapshot) => (
+                                    <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        style={{
+                                            ...provided.draggableProps.style,
+                                            opacity: snapshot.isDragging ? 0.98 : 1,
+                                            willChange: snapshot.isDragging ? 'transform' : 'auto',
+                                        }}
+                                    >
+                                        <div
+                                            {...provided.dragHandleProps}
+                                            className={snapshot.isDragging ? 'cursor-grabbing' : 'cursor-grab'}
+                                        >
+                                            <ListColumn
+                                                list={list}
+                                                onCardAdded={columnCallbacks[list.list_id] ?? onUpdate}
+                                                animationDelay={i * 60}
+                                                isDragging={snapshot.isDragging}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </Draggable>
+                        ))}
+
+                        {/* Add List Panel */}
+                        {isAddingList ? (
+                            <div
+                                className="min-w-68 w-68 shrink-0 rounded-xl p-3"
+                                style={{ background: '#282e33' }}
+                            >
+                                <input
+                                    autoFocus
+                                    className="
+                                        w-full rounded-lg px-3 py-2
+                                        text-sm font-semibold text-[#b6c2cf]
+                                        outline-none border-2 border-[#579dff]
+                                        placeholder:text-[#9fadbc]/40
+                                    "
+                                    style={{ background: '#22272b' }}
+                                    placeholder="Enter list title…"
+                                    value={listName}
+                                    onChange={(e) => setListName(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                />
+                                <div className="flex gap-2 mt-2.5 items-center">
+                                    <button
+                                        onClick={handleAddList}
+                                        className="
+                                            text-sm font-semibold px-4 py-1.5 rounded-md
+                                            text-[#1d2125] bg-[#579dff]
+                                            hover:bg-[#85b8ff]
+                                            active:scale-95
+                                            transition-all duration-150
+                                        "
+                                    >
+                                        Add list
+                                    </button>
+                                    <button
+                                        onClick={() => setIsAddingList(false)}
+                                        className="text-[#9fadbc] hover:text-[#b6c2cf] text-xl leading-none px-1 transition-colors"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => setIsAddingList(true)}
+                                className="
+                                    min-w-68 w-68 shrink-0
+                                    flex items-center gap-2
+                                    px-4 py-3 rounded-xl
+                                    text-sm font-semibold text-[#b6c2cf]
+                                    hover:bg-white/10
+                                    active:scale-[0.98]
+                                    transition-all duration-200
+                                    whitespace-nowrap
+                                "
+                                style={{ background: 'rgba(255,255,255,0.08)' }}
+                            >
+                                <span className="text-lg leading-none">+</span>
+                                Add another list
+                            </button>
+                        )}
+
+                        {/* Right buffer so last column isn't flush against edge */}
+                        {provided.placeholder}
+                        <div className="min-w-2 shrink-0" />
+                    </div>
+                )}
+            </Droppable>
         </DragDropContext>
     );
 });
