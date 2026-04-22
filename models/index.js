@@ -4,6 +4,7 @@ import Project from "./Project";
 import List from "./List";
 import Board from "./Board";
 import Card from "./Card";
+import Comment from "./Comment";
 
 
 Client.hasMany(Project, { foreignKey: "client_id" });
@@ -24,8 +25,19 @@ List.hasMany(Card, {
 });
 Card.belongsTo(List, { foreignKey: "list_id" });
 
+Card.hasMany(Comment, {
+    foreignKey: "card_id",
+    as: "comments",
+    onDelete: "CASCADE"
+});
+
+Comment.belongsTo(Card, {
+    foreignKey: "card_id",
+    as: "card"
+})
+
 Client.hasMany(ClientNote, { foreignKey: "client_id" });
 ClientNote.belongsTo(Client, { foreignKey: "client_id" });
 
 // 2. Export everything
-export { Client, ClientNote, Project, Board, List, Card };
+export { Client, ClientNote, Project, Board, List, Card , Comment };

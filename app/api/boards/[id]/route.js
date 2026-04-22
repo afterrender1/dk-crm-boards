@@ -1,5 +1,5 @@
 import { connectDB } from "@/config/sequelize";
-import { Board, List, Card } from "@/models/index";
+import { Board, List, Card, Comment } from "@/models/index";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
@@ -14,7 +14,13 @@ export async function GET(req, { params }) {
                     include: [
                         {
                             model: Card,
-                            as: "cards"
+                            as: "cards",
+                            include: [
+                                {
+                                    model: Comment,
+                                    as: "comments"
+                                }
+                            ]
                         }
                     ]
                 }
@@ -45,9 +51,9 @@ export async function GET(req, { params }) {
 export async function DELETE(req, { params }) {
     try {
         await connectDB();
-        
+
         // 1. URL se Board ki ID pakrein (e.g., /api/boards/5)
-        const { id } = await params; 
+        const { id } = await params;
 
         // 2. Database mein dhoonden aur khatam karein
         const deleted = await Board.destroy({
@@ -56,9 +62,9 @@ export async function DELETE(req, { params }) {
 
         // 3. Agar ID ghalat ho ya board na mile
         if (!deleted) {
-            return NextResponse.json({ 
-                success: false, 
-                message: "Bhai, ye Board pehle hi delete ho chuka hai ya mila hi nahi!" 
+            return NextResponse.json({
+                success: false,
+                message: "Bhai, ye Board pehle hi delete ho chuka hai ya mila hi nahi!"
             }, { status: 404 });
         }
 
@@ -69,9 +75,9 @@ export async function DELETE(req, { params }) {
 
     } catch (error) {
         console.error("Delete Board Error:", error);
-        return NextResponse.json({ 
-            success: false, 
-            error: error.message 
+        return NextResponse.json({
+            success: false,
+            error: error.message
         }, { status: 500 });
     }
 }
