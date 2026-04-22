@@ -1,14 +1,38 @@
-// ListColumn.js mein ye changes karein
-import React, { useState } from 'react'; // useState add kiya
+"use client"
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { Droppable } from '@hello-pangea/dnd';
+import { Trash2 } from 'lucide-react';
 import TaskCard from "./TaskCard";
 
-const ListColumn = ({ list, onCardAdded }) => { // onCardAdded prop add kiya taake list refresh ho
+const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0 }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [title, setTitle] = useState("");
+    const [visible, setVisible] = useState(false);
+    const columnRef = useRef(null);
 
-    const handleAddCard = async () => {
+    // Staggered fade-in animation on mount
+    useEffect(() => {
+        const t = setTimeout(() => setVisible(true), animationDelay);
+        return () => clearTimeout(t);
+    }, [animationDelay]);
+
+    const handleDeleteList = useCallback(async () => {
+        if (!window.confirm(`Delete "${list.name}"?`)) return;
+        try {
+            const res = await fetch(`/api/boards/${list.list_id}/lists`, { method: 'DELETE' });
+            if (res.ok) {
+                onCardAdded();
+            } else {
+                const d = await res.json();
+                alert(d.message || "Failed to delete list");
+            }
+        } catch (err) {
+            console.error("Delete error:", err);
+        }
+    }, [list.list_id, list.name, onCardAdded]);
+
+    const handleAddCard = useCallback(async () => {
         if (!title.trim()) return;
-
         try {
             const res = await fetch('/api/cards', {
                 method: 'POST',
@@ -16,68 +40,155 @@ const ListColumn = ({ list, onCardAdded }) => { // onCardAdded prop add kiya taa
                 body: JSON.stringify({
                     title,
                     list_id: list.list_id,
-                    priority: 'Medium', // Default priority
-                    order_index: list.cards?.length || 0
+                    priority: 'Medium',
+                    order_index: list.cards?.length ?? 0
                 })
             });
-
             if (res.ok) {
                 setTitle("");
                 setIsAdding(false);
-                onCardAdded(); // Parent (Page) ko batayen ke data refresh kare
+                onCardAdded();
             }
-        } catch (err) {
-            console.error("Card add karne mein masla:", err);
-        }
-    };
+        } catch (err) { console.error(err); }
+    }, [title, list.list_id, list.cards?.length, onCardAdded]);
+
+    const handleKeyDown = useCallback((e) => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAddCard(); }
+        if (e.key === 'Escape') setIsAdding(false);
+    }, [handleAddCard]);
 
     return (
-        <div className="min-w-75 bg-[#f3cccc] border border-neutral-200/50 p-4 rounded-2xl flex flex-col h-fit max-h-full">
-            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-4 px-2">
-                {list.name}
-            </h3> 
-            
-            <div className="space-y-3 mb-4">
-                {list.cards?.map((card) => (
-                    <TaskCard key={card.card_id} card={card} />
-                ))}
+        <div
+            ref={columnRef}
+            className="min-w-[272px] w-[272px] shrink-0 flex flex-col max-h-[calc(100vh-160px)] rounded-xl group/col"
+            style={{
+                background: '#101204',
+                opacity: visible ? 1 : 0,
+                transform: visible ? 'translateY(0)' : 'translateY(12px)',
+                transition: 'opacity 0.28s cubic-bezier(0.4,0,0.2,1), transform 0.28s cubic-bezier(0.4,0,0.2,1)',
+            }}
+        >
+            {/* Column Header */}
+            <div className="flex justify-between items-center px-3 pt-3 pb-2 shrink-0">
+                <h3 className="text-sm font-bold text-[#b6c2cf] flex-1 truncate pr-2">
+                    {list.name}
+                </h3>
+                <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-[11px] font-semibold text-[#9fadbc]/60 min-w-[18px] text-center">
+                        {list.cards?.length ?? 0}
+                    </span>
+                    <button
+                        onClick={handleDeleteList}
+                        title="Delete list"
+                        className="
+                            opacity-0 group-hover/col:opacity-100
+                            p-1.5 rounded-md
+                            text-[#9fadbc]/50 hover:text-[#f87168] hover:bg-[#f87168]/10
+                            transition-all duration-200
+                        "
+                    >
+                        <Trash2 size={13} />
+                    </button>
+                </div>
             </div>
 
-            {/* Input Logic */}
-            {isAdding ? (
-                <div className="bg-white p-3 rounded-xl border border-[#49bac9]/30 shadow-sm">
-                    <textarea
-                        autoFocus
-                        className="w-full text-sm outline-none resize-none text-neutral-700"
-                        placeholder="What needs to be done?"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleAddCard()}
-                    />
-                    <div className="flex gap-2 mt-2">
-                        <button 
-                            onClick={handleAddCard}
-                            className="bg-[#49bac9] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg hover:bg-[#3baec2]"
-                        >
-                            Add Card
-                        </button>
-                        <button 
-                            onClick={() => setIsAdding(false)}
-                            className="text-neutral-400 text-[10px] font-bold px-3 py-1.5 hover:text-neutral-600"
-                        >
-                            Cancel
-                        </button>
+            {/* Droppable card list */}
+            <Droppable droppableId={list.list_id.toString()}>
+                {(provided, snapshot) => (
+                    <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="flex-1 overflow-y-auto overflow-x-hidden px-2 min-h-[8px]"
+                        style={{
+                            scrollbarWidth: 'thin',
+                            scrollbarColor: '#454f59 transparent',
+                            background: snapshot.isDraggingOver
+                                ? 'rgba(87,157,255,0.06)'
+                                : 'transparent',
+                            borderRadius: '8px',
+                            transition: 'background 0.15s ease',
+                        }}
+                    >
+                        {list.cards?.map((card, index) => (
+                            <TaskCard
+                                key={card.card_id}
+                                card={card}
+                                index={index}
+                            />
+                        ))}
+                        {provided.placeholder}
                     </div>
-                </div>
-            ) : (
-                <button 
-                    onClick={() => setIsAdding(true)}
-                    className="w-full text-left p-2 text-[10px] font-bold text-neutral-400 hover:text-[#49bac9] hover:bg-white rounded-lg transition-all"
-                >
-                    + Add a card
-                </button>
-            )}
+                )}
+            </Droppable>
+
+            {/* Add Card Section */}
+            <div className="shrink-0 px-2 pb-2 pt-1">
+                {isAdding ? (
+                    <div
+                        className="rounded-lg p-2"
+                        style={{ background: '#22272b' }}
+                    >
+                        <textarea
+                            autoFocus
+                            rows={3}
+                            className="
+                                w-full rounded-md px-2.5 py-2
+                                text-sm text-[#b6c2cf] resize-none
+                                outline-none
+                                placeholder:text-[#9fadbc]/40
+                                focus:ring-2 focus:ring-[#579dff]/50
+                            "
+                            style={{ background: '#22272b' }}
+                            placeholder="Enter a title for this card…"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <div className="flex gap-2 items-center mt-2">
+                            <button
+                                onClick={handleAddCard}
+                                className="
+                                    text-sm font-semibold px-4 py-1.5 rounded-md
+                                    text-[#1d2125] bg-[#579dff]
+                                    hover:bg-[#85b8ff]
+                                    active:scale-95
+                                    transition-all duration-150
+                                "
+                            >
+                                Add card
+                            </button>
+                            <button
+                                onClick={() => { setIsAdding(false); setTitle(""); }}
+                                className="text-[#9fadbc] hover:text-[#b6c2cf] text-xl leading-none px-1 transition-colors"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => setIsAdding(true)}
+                        className="
+                            w-full flex items-center gap-1.5 px-2.5 py-2
+                            text-sm text-[#9fadbc]
+                            hover:bg-[#579dff]/15 hover:text-[#b6c2cf]
+                            rounded-lg
+                            active:scale-[0.98]
+                            transition-all duration-150
+                        "
+                    >
+                        <span className="text-base leading-none">+</span>
+                        Add a card
+                    </button>
+                )}
+            </div>
         </div>
     );
-};
+}, (prev, next) =>
+    prev.list === next.list &&
+    prev.onCardAdded === next.onCardAdded &&
+    prev.animationDelay === next.animationDelay
+);
+
+ListColumn.displayName = 'ListColumn';
 export default ListColumn;

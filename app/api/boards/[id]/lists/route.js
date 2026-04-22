@@ -37,3 +37,40 @@ export async function POST(req, { params }) {
 }
 
 
+
+
+
+export async function DELETE(req, { params }) {
+    try {
+        await connectDB();
+        
+        // URL se List ki ID pakrein
+        const { id } = await params; 
+
+        // Database se list ko udaa dein
+        const deletedCount = await List.destroy({
+            where: { list_id: id }
+        });
+
+        // Check karein ke kya list waqai thi ya pehle hi delete ho chuki hai
+        if (deletedCount === 0) {
+            return NextResponse.json({
+                success: false,
+                message: "List nahi mili ya pehle hi delete ho chuki hai."
+            }, { status: 404 });
+        }
+
+        return NextResponse.json({
+            success: true,
+            message: "List (aur uske cards) kamyabi se delete ho gaye! 🗑️"
+        });
+
+    } catch (error) {
+        console.error("Error while deleting list:", error.message);
+        return NextResponse.json({
+            success: false,
+            message: "List delete karne mein masla hua",
+            error: error.message
+        }, { status: 500 });
+    }
+}
