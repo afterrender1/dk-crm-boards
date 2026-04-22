@@ -1,6 +1,7 @@
 "use client"
 import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
+import { FaTrash } from "react-icons/fa6";
 
 const PRIORITY_CONFIG = {
     High: { label: 'High', color: '#f87168', bg: 'rgba(248,113,104,0.15)' },
@@ -8,8 +9,27 @@ const PRIORITY_CONFIG = {
     Low: { label: 'Low', color: '#4bce97', bg: 'rgba(75,206,151,0.15)' },
 };
 
-const TaskCard = React.memo(({ card, index }) => {
+const TaskCard = React.memo(({ card, index, onCardAdded }) => {
     const priority = PRIORITY_CONFIG[card.priority] ?? PRIORITY_CONFIG.Medium;
+
+    const handleDelete = (e) => {
+        e.stopPropagation();
+        if (!window.confirm(`Delete "${card.title}"?`)) return;
+
+        fetch(`/api/cards/${card.card_id}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    onCardAdded?.();
+                } else {
+                    alert(data.message || "Failed to delete card");
+                }
+            })
+            .catch(err => {
+                console.error("Delete error:", err);
+                alert("Failed to delete card");
+            });
+    }
 
     return (
         <Draggable draggableId={card.card_id.toString()} index={index}>
@@ -29,11 +49,21 @@ const TaskCard = React.memo(({ card, index }) => {
                         text-[#b6c2cf]
                         transition-all duration-100
                         ${snapshot.isDragging
-                            ? 'shadow-2xl shadow-black/60 opacity-98 border-[#579dff]/60 bg-[#2c333a] z-9999'
+                            ? 'shadow-2xl shadow-black/60 opacity-98 border-[#3d9ca8]/60 bg-[#2c333a] z-9999'
                             : 'border-transparent hover:border-[#454f59] bg-[#22272b]'
                         }
                     `}
                 >
+                    <div className='z-50 absolute right-1 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
+                        {/* Delete button */}
+                        <button
+                            onClick={handleDelete}
+                            className='p-1.5 rounded-md text-[#9fadbc]/50 hover:text-[#f87168] hover:bg-[#f87168]/10 transition-all duration-200'
+                            title="Delete card"
+                        >
+                            <FaTrash size={12} />
+                        </button>
+                    </div>
                     {/* Hover highlight background */}
                     {!snapshot.isDragging && (
                         <div className="

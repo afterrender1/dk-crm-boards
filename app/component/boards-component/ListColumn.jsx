@@ -1,7 +1,8 @@
 "use client"
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Droppable } from '@hello-pangea/dnd';
-import { Trash2 } from 'lucide-react';
+import { FaTrash } from "react-icons/fa6";
+
 import TaskCard from "./TaskCard";
 
 const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDragging = false }) => {
@@ -17,9 +18,9 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDraggi
     }, [animationDelay]);
 
     const handleDeleteList = useCallback(async () => {
-        if (!window.confirm(`Delete "${list.name}"?`)) return;
+        if (!window.confirm(`Delete "${list.name}" and all its cards?`)) return;
         try {
-            const res = await fetch(`/api/boards/${list.list_id}/lists`, { method: 'DELETE' });
+            const res = await fetch(`/api/lists/${list.list_id}`, { method: 'DELETE' });
             if (res.ok) {
                 onCardAdded();
             } else {
@@ -28,6 +29,7 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDraggi
             }
         } catch (err) {
             console.error("Delete error:", err);
+            alert("Error deleting list");
         }
     }, [list.list_id, list.name, onCardAdded]);
 
@@ -87,7 +89,7 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDraggi
                             transition-all duration-200
                         "
                     >
-                        <Trash2 size={13} />
+                        <FaTrash size={13} />
                     </button>
                 </div>
             </div>
@@ -115,6 +117,7 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDraggi
                                 key={card.card_id}
                                 card={card}
                                 index={index}
+                                onCardAdded={onCardAdded}
                             />
                         ))}
                         {provided.placeholder}
@@ -137,7 +140,7 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDraggi
                                 text-sm text-[#b6c2cf] resize-none
                                 outline-none
                                 placeholder:text-[#9fadbc]/40
-                                focus:ring-2 focus:ring-[#579dff]/50
+                                focus:ring-2 focus:ring-[#3d9ca8]/50
                             "
                             style={{ background: '#22272b' }}
                             placeholder="Enter a title for this card…"
@@ -150,7 +153,7 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDraggi
                                 onClick={handleAddCard}
                                 className="
                                     text-sm font-semibold px-4 py-1.5 rounded-md
-                                    text-[#1d2125] bg-[#579dff]
+                                    text-[#1d2125] bg-[#3d9ca8]
                                     hover:bg-[#85b8ff]
                                     active:scale-95
                                     transition-all duration-150

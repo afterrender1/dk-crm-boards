@@ -247,7 +247,7 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
                                     className="
                                         w-full rounded-lg px-3 py-2
                                         text-sm font-semibold text-[#b6c2cf]
-                                        outline-none border-2 border-[#579dff]
+                                        outline-none border-2 border-[#3d9ca8]
                                         placeholder:text-[#9fadbc]/40
                                     "
                                     style={{ background: '#22272b' }}
@@ -261,7 +261,7 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
                                         onClick={handleAddList}
                                         className="
                                             text-sm font-semibold px-4 py-1.5 rounded-md
-                                            text-[#1d2125] bg-[#579dff]
+                                            text-[#1d2125] bg-[#3d9ca8]
                                             hover:bg-[#85b8ff]
                                             active:scale-95
                                             transition-all duration-150
