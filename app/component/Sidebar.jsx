@@ -3,17 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LuLayoutDashboard, LuMessageSquareDot, LuMenu, LuX } from "react-icons/lu";
-import { BsBarChartLine } from "react-icons/bs";
+import { LuLayoutDashboard, LuMenu, LuX } from "react-icons/lu";
 import { IoSettingsOutline, IoBriefcaseOutline } from "react-icons/io5";
-
 import { IoIosLogOut } from "react-icons/io";
 import { AiOutlineUser } from "react-icons/ai";
 import { PiUsersThreeLight } from "react-icons/pi";
-
 import { inter } from '../fonts';
 import Image from 'next/image';
-
 const Sidebar = () => {
     const pathname = usePathname();
     const [isHovered, setIsHovered] = useState(false);
