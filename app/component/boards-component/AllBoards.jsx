@@ -177,12 +177,12 @@ const AllBoards = () => {
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-6">
+                        <div className="flex bg-white p-4 border-6 rounded-2xl border-[#3d9ca8] items-center justify-between gap-6">
                             <div className="text-right">
-                                <div className="text-5xl md:text-6xl font-bold text-neutral-900 tabular-nums leading-none">
+                                <div className="text-start text-5xl md:text-6xl font-bold text-[#128fa0] tabular-nums leading-none">
                                     {boards.length}
                                 </div>
-                                <div className="text-xs font-semibold tracking-[0.2em] text-neutral-400 uppercase mt-2">
+                                <div className="text-base font-semibold  text-neutral-800 uppercase mt-2">
                                     Active Boards
                                 </div>
                             </div>
@@ -257,9 +257,17 @@ const AllBoards = () => {
                                                 )}
                                             </div>
 
-                                            <div className="w-12 h-12 rounded-2xl bg-neutral-50 border border-neutral-100 flex items-center justify-center 
-                                        group-hover:bg-[#1fd6ee] group-hover:text-white group-hover:border-[#1fd6ee] 
-                                        duration-500 shadow-sm">
+                                            <div
+                                                style={{ "--hover-color": board?.bg_color }}
+                                                className={`
+    w-12 h-12 rounded-2xl bg-neutral-50 border border-neutral-100 
+    flex items-center justify-center 
+    duration-500 shadow-sm
+    group-hover:bg-(--hover-color)
+    group-hover:text-white 
+    group-hover:border-(--hover-color)
+  `}
+                                            >
                                                 <Layers className="w-5 h-5" strokeWidth={1.8} />
                                             </div>
                                         </div>
