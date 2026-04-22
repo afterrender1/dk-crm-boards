@@ -60,7 +60,7 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0 }) => {
     return (
         <div
             ref={columnRef}
-            className="min-w-[272px] w-[272px] shrink-0 flex flex-col max-h-[calc(100vh-160px)] rounded-xl group/col"
+            className="min-w-68 w-68 shrink-0 flex flex-col max-h-[calc(100vh-160px)] rounded-xl group/col"
             style={{
                 background: '#101204',
                 opacity: visible ? 1 : 0,
@@ -74,7 +74,7 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0 }) => {
                     {list.name}
                 </h3>
                 <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[11px] font-semibold text-[#9fadbc]/60 min-w-[18px] text-center">
+                    <span className="text-[11px] font-semibold text-[#9fadbc]/60 min-w-4.5 text-center">
                         {list.cards?.length ?? 0}
                     </span>
                     <button
@@ -93,20 +93,21 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0 }) => {
             </div>
 
             {/* Droppable card list */}
-            <Droppable droppableId={list.list_id.toString()}>
+            <Droppable droppableId={list.list_id.toString()} type="CARD">
                 {(provided, snapshot) => (
                     <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className="flex-1 overflow-y-auto overflow-x-hidden px-2 min-h-[8px]"
+                        className="flex-1 overflow-y-auto overflow-x-hidden px-2 min-h-2"
                         style={{
                             scrollbarWidth: 'thin',
                             scrollbarColor: '#454f59 transparent',
                             background: snapshot.isDraggingOver
-                                ? 'rgba(87,157,255,0.06)'
-                                : 'transparent',
+                                ? 'rgba(87,157,255,0.1)'
+                                : 'rgba(87,157,255,0.02)',
                             borderRadius: '8px',
-                            transition: 'background 0.15s ease',
+                            transition: 'background 0.12s ease-out',
+                            outline: snapshot.isDraggingOver ? '2px solid rgba(87,157,255,0.3)' : 'none',
                         }}
                     >
                         {list.cards?.map((card, index) => (

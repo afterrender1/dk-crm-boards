@@ -3,9 +3,9 @@ import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 
 const PRIORITY_CONFIG = {
-    High:   { label: 'High',   color: '#f87168', bg: 'rgba(248,113,104,0.15)' },
-    Medium: { label: 'Medium', color: '#f5a623', bg: 'rgba(245,166,35,0.15)'  },
-    Low:    { label: 'Low',    color: '#4bce97', bg: 'rgba(75,206,151,0.15)'  },
+    High: { label: 'High', color: '#f87168', bg: 'rgba(248,113,104,0.15)' },
+    Medium: { label: 'Medium', color: '#f5a623', bg: 'rgba(245,166,35,0.15)' },
+    Low: { label: 'Low', color: '#4bce97', bg: 'rgba(75,206,151,0.15)' },
 };
 
 const TaskCard = React.memo(({ card, index }) => {
@@ -18,24 +18,19 @@ const TaskCard = React.memo(({ card, index }) => {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    /* FIX: Dono style props ko ek hi object mein merge kar diya gaya hai.
-                       provided.draggableProps.style ko hamesha pehle spread karen.
-                    */
                     style={{
                         ...provided.draggableProps.style,
                         willChange: snapshot.isDragging ? 'transform' : 'auto',
-                        zIndex: snapshot.isDragging ? 9999 : 'auto',
-                        background: snapshot.isDragging ? '#2c333a' : '#22272b',
-                        // Dragging ke waqt agar card jump kare to transition: 'none' zaroori hai
-                        transition: snapshot.isDragging ? 'none' : provided.draggableProps.style?.transition,
+                        opacity: snapshot.isDragging ? 0.98 : 1,
                     }}
                     className={`
                         relative group mb-2 px-3 py-3
-                        rounded-lg border cursor-pointer select-none
+                        rounded-lg border cursor-grab active:cursor-grabbing select-none
                         text-[#b6c2cf]
-                        ${snapshot.isDragging 
-                            ? 'shadow-2xl shadow-black/40 opacity-95 border-[#579dff]/40' 
-                            : 'border-transparent hover:border-[#454f59] transition-all duration-150'
+                        transition-all duration-100
+                        ${snapshot.isDragging
+                            ? 'shadow-2xl shadow-black/60 opacity-98 border-[#579dff]/60 bg-[#2c333a] z-9999'
+                            : 'border-transparent hover:border-[#454f59] bg-[#22272b]'
                         }
                     `}
                 >
@@ -46,13 +41,13 @@ const TaskCard = React.memo(({ card, index }) => {
                             transition-opacity duration-150
                             pointer-events-none
                         "
-                        style={{ background: 'rgba(255,255,255,0.03)' }}
+                            style={{ background: 'rgba(255,255,255,0.03)' }}
                         />
                     )}
 
                     <div className="relative z-10 space-y-2">
                         {/* Title */}
-                        <p className="text-sm font-medium text-[#b6c2cf] leading-snug">
+                        <p className="text-sm font-medium text-[#b6c2cf] leading-snug overflow-wrap">
                             {card.title}
                         </p>
 

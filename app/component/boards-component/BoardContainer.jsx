@@ -24,8 +24,12 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
         if (!el) return;
 
         const onMouseDown = (e) => {
-            // Don't hijack clicks on interactive elements
-            if (e.target.closest('button, input, textarea, [data-rfd-draggable-id]')) return;
+            // Skip if clicking on interactive elements or draggables
+            const target = e.target;
+            if (target.closest('button, input, textarea, [role="button"], [data-rfd-draggable-id], [data-rfd-droppable-id]')) {
+                return;
+            }
+
             isDraggingScroll.current = true;
             startX.current = e.pageX - el.offsetLeft;
             scrollLeft.current = el.scrollLeft;
@@ -47,12 +51,12 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
             el.style.userSelect = '';
         };
 
-        el.addEventListener('mousedown', onMouseDown);
+        el.addEventListener('mousedown', onMouseDown, true);
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
 
         return () => {
-            el.removeEventListener('mousedown', onMouseDown);
+            el.removeEventListener('mousedown', onMouseDown, true);
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('mouseup', onMouseUp);
         };
@@ -60,39 +64,57 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
 
     // ── Optimistic drag end ────────────────────────────────────
     const onDragEnd = useCallback(async (result) => {
-        const { destination, source, draggableId } = result;
+        const { destination, source, draggableId, type } = result;
+
+        // If no destination or same position, bail
         if (!destination) return;
         if (
             destination.droppableId === source.droppableId &&
             destination.index === source.index
         ) return;
 
+        // Create deep copy of lists
         const newLists = localLists.map(l => ({
             ...l,
             cards: l.cards ? [...l.cards] : []
         }));
 
+        // Find source and destination lists
         const srcList = newLists.find(l => l.list_id.toString() === source.droppableId);
         const destList = newLists.find(l => l.list_id.toString() === destination.droppableId);
-        if (!srcList || !destList) return;
 
+        if (!srcList || !destList) return;
+        if (srcList.cards.length === 0 || !srcList.cards[source.index]) return;
+
+        // Move card
         const [movedCard] = srcList.cards.splice(source.index, 1);
         destList.cards.splice(destination.index, 0, movedCard);
+
+        // Update local state immediately (optimistic)
         setLocalLists(newLists);
 
+        // Persist to API
         try {
-            const res = await fetch(`/api/cards/${draggableId}`, {
+            const cardId = parseInt(draggableId);
+            const destListId = parseInt(destination.droppableId);
+
+            const res = await fetch(`/api/cards/${cardId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    list_id: parseInt(destination.droppableId),
+                    list_id: destListId,
                     order_index: destination.index
                 })
             });
-            if (!res.ok) throw new Error('API error');
+
+            if (!res.ok) {
+                console.error('Failed to update card order');
+                // Revert on error
+                onUpdate?.();
+            }
         } catch (err) {
             console.error("Drag update failed, reverting", err);
-            onUpdate();
+            onUpdate?.();
         }
     }, [localLists, onUpdate]);
 
@@ -124,7 +146,10 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
     if (!isReady) return null;
 
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext
+            onDragEnd={onDragEnd}
+            nonce="unique-app-nonce"
+        >
             <div
                 ref={scrollRef}
                 className="
@@ -155,7 +180,7 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
                 {/* Add List Panel */}
                 {isAddingList ? (
                     <div
-                        className="min-w-[272px] w-[272px] shrink-0 rounded-xl p-3"
+                        className="min-w-68 w-68 shrink-0 rounded-xl p-3"
                         style={{ background: '#282e33' }}
                     >
                         <input
@@ -197,7 +222,7 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
                     <button
                         onClick={() => setIsAddingList(true)}
                         className="
-                            min-w-[272px] w-[272px] shrink-0
+                            min-w-68 w-68 shrink-0
                             flex items-center gap-2
                             px-4 py-3 rounded-xl
                             text-sm font-semibold text-[#b6c2cf]
@@ -214,7 +239,7 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
                 )}
 
                 {/* Right buffer so last column isn't flush against edge */}
-                <div className="min-w-[8px] shrink-0" />
+                <div className="min-w-2 shrink-0" />
             </div>
         </DragDropContext>
     );

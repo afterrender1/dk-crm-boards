@@ -66,11 +66,11 @@ export default function BoardPage() {
     const totalCards = board.lists?.reduce((acc, list) => acc + (list.cards?.length || 0), 0) ?? 0;
 
     return (
-        <div className={`${urbanist.className} flex h-screen bg-[#1d2125] overflow-hidden text-[#b6c2cf]`}>
+        <div className={`${urbanist.className} ml-20 flex h-screen bg-[#1d2125] overflow-hidden text-[#b6c2cf]`}>
             <main className="flex-1 flex flex-col min-w-0">
 
                 {/* Header */}
-                <header className="shrink-0 px-8 pt-8 pb-6 border-b border-white/[0.08] bg-[#1d2125]/80 backdrop-blur-xl">
+                <header className="shrink-0 px-8 pt-8 pb-6 border-b border-white/8 bg-[#1d2125]/80 backdrop-blur-xl">
                     <div className="flex justify-between items-end">
                         <div className="space-y-1.5">
                             <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.3em] text-[#579dff]/70 uppercase">
