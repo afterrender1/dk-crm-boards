@@ -2,9 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Layers, Plus, ArrowRight, Sparkles } from 'lucide-react'
 import gsap from 'gsap'
-import { urbanist, inter } from '@/app/fonts'
+import { urbanist } from '@/app/fonts'
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import CreateNewBoardFormModel from './CreateNewBoardFormModel'
+import { useRouter } from 'next/navigation'
 
 
 const AllBoards = () => {
@@ -12,6 +13,7 @@ const AllBoards = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const router = useRouter()
 
     const headerRef = useRef(null)
     const gridRef = useRef(null)
@@ -203,6 +205,7 @@ const AllBoards = () => {
                                 onMouseEnter={() => handleCardHover(index, true)}
                                 onMouseLeave={() => handleCardHover(index, false)}
                                 className="group relative cursor-pointer opacity-0 perspective-1000"
+                                onClick={() => router.push(`/board/${board.board_id}`)}
                             >
                                 {/* Card Shadow & Lift Effect Container */}
                                 <div className="relative aspect-16/10 rounded-[32px] p-4 transition-all duration-500 ease-out 
