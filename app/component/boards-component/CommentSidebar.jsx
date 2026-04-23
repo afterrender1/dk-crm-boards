@@ -76,89 +76,95 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
                 />
             )}
 
-            {/* Sidebar Panel */}
-            <div className={`fixed top-0 right-0 h-screen w-112.5 bg-white shadow-2xl z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] border-l border-neutral-200 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            {/* Sidebar Panel - Dark Theme, Responsive */}
+            <div className={`fixed top-0 right-0 h-screen w-full sm:w-96 md:w-112.5 bg-[#22272b] shadow-2xl z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] border-l border-[#454f59]/50 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
 
                 {/* Header */}
-                <div className="p-8 border-b border-neutral-100 flex justify-between items-start">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-[10px] font-bold text-[#49bac9] uppercase tracking-widest">
-                            <Tag size={12} /> {card.priority} Priority
+                <div className="px-4 py-3 border-b border-[#454f59]/30 flex justify-between items-start gap-2 bg-[#1d2125]/50">
+                    <div className="space-y-1 flex-1 min-w-0">
+                        <div className="inline-flex items-center gap-1.5 text-[9px] font-bold text-[#579dff]/70 uppercase tracking-wider bg-[#579dff]/10 px-2 py-1 rounded-lg border border-[#579dff]/20">
+                            <Tag size={10} /> {card.priority}
                         </div>
-                        <h2 className="text-2xl font-bold text-neutral-900 leading-tight">{card.title}</h2>
+                        <h2 className="text-lg font-bold text-[#b6c2cf] leading-tight truncate">{card.title}</h2>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 rounded-full text-neutral-400 transition-all active:scale-90">
-                        <X size={20} />
+                    <button onClick={onClose} className="p-1.5 hover:bg-[#454f59]/50 rounded-lg text-[#9fadbc] transition-all active:scale-90 shrink-0">
+                        <X size={18} />
                     </button>
                 </div>
 
                 {/* Scrollable Content Area */}
-                <div className="p-8 overflow-y-auto h-[calc(100vh-100px)] custom-scrollbar pb-32">
+                <div className="px-4 py-3 overflow-y-auto h-[calc(100vh-60px)] custom-scrollbar space-y-4 pb-20">
                     {/* Description Section */}
-                    <div className="mb-10 group">
-                        <h4 className="text-[10px] font-black text-neutral-300 uppercase tracking-[0.2em] mb-4">Description</h4>
-                        <p className="text-sm text-neutral-600 leading-relaxed bg-neutral-50/50 p-5 rounded-[1.5rem] border border-neutral-100 group-hover:border-[#49bac9]/20 transition-colors">
+                    <div className="group">
+                        <h4 className="text-[9px] font-bold text-[#579dff]/60 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <span className="w-1 h-1 rounded-full bg-[#579dff]/60" />
+                            Description
+                        </h4>
+                        <p className="text-xs text-[#9fadbc] leading-relaxed bg-[#1d2125]/50 p-3 rounded-lg border border-[#454f59]/30 group-hover:border-[#579dff]/40 transition-colors">
                             {card.description || "No description provided for this task."}
                         </p>
                     </div>
 
                     {/* Discussion Section */}
                     <div>
-                        <div className="flex items-center justify-between mb-8">
-                            <div className="flex items-center gap-2">
-                                <MessageSquare size={16} className="text-[#49bac9]" />
-                                <h4 className="text-[10px] font-black text-neutral-300 uppercase tracking-[0.2em]">Discussion</h4>
+                        <div className="flex items-center justify-between mb-3 gap-2">
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-5 h-5 rounded-lg bg-[#579dff]/10 border border-[#579dff]/20 flex items-center justify-center">
+                                    <MessageSquare size={12} className="text-[#579dff]" />
+                                </div>
+                                <h4 className="text-[9px] font-bold text-[#579dff]/60 uppercase tracking-wider">Discussion</h4>
                             </div>
-                            <span className="text-[10px] font-bold bg-neutral-50 px-3 py-1 rounded-full border border-neutral-100 text-neutral-400">
-                                {comments.length} Comments
+                            <span className="text-[9px] font-bold bg-[#579dff]/10 px-2 py-1 rounded-lg border border-[#579dff]/20 text-[#579dff]/80 whitespace-nowrap">
+                                {comments.length}
                             </span>
                         </div>
 
                         {/* Comment Input Panel */}
-                        <form onSubmit={handlePostComment} className="mb-10 bg-white border border-neutral-100 rounded-[1.5rem] p-2 shadow-sm focus-within:border-[#49bac9]/40 focus-within:shadow-lg focus-within:shadow-[#49bac9]/5 transition-all">
+                        <form onSubmit={handlePostComment} className="mb-3 bg-[#1d2125]/60 border border-[#454f59]/30 rounded-lg p-1.5 shadow-sm focus-within:border-[#579dff]/50 focus-within:shadow-lg focus-within:shadow-[#579dff]/10 transition-all">
                             <textarea
                                 value={commentText}
                                 onChange={(e) => setCommentText(e.target.value)}
-                                className="w-full bg-transparent p-4 text-sm outline-none resize-none text-neutral-700 min-h-25 placeholder:text-neutral-300"
+                                className="w-full bg-transparent p-2 text-xs outline-none resize-none text-[#b6c2cf] min-h-16 placeholder:text-[#9fadbc]/40"
                                 placeholder="Share your thoughts..."
                                 disabled={isSubmitting}
                             />
-                            <div className="flex justify-between items-center p-2 border-t border-neutral-50">
-                                <div className="h-8 w-8 rounded-full bg-linear-to-tr from-[#49bac9] to-[#3da6b5] flex items-center justify-center text-[10px] text-white font-bold shadow-md">A</div>
+                            <div className="flex justify-between items-center p-1.5 border-t border-[#454f59]/20 gap-2">
+                                <div className="h-6 w-6 rounded-lg bg-[#579dff]/15 border border-[#579dff]/20 flex items-center justify-center text-[9px] text-[#579dff] font-bold shrink-0">A</div>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting || !commentText.trim()}
-                                    className="bg-[#49bac9] hover:bg-[#3da6b5] disabled:opacity-30 disabled:grayscale text-white text-[10px] font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-[#49bac9]/20"
+                                    className="bg-[#579dff]/15 hover:bg-[#579dff]/25 disabled:opacity-30 text-[#579dff] text-[9px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all active:scale-95 border border-[#579dff]/20 whitespace-nowrap"
                                 >
-                                    {isSubmitting ? <Loader size={14} className="animate-spin" /> : <Send size={14} />}
-                                    {isSubmitting ? 'Posting...' : 'Post Comment'}
+                                    {isSubmitting ? <Loader size={12} className="animate-spin" /> : <Send size={12} />}
+                                    {isSubmitting ? 'Posting...' : 'Post'}
                                 </button>
                             </div>
                         </form>
 
                         {/* Comments List */}
-                        <div className="space-y-6">
+                        <div className="space-y-2">
                             {isLoading ? (
-                                <div className="flex flex-col items-center py-12 gap-3">
-                                    <Loader className="animate-spin text-[#49bac9]" size={24} />
-                                    <p className="text-[10px] font-bold text-neutral-300 uppercase tracking-widest">Loading Conversation...</p>
+                                <div className="flex flex-col items-center py-8 gap-2">
+                                    <Loader className="animate-spin text-[#579dff]" size={20} />
+                                    <p className="text-[9px] font-bold text-[#579dff]/60 uppercase tracking-wider">Loading...</p>
                                 </div>
                             ) : comments.length === 0 ? (
-                                <div className="text-center py-12 border-2 border-dashed border-neutral-50 rounded-[2rem]">
-                                    <p className="text-sm text-neutral-300 font-medium italic">No discussion yet.</p>
+                                <div className="text-center py-8 border border-dashed border-[#454f59]/30 rounded-lg bg-[#1d2125]/30">
+                                    <MessageSquare size={24} className="mx-auto mb-2 text-[#579dff]/20" />
+                                    <p className="text-xs text-[#9fadbc]/50 font-medium">No comments yet</p>
                                 </div>
                             ) : (
                                 comments.map((comment) => (
-                                    <div key={comment.comment_id} className="flex gap-4 animate-in slide-in-from-bottom-2 duration-300">
-                                        <div className="h-9 w-9 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center text-[10px] text-neutral-400 font-bold shrink-0">A</div>
-                                        <div className="flex-1 space-y-2">
-                                            <div className="flex items-center gap-3">
-                                                <p className="text-xs font-bold text-neutral-800">Arham</p>
-                                                <span className="h-1 w-1 bg-neutral-200 rounded-full" />
-                                                <p className="text-[10px] font-medium text-neutral-300 uppercase tracking-tight">{formatDate(comment.createdAt)}</p>
+                                    <div key={comment.comment_id} className="flex gap-2 animate-in slide-in-from-bottom-2 duration-300 group/comment">
+                                        <div className="h-7 w-7 rounded-lg bg-[#579dff]/15 border border-[#579dff]/20 flex items-center justify-center text-[9px] text-[#579dff] font-bold shrink-0">A</div>
+                                        <div className="flex-1 space-y-1 min-w-0">
+                                            <div className="flex items-center gap-1.5 text-[9px]">
+                                                <p className="font-bold text-[#579dff]/70 uppercase tracking-wider">You</p>
+                                                <span className="h-0.5 w-0.5 bg-[#454f59]/50 rounded-full" />
+                                                <p className="text-[#9fadbc]/50">{formatDate(comment.createdAt)}</p>
                                             </div>
-                                            <div className="bg-neutral-50/80 p-4 rounded-2xl rounded-tl-none border border-neutral-100/50">
-                                                <p className="text-sm text-neutral-600 leading-relaxed">{comment.text}</p>
+                                            <div className="bg-black/60 p-2.5 rounded-lg rounded-tl-none border border-[#454f59]/30 group-hover/comment:border-[#579dff]/40 group-hover/comment:bg-[#1d2125]/80 transition-all">
+                                                <p className="text-sm text-[#9fadbc] capitalize leading-relaxed">{comment.text}</p>
                                             </div>
                                         </div>
                                     </div>
