@@ -2,14 +2,17 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Droppable } from '@hello-pangea/dnd';
 import { FaTrash } from "react-icons/fa6";
+import { ImSpinner8 } from "react-icons/im";
 
 import TaskCard from "./TaskCard";
 
 const ListColumn = React.memo(({ list, onCardAdded, onCardClick, animationDelay = 0, isDragging = false }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [visible, setVisible] = useState(false);
     const columnRef = useRef(null);
+    const [loading, setLoading] = useState(false)
 
     // Staggered fade-in animation on mount
     useEffect(() => {
@@ -36,23 +39,28 @@ const ListColumn = React.memo(({ list, onCardAdded, onCardClick, animationDelay 
     const handleAddCard = useCallback(async () => {
         if (!title.trim()) return;
         try {
+            setLoading(true)
             const res = await fetch('/api/cards', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     title,
+                    description,
                     list_id: list.list_id,
                     priority: 'Medium',
                     order_index: list.cards?.length ?? 0
                 })
             });
             if (res.ok) {
+                setLoading(false)
                 setTitle("");
                 setIsAdding(false);
                 onCardAdded();
             }
-        } catch (err) { console.error(err); }
-    }, [title, list.list_id, list.cards?.length, onCardAdded]);
+        } catch (err) {
+            setLoading(false), console.error(err);
+        }
+    }, [title, description, list.list_id, list.cards?.length, onCardAdded]);
 
     const handleKeyDown = useCallback((e) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAddCard(); }
@@ -142,6 +150,8 @@ const ListColumn = React.memo(({ list, onCardAdded, onCardClick, animationDelay 
                                 outline-none
                                 placeholder:text-[#9fadbc]/40
                                 focus:ring-2 focus:ring-[#3d9ca8]/50
+                                ring-1 ring-[#3d9ca8]/50
+
                             "
                             style={{ background: '#22272b' }}
                             placeholder="Enter a title for this card…"
@@ -149,6 +159,25 @@ const ListColumn = React.memo(({ list, onCardAdded, onCardClick, animationDelay 
                             onChange={(e) => setTitle(e.target.value)}
                             onKeyDown={handleKeyDown}
                         />
+                        <textarea
+                            
+                            rows={3}
+                            className="
+                                w-full rounded-md px-2.5 py-2
+                                text-sm text-[#b6c2cf] resize-none
+                                outline-none
+                                placeholder:text-[#ffff]/40
+                                focus:ring-2 focus:ring-[#3d9ca8]/50
+                                ring-1 ring-[#3d9ca8]/50
+                            "
+                            style={{ background: '#22272b' }}
+                            placeholder="Description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+
+
                         <div className="flex gap-2 items-center mt-2">
                             <button
                                 onClick={handleAddCard}
@@ -160,7 +189,12 @@ const ListColumn = React.memo(({ list, onCardAdded, onCardClick, animationDelay 
                                     transition-all duration-150
                                 "
                             >
-                                Add card
+                                <div className='flex justify-center items-center gap-1'>
+                                    {loading && <span className='animate-spin'>
+                                        <ImSpinner8 />
+                                    </span>}
+                                    Add card
+                                </div>
                             </button>
                             <button
                                 onClick={() => { setIsAdding(false); setTitle(""); }}
