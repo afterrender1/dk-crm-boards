@@ -12,19 +12,17 @@ const sequelize = new Sequelize(
   }
 );
 
-// 🔥 Test connection AND Sync tables
-// lib/db.js
+
 let isConnected = false;
 
 export const connectDB = async () => {
-  if (isConnected) return; // Skip if already connected
+  if (isConnected) return;
 
   try {
     await sequelize.authenticate();
     isConnected = true;
     console.log("✅ Database connected successfully");
 
-    // REMOVE sequelize.sync({ alter: true }) FROM HERE
   } catch (error) {
     console.error("❌ DB connection failed:", error);
   }
