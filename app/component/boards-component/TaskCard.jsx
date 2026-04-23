@@ -9,7 +9,7 @@ const PRIORITY_CONFIG = {
     Low: { label: 'Low', color: '#4bce97', bg: 'rgba(75,206,151,0.15)' },
 };
 
-const TaskCard = React.memo(({ card, index, onCardAdded }) => {
+const TaskCard = React.memo(({ card, index, onCardAdded, onCardClick }) => {
     const priority = PRIORITY_CONFIG[card.priority] ?? PRIORITY_CONFIG.Medium;
 
     const handleDelete = (e) => {
@@ -31,6 +31,14 @@ const TaskCard = React.memo(({ card, index, onCardAdded }) => {
             });
     }
 
+    const handleCardClick = (e) => {
+        // Only trigger on card click, not on button clicks or drag
+        if (e.target.closest('button') || e.target.closest('.no-click')) {
+            return;
+        }
+        onCardClick?.(card);
+    }
+
     return (
         <Draggable draggableId={card.card_id.toString()} index={index}>
             {(provided, snapshot) => (
@@ -38,6 +46,7 @@ const TaskCard = React.memo(({ card, index, onCardAdded }) => {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
+                    onClick={handleCardClick}
                     style={{
                         ...provided.draggableProps.style,
                         willChange: snapshot.isDragging ? 'transform' : 'auto',
@@ -116,7 +125,8 @@ const TaskCard = React.memo(({ card, index, onCardAdded }) => {
     prev.card.card_id === next.card.card_id &&
     prev.card.title === next.card.title &&
     prev.card.priority === next.card.priority &&
-    prev.card.description === next.card.description
+    prev.card.description === next.card.description &&
+    prev.onCardClick === next.onCardClick
 );
 
 TaskCard.displayName = 'TaskCard';

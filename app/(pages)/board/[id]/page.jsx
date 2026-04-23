@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useParams } from "next/navigation";
 import { urbanist } from "@/app/fonts";
 import BoardContainer from "@/app/component/boards-component/BoardContainer";
+import CommentSidebar from '@/app/component/boards-component/CommentSidebar';
 
 export default function BoardPage() {
     const params = useParams();
@@ -112,6 +113,7 @@ export default function BoardPage() {
                     />
                 </div>
             </main>
+            <CommentSidebar isOpen={true}/>
         </div>
     );
 }

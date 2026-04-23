@@ -3,6 +3,33 @@ import Comment from "@/models/Comment";
 import Card from "@/models/Card"; // Card model bhi import karein
 import { connectDB } from "@/config/sequelize";
 
+export async function GET(req, { params }) {
+    try {
+        await connectDB();
+
+        const { id } = await params;
+        const numericCardId = parseInt(id);
+
+        // Fetch comments for this card, ordered by most recent first
+        const comments = await Comment.findAll({
+            where: { card_id: numericCardId },
+            order: [['createdAt', 'DESC']]
+        });
+
+        return NextResponse.json({
+            success: true,
+            comments
+        });
+
+    } catch (error) {
+        console.error("Comment GET Error:", error.message);
+        return NextResponse.json({
+            success: false,
+            error: "Failed to fetch comments"
+        }, { status: 500 });
+    }
+}
+
 export async function POST(req, { params }) {
     try {
         await connectDB(); // Connection lazmi check karein

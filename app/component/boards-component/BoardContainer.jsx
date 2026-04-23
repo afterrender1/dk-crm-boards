@@ -2,12 +2,15 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import ListColumn from "./ListColumn";
+import CommentSidebar from "./CommentSidebar";
 
 const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) => {
     const [isReady, setIsReady] = useState(false);
     const [isAddingList, setIsAddingList] = useState(false);
     const [listName, setListName] = useState("");
     const [localLists, setLocalLists] = useState(initialLists ?? []);
+    const [selectedCard, setSelectedCard] = useState(null);
+    const [isCommentSidebarOpen, setIsCommentSidebarOpen] = useState(false);
 
     // ── Drag-to-scroll refs ────────────────────────────────────
     const scrollRef = useRef(null);
@@ -167,6 +170,11 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
         if (e.key === 'Escape') setIsAddingList(false);
     }, [handleAddList]);
 
+    const handleCardClick = useCallback((card) => {
+        setSelectedCard(card);
+        setIsCommentSidebarOpen(true);
+    }, []);
+
     const columnCallbacks = useMemo(() => {
         const map = {};
         (initialLists ?? []).forEach(l => { map[l.list_id] = onUpdate; });
@@ -227,6 +235,7 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
                                             <ListColumn
                                                 list={list}
                                                 onCardAdded={columnCallbacks[list.list_id] ?? onUpdate}
+                                                onCardClick={handleCardClick}
                                                 animationDelay={i * 60}
                                                 isDragging={snapshot.isDragging}
                                             />
@@ -303,6 +312,13 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
                     </div>
                 )}
             </Droppable>
+
+            {/* Comment Sidebar */}
+            <CommentSidebar
+                card={selectedCard}
+                isOpen={isCommentSidebarOpen}
+                onClose={() => setIsCommentSidebarOpen(false)}
+            />
         </DragDropContext>
     );
 });

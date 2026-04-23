@@ -5,7 +5,7 @@ import { FaTrash } from "react-icons/fa6";
 
 import TaskCard from "./TaskCard";
 
-const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDragging = false }) => {
+const ListColumn = React.memo(({ list, onCardAdded, onCardClick, animationDelay = 0, isDragging = false }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [title, setTitle] = useState("");
     const [visible, setVisible] = useState(false);
@@ -118,6 +118,7 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDraggi
                                 card={card}
                                 index={index}
                                 onCardAdded={onCardAdded}
+                                onCardClick={onCardClick}
                             />
                         ))}
                         {provided.placeholder}
@@ -191,6 +192,7 @@ const ListColumn = React.memo(({ list, onCardAdded, animationDelay = 0, isDraggi
 }, (prev, next) =>
     prev.list === next.list &&
     prev.onCardAdded === next.onCardAdded &&
+    prev.onCardClick === next.onCardClick &&
     prev.animationDelay === next.animationDelay
 );
 
