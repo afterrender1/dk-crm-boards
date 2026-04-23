@@ -6,6 +6,10 @@ import { urbanist } from '@/app/fonts'
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import CreateNewBoardFormModel from './CreateNewBoardFormModel'
 import { useRouter } from 'next/navigation'
+import useSWR from 'swr'
+
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 
 const AllBoards = () => {
@@ -14,10 +18,18 @@ const AllBoards = () => {
     const [error, setError] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const router = useRouter()
-
     const headerRef = useRef(null)
     const gridRef = useRef(null)
     const cardsRef = useRef([])
+
+    const { data, error: swrError, isLoading: swrLoading, mutate } = useSWR('/api/boards', fetcher, {
+        revalidateOnFocus: false,
+        dedupingInterval: 60000,
+    })
+
+
+
+
     const formatRelativeTime = (date) => {
         const diffInSeconds = Math.floor((new Date() - new Date(date)) / 1000);
         if (diffInSeconds < 60) return 'Just now';
@@ -49,33 +61,37 @@ const AllBoards = () => {
                 const data = await res.json();
                 throw new Error(data.message || 'Failed to delete board');
             }
-            setBoards(prev => prev.filter(board => board.board_id !== boardId));
+            // Refresh SWR cache after deletion
+            try { await mutate(); } catch (e) { setBoards(prev => prev.filter(board => board.board_id !== boardId)); }
         } catch (err) {
             console.error("Delete error:", err);
             alert(err.message || "An error occurred while deleting the board.");
         }
     }
 
+    // Sync local state with SWR cache
     useEffect(() => {
-        const fetchBoards = async () => {
-            try {
-                const res = await fetch('/api/boards')
-                const data = await res.json()
-                if (data.success) {
-                    setBoards(data.boards || [data.board])
-                }
-                else {
-                    setError(data.message || 'Failed to fetch boards')
-                }
-            } catch (err) {
-                setError('Network error')
-            }
-            finally {
-                setLoading(false)
-            }
+        if (swrLoading) {
+            setLoading(true)
+            return
         }
-        fetchBoards()
-    }, [])
+
+        if (swrError) {
+            setError(swrError.message || 'Failed to fetch boards')
+            setLoading(false)
+            return
+        }
+
+        if (data) {
+            if (data.success) {
+                setBoards(data.boards || (data.board ? [data.board] : []))
+                setError(null)
+            } else {
+                setError(data.message || 'Failed to fetch boards')
+            }
+            setLoading(false)
+        }
+    }, [data, swrError, swrLoading])
 
     // GSAP entrance animations
     useEffect(() => {
@@ -156,8 +172,10 @@ const AllBoards = () => {
             <CreateNewBoardFormModel
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSuccess={(newBoard) => {
-                    setBoards(prev => [newBoard, ...prev]);
+                onSuccess={async () => {
+                    // Refresh board list from cache after creating a new board
+                    await mutate();
+                    setIsModalOpen(false);
                 }}
             />
 
