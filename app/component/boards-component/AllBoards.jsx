@@ -120,6 +120,8 @@ const AllBoards = () => {
 
         // Inner glow effect
         const inner = card.querySelector('.inner-card')
+        if (!inner) return
+
         gsap.to(inner, {
             boxShadow: isEntering
                 ? "0 20px 40px -10px rgba(0,0,0,0.15)"
@@ -236,7 +238,7 @@ const AllBoards = () => {
                                     </button>
 
                                     {/* Inner Card (The Premium Glass) */}
-                                    <div className="relative h-full w-full bg-white/75 backdrop-blur-xl rounded-[24px] p-6 
+                                    <div className="inner-card relative h-full w-full bg-white/75 backdrop-blur-xl rounded-[24px] p-6 
                                 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] 
                                 border border-white/60 flex flex-col justify-between overflow-hidden">
 
