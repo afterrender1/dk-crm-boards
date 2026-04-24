@@ -166,6 +166,7 @@ const TaskCard = React.memo(({ card, index, onCardAdded, onCardClick }) => {
     const [editData, setEditData] = useState({
         title: card.title,
         description: card.description,
+        due_date: card.due_date
     });
 
     const btnRef = useRef(null); // anchor for portal menu
@@ -340,6 +341,18 @@ const TaskCard = React.memo(({ card, index, onCardAdded, onCardClick }) => {
                                         "
                                         value={editData.description || ''}
                                         onChange={(e) => setEditData(p => ({ ...p, description: e.target.value }))}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[9px] font-black text-[#9fadbc]/35 uppercase tracking-widest mb-1.5">
+                                        Due Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={editData.due_date ? editData.due_date.split('T')[0] : ""}
+                                        onChange={(e) => setEditData(p => ({ ...p, due_date: e.target.value }))}
+                                        className="w-full rounded-md pl-9 pr-2.5 py-1.5 text-[11px] text-[#b6c2cf] outline-none ring-1 ring-[#454f59] focus:ring-2 focus:ring-[#579dff]/50 appearance-none bg-[#1d2125] cursor-pointer transition-all"
+                                        style={{ colorScheme: 'dark' }}
                                     />
                                 </div>
 
