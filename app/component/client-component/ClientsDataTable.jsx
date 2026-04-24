@@ -16,6 +16,11 @@ import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
+const getClientAvatar = (client) =>
+    client?.profile_image_url ||
+    (client?.gender === "Male"
+        ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxz7qJ9pU6Xj2EJKaRDVz-9Bd0xh2LnMklGw&s"
+        : "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/user-female-icon.png");
 
 const ClientsDataTable = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -87,38 +92,33 @@ const ClientsDataTable = () => {
 
     return (
         <>
-            <Table className={`${inter.className} text-sm`}>
-                <TableCaption>A comprehensive list of your agency clients.</TableCaption>
-                <TableHeader className="bg-gray-50/50">
+            <div className="w-full rounded-2xl border border-gray-100 bg-white p-2 sm:p-3 md:p-4">
+                <div className="overflow-x-auto">
+            <Table className={`${inter.className} min-w-[980px] text-xs sm:text-sm`}>
+                <TableCaption className="text-xs sm:text-sm text-gray-500 pt-3 sm:pt-4">A comprehensive list of your agency clients.</TableCaption>
+                <TableHeader className="bg-gray-50/60">
                     <TableRow>
-                        <TableHead className="w-20">ID</TableHead>
-                        <TableHead className="font-semibold">Client & Company</TableHead>
-                        <TableHead>Contact Info</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Website</TableHead>
-                        <TableHead className="text-right">Joined Date</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
+                        <TableHead className="w-20 px-2.5 sm:px-3 py-2.5 sm:py-3 text-[11px] sm:text-xs text-gray-600">ID</TableHead>
+                        <TableHead className="font-semibold text-[11px] sm:text-xs text-gray-700">Client & Company</TableHead>
+                        <TableHead className="text-[11px] sm:text-xs text-gray-600">Contact Info</TableHead>
+                        <TableHead className="text-[11px] sm:text-xs text-gray-600">Location</TableHead>
+                        <TableHead className="text-[11px] sm:text-xs text-gray-600">Status</TableHead>
+                        <TableHead className="text-[11px] sm:text-xs text-gray-600">Website</TableHead>
+                        <TableHead className="text-right text-[11px] sm:text-xs text-gray-600">Joined Date</TableHead>
+                        <TableHead className="text-right text-[11px] sm:text-xs text-gray-600">Action</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {clientsData.map((client) => (
-                        <TableRow key={client.client_id} className="border-none hover:bg-gray-50/50 transition-colors">
-                            <TableCell className="text-gray-500  text-xs">{client.client_id}</TableCell>
+                        <TableRow key={client.client_id} className="border-none hover:bg-gray-50/60 transition-colors">
+                            <TableCell className="text-gray-500 text-xs px-2.5 sm:px-3 py-2.5 sm:py-3">{client.client_id}</TableCell>
                             <TableCell>
-                                <div className="flex items-center gap-3 hover:bg-gray-100 cursor-pointer p-3" onClick={() => {
+                                <div className="flex items-center gap-2.5 sm:gap-3 hover:bg-gray-100 cursor-pointer px-2 py-2.5 sm:p-3 rounded-xl transition-colors" onClick={() => {
                                     router.push(`/client/${client.client_id}`)
                                 }}>
-                                    {/* Dummy Avatar Effect */}
-                                    <div className="w-9 h-9 rounded-full bg-[#d9fff6] border border-[#d9fff6] flex items-center justify-center overflow-hidden shrink-0">
-                                        {/* Agar image ho toh <img> tag, warna initials */}
+                                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#d9fff6] border border-[#d9fff6] flex items-center justify-center overflow-hidden shrink-0">
                                         <img
-                                            src={
-                                                client?.profile_image_url ||
-                                                (client?.gender === "Male"
-                                                    ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxz7qJ9pU6Xj2EJKaRDVz-9Bd0xh2LnMklGw&s"
-                                                    : "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/user-female-icon.png")
-                                            }
+                                            src={getClientAvatar(client)}
                                             height={200}
                                             width={200}
                                             alt="Client Profile"
@@ -126,52 +126,51 @@ const ClientsDataTable = () => {
                                         />
                                     </div>
 
-                                    {/* Text Info */}
                                     <div className="flex flex-col">
-                                        <span className="font-semibold text-gray-900 leading-none mb-1">
+                                        <span className="font-semibold text-gray-900 text-xs sm:text-sm leading-none mb-1">
                                             {client.full_name}
                                         </span>
-                                        <span className="text-[11px] text-gray-500 leading-none">
+                                        <span className="text-[10px] sm:text-[11px] text-gray-500 leading-none">
                                             {client.company_name || 'No Company'}
                                         </span>
                                     </div>
                                 </div>
                             </TableCell>
                             <TableCell>
-                                <div className="flex flex-col text-xs space-y-1">
-                                    <span className="text-gray-500 font-medium">{client.email}</span>
+                                <div className="flex flex-col text-[11px] sm:text-xs space-y-1">
+                                    <span className="text-gray-600 font-medium">{client.email}</span>
                                     <span className="text-gray-500">{client.phone_number || 'N/A'}</span>
                                 </div>
                             </TableCell>
                             <TableCell>
-                                <div className="text-xs">
-                                    <span className="text-gray-500">{client.city}, {client.country}</span>
+                                <div className="text-[11px] sm:text-xs">
+                                    <span className="text-gray-600">{client.city}, {client.country}</span>
                                     <p className="text-gray-500 text-[10px]">{client.state}</p>
                                 </div>
                             </TableCell>
                             <TableCell>
-                                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${getStatusStyles(client.status)}`}>
+                                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${getStatusStyles(client.status)}`}>
                                     {client.status}
                                 </span>
                             </TableCell>
                             <TableCell>
                                 {client.website_url ? (
-                                    <a href={client.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline text-xs">Visit Site</a>
-                                ) : <span className="text-gray-300 text-xs">None</span>}
+                                    <a href={client.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-[11px] sm:text-xs font-medium">Visit Site</a>
+                                ) : <span className="text-gray-300 text-[11px] sm:text-xs">None</span>}
                             </TableCell>
-                            <TableCell className="text-right text-xs text-gray-500">
+                            <TableCell className="text-right text-[11px] sm:text-xs text-gray-500">
                                 {new Date(client.created_at).toLocaleDateString('en-GB')}
                             </TableCell>
-                            <TableCell className="text-right gap-2 flex justify-end">
+                            <TableCell className="text-right gap-1.5 sm:gap-2 flex justify-end">
                                 <div
                                     onClick={() => handleEditClick(client)}
-                                    className='inline-flex hover:bg-blue-500 p-2 active:scale-95 rounded-md hover:text-white text-gray-500 cursor-pointer duration-300'
+                                    className='inline-flex hover:bg-blue-500 p-1.5 sm:p-2 active:scale-95 rounded-md hover:text-white text-gray-500 cursor-pointer duration-300'
                                 >
                                     <GrEdit />
                                 </div>
                                 <div
                                     onClick={() => handleDeleteClick(client)}
-                                    className='inline-flex hover:bg-red-500 p-2 active:scale-95 rounded-md hover:text-white text-gray-500 cursor-pointer duration-300'
+                                    className='inline-flex hover:bg-red-500 p-1.5 sm:p-2 active:scale-95 rounded-md hover:text-white text-gray-500 cursor-pointer duration-300'
                                 >
                                     <MdOutlineDeleteOutline />
                                 </div>
@@ -180,12 +179,14 @@ const ClientsDataTable = () => {
                     ))}
                 </TableBody>
             </Table>
+                </div>
+            </div>
 
             {/* --- EDIT MODAL (WHITE THEME) --- */}
             {isEditModalOpen && selectedClient && (
-                <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-                    <div className="bg-white w-full max-w-3xl rounded shadow-2xl border border-gray-200 overflow-hidden">
-                        <div className="px-8 py-5 border-b border-gray-100 flex justify-between items-center">
+                <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 sm:p-4">
+                    <div className="bg-white w-full max-w-3xl rounded-xl shadow-2xl border border-gray-200 overflow-hidden max-h-[92vh]">
+                        <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-5 border-b border-gray-100 flex justify-between items-center">
                             <div>
                                 <h2 className="text-xl font-bold text-gray-900">Edit Client</h2>
                                 <p className="text-xs text-gray-500">Update details for {selectedClient.full_name}</p>
@@ -193,8 +194,8 @@ const ClientsDataTable = () => {
                             <button onClick={() => setIsEditModalOpen(false)} className="text-gray-500 hover:text-gray-900 text-2xl">&times;</button>
                         </div>
 
-                        <form onSubmit={handleUpdateSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
-                            <div className="grid md:grid-cols-2 gap-5">
+                        <form onSubmit={handleUpdateSubmit} className="p-4 sm:p-6 md:p-8 space-y-6 max-h-[75vh] overflow-y-auto">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                                 <ModalInput label="Full Name" name="full_name" value={selectedClient.full_name} onChange={handleUpdateChange} />
                                 <ModalInput label="Email" name="email" type="email" value={selectedClient.email} onChange={handleUpdateChange} />
                                 <ModalSelect label="Gender" name="gender" value={selectedClient.gender} onChange={handleUpdateChange} options={['Male', 'Female', 'Other']} />
@@ -209,7 +210,7 @@ const ClientsDataTable = () => {
                                 <ModalInput label="Lead Stage" name="lead_stage" value={selectedClient.lead_stage} onChange={handleUpdateChange} />
                             </div>
 
-                            <div className="flex justify-end gap-4 pt-6 border-t border-gray-100">
+                            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-4 pt-6 border-t border-gray-100">
                                 <button type="button" onClick={() => setIsEditModalOpen(false)} className="text-sm font-medium text-gray-500 hover:text-gray-900">Cancel</button>
                                 <button type="submit" className="px-8 py-2.5 bg-black text-white text-sm font-bold rounded hover:bg-gray-800 transition shadow-lg active:scale-95">
                                     Update Client
