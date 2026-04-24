@@ -1,32 +1,24 @@
 "use client"
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react';
 import { urbanist } from '@/app/fonts';
 import { FiUsers, FiUserCheck, FiClock, FiUserMinus } from "react-icons/fi";
 import { MdOutlineChevronRight } from "react-icons/md";
 import { HiOutlineDownload } from "react-icons/hi";
+import useSWR from 'swr';
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
+
 
 const ActiveStrip = () => {
-    const [clientsData, setClientsData] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    const getStatsData = async () => {
-        try {
-            const response = await fetch('/api/client');
-            const data = await response.json();
-            const finalData = Array.isArray(data) ? data : data.data || [];
-            setClientsData(finalData);
-        } catch (error) {
-            console.error('Error fetching stats:', error);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        getStatsData();
-        const interval = setInterval(getStatsData, 30000);
-        return () => clearInterval(interval);
-    }, []);
+    const { data: clientsData = [], isLoading } = useSWR('/api/client', fetcher, {
+        revalidateOnFocus: false,
+        revalidateIfStale: true,
+        dedupingInterval: 60000,
+        focusThrottleInterval: 300000,
+        errorRetryCount: 3,
+        errorRetryInterval: 5000,
+        fallbackData: [],
+    });
 
     const stats = useMemo(() => {
         if (clientsData.length === 0) return { total: 0, active: 0, pending: 0, closed: 0, projects: 0 };
@@ -39,7 +31,7 @@ const ActiveStrip = () => {
         };
     }, [clientsData]);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 mb-6 sm:mb-8 animate-pulse px-3 sm:px-5 md:px-6 mt-6 sm:mt-10">
                 {[...Array(4)].map((_, i) => (
@@ -51,10 +43,10 @@ const ActiveStrip = () => {
 
     return (
         <div className={`mt-6 sm:mt-10 md:mt-12 mx-auto max-w-[1700px] px-3 sm:px-5 md:px-6 lg:px-8 ${urbanist.className}`}>
-            
+
             {/* Main Wrapper like the Image Container */}
             <div className="bg-white/70 border border-gray-100 p-3 sm:p-4 md:p-6 rounded-xl">
-                
+
                 {/* Header Section from Image */}
                 <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 sm:mb-6 px-1 sm:px-2 gap-2.5 sm:gap-3">
                     <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">Client performance</h2>
@@ -70,33 +62,33 @@ const ActiveStrip = () => {
 
                 {/* Grid Container */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
-                    <StatBox 
-                        label="Total Clients" 
-                        value={stats.total} 
-                        icon={<FiUsers />} 
-                        iconBg="bg-[#e0f2fe]" 
-                        iconColor="text-[#0ea5e9]" 
+                    <StatBox
+                        label="Total Clients"
+                        value={stats.total}
+                        icon={<FiUsers />}
+                        iconBg="bg-[#e0f2fe]"
+                        iconColor="text-[#0ea5e9]"
                     />
-                    <StatBox 
-                        label="Active Clients" 
-                        value={stats.active} 
-                        icon={<FiUserCheck />} 
-                        iconBg="bg-[#f5f3ff]" 
-                        iconColor="text-[#8b5cf6]" 
+                    <StatBox
+                        label="Active Clients"
+                        value={stats.active}
+                        icon={<FiUserCheck />}
+                        iconBg="bg-[#f5f3ff]"
+                        iconColor="text-[#8b5cf6]"
                     />
-                    <StatBox 
-                        label="Pending Leads" 
-                        value={stats.pending} 
-                        icon={<FiClock />} 
-                        iconBg="bg-[#fff7ed]" 
-                        iconColor="text-[#f97316]" 
+                    <StatBox
+                        label="Pending Leads"
+                        value={stats.pending}
+                        icon={<FiClock />}
+                        iconBg="bg-[#fff7ed]"
+                        iconColor="text-[#f97316]"
                     />
-                    <StatBox 
-                        label="Closed Clients" 
-                        value={stats.closed} 
-                        icon={<FiUserMinus />} 
-                        iconBg="bg-[#f0fdf4]" 
-                        iconColor="text-[#22c55e]" 
+                    <StatBox
+                        label="Closed Clients"
+                        value={stats.closed}
+                        icon={<FiUserMinus />}
+                        iconBg="bg-[#f0fdf4]"
+                        iconColor="text-[#22c55e]"
                     />
                 </div>
             </div>
@@ -107,7 +99,7 @@ const ActiveStrip = () => {
 /* Updated Stat Card Component to match Image */
 const StatBox = ({ label, value, icon, iconBg, iconColor }) => (
     <div className="bg-[#F4F6F8] border border-gray-100 p-4 sm:p-5 md:p-6 rounded-xl relative group transition-all duration-300">
-        
+
         {/* Top Section: Label and Icon */}
         <div className="flex justify-between items-start mb-3 sm:mb-4">
             <p className="text-[13px] sm:text-[15px] font-semibold text-gray-600 tracking-tight">
