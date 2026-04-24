@@ -42,7 +42,7 @@ const ActiveStrip = () => {
     }
 
     return (
-        <div className={`mt-6 sm:mt-10 md:mt-12 mx-auto max-w-[1700px] px-3 sm:px-5 md:px-6 lg:px-8 ${urbanist.className}`}>
+        <div className={`mt-6 sm:mt-10 md:mt-12 mx-auto max-w-425 px-3 sm:px-5 md:px-6 lg:px-8 ${urbanist.className}`}>
 
             {/* Main Wrapper like the Image Container */}
             <div className="bg-white/70 border border-gray-100 p-3 sm:p-4 md:p-6 rounded-xl">
