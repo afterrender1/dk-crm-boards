@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
     Table,
     TableBody,
@@ -13,27 +13,24 @@ import { inter } from '@/app/fonts';
 import { GrEdit } from "react-icons/gr";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useRouter } from 'next/navigation';
+import useSWR from 'swr';
 
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const ClientsDataTable = () => {
-    const [clientsData, setClientsData] = useState([]);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
     const router = useRouter();
 
-    const getClientsData = async () => {
-        try {
-            const response = await fetch('/api/client');
-            const data = await response.json();
-            setClientsData(Array.isArray(data) ? data : data.data || []);
-        } catch (error) {
-            console.error('Error fetching clients data:', error);
-        }
-    }
+    const { data, mutate } = useSWR('/api/client', fetcher, {
+        revalidateOnFocus: false,
+        dedupingInterval: 60000,
+    });
 
-    useEffect(() => {
-        getClientsData();
-    }, [])
+    const clientsData = useMemo(() => {
+        if (Array.isArray(data)) return data;
+        return data?.data || [];
+    }, [data]);
 
     const handleEditClick = (client) => {
         setSelectedClient(client);
@@ -49,7 +46,7 @@ const ClientsDataTable = () => {
                 headers: { "Content-Type": "application/json" },
             })
             if (res.ok) {
-                getClientsData()
+                await mutate();
             }
         } catch (error) {
             console.log(error);
@@ -70,7 +67,7 @@ const ClientsDataTable = () => {
                 body: JSON.stringify(selectedClient)
             });
             if (res.ok) {
-                getClientsData(); // Table refresh
+                await mutate(); // Refresh from SWR cache
                 setIsEditModalOpen(false);
             }
         } catch (error) {
