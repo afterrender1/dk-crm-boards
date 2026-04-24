@@ -50,7 +50,7 @@ export async function PATCH(req, { params }) {
             title: data.title || card.title,
             description: data.description !== undefined ? data.description : card.description,
             list_id: data.list_id || card.list_id,
-            due_date: data.due_date || card.due_date,
+            due_date : data.due_date || card.due_date,
             order_index: data.order_index !== undefined ? data.order_index : card.order_index,
             priority: data.priority || card.priority
         });
