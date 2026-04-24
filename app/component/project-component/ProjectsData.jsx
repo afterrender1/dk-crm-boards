@@ -55,28 +55,22 @@ const projectsData = useMemo(()=>
     return data?.data || [];
 }, [data]);
 
-const fetchProjects = async (forceRefresh = false) => {
-    if (!forceRefresh) {
-        const cached = sessionStorage.getItem(CACHE_KEY);
-        if (cached) {
-            setProjects(JSON.parse(cached));
+    useEffect(() => {
+        if (data) {
+            setProjects(projectsData);
             setLoading(false);
-            return;
         }
-    }
-    await refreshData();
-};
+    }, [data]);
 
-useEffect(() => { fetchProjects(true); }, []); // ← always fresh on mount
-    useEffect(() => { fetchProjects(); }, []);
-
-    const filteredProjects = useMemo(() => projects.filter(p => {
+    const filteredProjects = useMemo(() => projectsData.filter(p => {
         const q = searchTerm.toLowerCase();
         const matchesSearch  = p.project_name.toLowerCase().includes(q) ||
-                               p.client_name.toLowerCase().includes(q);
+                               p.client_name.toLowerCase().includes(q) ||
+                               p.client_email.toLowerCase().includes(q) ||
+                               p.company_name.toLowerCase().includes(q);
         const matchesStatus  = statusFilter === "All" || p.status === statusFilter;
         return matchesSearch && matchesStatus;
-    }), [searchTerm, statusFilter, projects]);
+    }), [searchTerm, statusFilter, projectsData]);
 
     const handleEditInitiate = (project) => {
         setSelectedProject(project);
@@ -157,7 +151,7 @@ useEffect(() => { fetchProjects(true); }, []); // ← always fresh on mount
                             <ProjectCard
                                 key={project.project_id}
                                 data={project}
-                                onUpdate={() => fetchProjects(true)}
+                                onUpdate={() => mutate()}
                                 onEdit={() => handleEditInitiate(project)}
                             />
                         ))
@@ -170,7 +164,7 @@ useEffect(() => { fetchProjects(true); }, []); // ← always fresh on mount
                 <EditProjectModal
                     project={selectedProject}
                     onClose={() => { setIsEditModalOpen(false); setSelectedProject(null); }}
-                    onSuccess={() => fetchProjects(true)}
+                    onSuccess={() => mutate()}
                 />
             )}
         </div>
