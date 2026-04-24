@@ -22,7 +22,8 @@ export async function GET() {
                 model: Client,
                 attributes: ["full_name", "email", "company_name"],
             },
-            order: [["created_at", "DESC"]],
+            // The projects table does not have created_at, so sort by PK (latest first).
+            order: [["project_id", "DESC"]],
         });
 
         return NextResponse.json({ projects, message: "Projects retrieved successfully" });
