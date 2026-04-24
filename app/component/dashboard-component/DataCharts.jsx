@@ -14,11 +14,11 @@ const data = [
 
 export default function DataCharts() {
   return (
-    <div className={`h-96 bg-white p-6 rounded-lg border border-gray-100 ${inter.className}`}>
-      <h3 className="text-lg font-bold text-gray-800 mb-6">Revenue Overview</h3>
+    <div className={`h-[320px] sm:h-[360px] md:h-96 bg-white p-3 sm:p-4 md:p-6 rounded-xl border border-gray-100 ${inter.className}`}>
+      <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 md:mb-6">Revenue Overview</h3>
 
-      <ResponsiveContainer width="100%" height="90%">
-        <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+      <ResponsiveContainer width="100%" height="88%">
+        <LineChart data={data} margin={{ top: 5, right: 8, left: -24, bottom: 4 }}>
           {/* Grid Lines - Tailwind Gray 100 */}
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
 
@@ -27,28 +27,28 @@ export default function DataCharts() {
             dataKey="name"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: '#9ca3af', fontSize: 12 }}
-            dy={10}
+            tick={{ fill: '#9ca3af', fontSize: 11 }}
+            dy={8}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fill: '#9ca3af', fontSize: 12 }}
+            tick={{ fill: '#9ca3af', fontSize: 11 }}
           />
 
           {/* Custom Tooltip - Tailwind Styled */}
           <Tooltip
             contentStyle={{
               backgroundColor: '#fff',
-              borderRadius: '16px',
+              borderRadius: '12px',
               border: '1px solid #f3f4f6',
               boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-              padding: '12px'
+              padding: '10px'
             }}
             itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
           />
 
-          <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '12px', fontWeight: '600' }} />
+          <Legend iconType="circle" wrapperStyle={{ paddingTop: '12px', fontSize: '11px', fontWeight: '600' }} />
 
           {/* Line 1 - Tailwind Blue 500 */}
           <Line

@@ -50,20 +50,20 @@ export default function CircleCharts() {
 
   if (loading) {
     return (
-      <div className="w-full h-100 bg-white p-6 rounded-lg border border-gray-100 flex items-center justify-center animate-pulse">
+      <div className="w-full h-[320px] sm:h-[360px] md:h-[400px] bg-white p-3 sm:p-4 md:p-6 rounded-xl border border-gray-100 flex items-center justify-center animate-pulse">
         <p className="text-xs font-bold text-gray-300 uppercase tracking-widest">Loading Distribution...</p>
       </div>
     );
   }
 
   return (
-    <div className={`w-full h-96 bg-white p-6 rounded-lg border border-gray-100 shadow-sm ${inter.className}`}>
-      <div className="mb-6">
-        <h3 className="text-lg font-bold text-gray-800 tracking-tight">Lead Distribution</h3>
-        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Real-time status breakdown</p>
+    <div className={`w-full h-[320px] sm:h-[360px] md:h-96 bg-white p-3 sm:p-4 md:p-6 rounded-xl border border-gray-100 shadow-sm ${inter.className}`}>
+      <div className="mb-3 sm:mb-4 md:mb-6">
+        <h3 className="text-base sm:text-lg font-bold text-gray-800 tracking-tight">Lead Distribution</h3>
+        <p className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest">Real-time status breakdown</p>
       </div>
 
-      <div className="relative h-[80%]">
+      <div className="relative h-[78%] sm:h-[80%]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -74,9 +74,9 @@ export default function CircleCharts() {
               cy="50%"
               innerRadius="60%"
               outerRadius="85%"
-              paddingAngle={5}
+              paddingAngle={4}
               stroke="none"
-              cornerRadius={6}
+              cornerRadius={5}
             >
               {statusDistribution.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -85,10 +85,10 @@ export default function CircleCharts() {
             <Tooltip
               contentStyle={{
                 backgroundColor: '#fff',
-                borderRadius: '16px',
+                borderRadius: '12px',
                 border: 'none',
                 boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: 'bold'
               }}
             />
@@ -97,17 +97,17 @@ export default function CircleCharts() {
 
         {/* Center Label */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-3xl font-black text-slate-900 leading-none">{clientsData.length}</span>
-          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">Total Leads</span>
+          <span className="text-2xl sm:text-3xl font-black text-slate-900 leading-none">{clientsData.length}</span>
+          <span className="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Total Leads</span>
         </div>
       </div>
 
       {/* Custom Legend */}
-      <div className="flex justify-center gap-4 mt-2">
+      <div className="flex flex-wrap justify-center gap-2.5 sm:gap-4 mt-2">
         {statusDistribution.map((item, index) => (
           <div key={item.name} className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[index] }} />
-            <span className="text-[10px] font-bold text-slate-500 uppercase">{item.name}</span>
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-600 uppercase">{item.name}</span>
           </div>
         ))}
       </div>

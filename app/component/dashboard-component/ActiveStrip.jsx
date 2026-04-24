@@ -41,35 +41,35 @@ const ActiveStrip = () => {
 
     if (loading) {
         return (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 animate-pulse px-6 mt-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 mb-6 sm:mb-8 animate-pulse px-3 sm:px-5 md:px-6 mt-6 sm:mt-10">
                 {[...Array(4)].map((_, i) => (
-                    <div key={i} className="h-32 bg-gray-100 rounded-lg border border-gray-100 "></div>
+                    <div key={i} className="h-28 sm:h-32 bg-gray-100 rounded-xl border border-gray-100"></div>
                 ))}
             </div>
         );
     }
 
     return (
-        <div className={`mt-12 mx-auto max-w-400 px-6 ${urbanist.className}`}>
+        <div className={`mt-6 sm:mt-10 md:mt-12 mx-auto max-w-[1700px] px-3 sm:px-5 md:px-6 lg:px-8 ${urbanist.className}`}>
             
             {/* Main Wrapper like the Image Container */}
-            <div className="bg-white/50 p-6 rounded-lg">
+            <div className="bg-white/70 border border-gray-100 p-3 sm:p-4 md:p-6 rounded-xl">
                 
                 {/* Header Section from Image */}
-                <div className="flex justify-between items-center mb-6 px-2">
-                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">Client performance</h2>
-                    <div className="flex gap-3">
-                        <button className="bg-[#eef5f9] text-[#6bb4d7] px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-1">
+                <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 sm:mb-6 px-1 sm:px-2 gap-2.5 sm:gap-3">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">Client performance</h2>
+                    <div className="flex flex-wrap gap-2 sm:gap-3">
+                        <button className="bg-[#eef5f9] text-[#3f86a8] px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1">
                             Last 30 Days <MdOutlineChevronRight className="rotate-90 text-xl" />
                         </button>
-                        <button className="bg-[#eef5f9] text-[#6bb4d7] px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2">
+                        <button className="bg-[#eef5f9] text-[#3f86a8] px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
                             <HiOutlineDownload className="text-lg" /> Export Report
                         </button>
                     </div>
                 </div>
 
                 {/* Grid Container */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
                     <StatBox 
                         label="Total Clients" 
                         value={stats.total} 
@@ -106,24 +106,24 @@ const ActiveStrip = () => {
 
 /* Updated Stat Card Component to match Image */
 const StatBox = ({ label, value, icon, iconBg, iconColor }) => (
-    <div className="bg-[#F4F6F8] border border-gray-50 p-7 rounded-xl  relative group  transition-all duration-300">
+    <div className="bg-[#F4F6F8] border border-gray-100 p-4 sm:p-5 md:p-6 rounded-xl relative group transition-all duration-300">
         
         {/* Top Section: Label and Icon */}
-        <div className="flex justify-between items-start mb-4">
-            <p className="text-[15px] font-medium text-gray-500 tracking-tight">
+        <div className="flex justify-between items-start mb-3 sm:mb-4">
+            <p className="text-[13px] sm:text-[15px] font-semibold text-gray-600 tracking-tight">
                 {label}
             </p>
-            <div className={`w-10 h-10  ${iconColor} rounded-full flex items-center justify-center text-xl`}>
+            <div className={`w-9 h-9 sm:w-10 sm:h-10 ${iconColor} rounded-full flex items-center justify-center text-lg sm:text-xl`}>
                 {icon}
             </div>
         </div>
 
         {/* Bottom Section: Value and Subtitle */}
-        <div className="flex items-baseline gap-2">
-            <h4 className="text-3xl font-bold text-gray-900 tracking-tight">
+        <div className="flex items-baseline gap-1.5 sm:gap-2">
+            <h4 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
                 {value >= 1000 ? (value / 1000).toFixed(1) + 'k' : value}
             </h4>
-            <p className="text-xs font-semibold text-gray-400">
+            <p className="text-[10px] sm:text-xs font-semibold text-gray-500">
                 From this agency
             </p>
         </div>
