@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className="h-full antialiased"
     >
-      <body className="min-h-full flex flex-col">
+      <body suppressHydrationWarning={true} className="min-h-full flex flex-col">
         <Sidebar />
         {children}
       </body>
