@@ -78,30 +78,30 @@ const projectsData = useMemo(()=>
     };
 
     return (
-        <div className={`p-4 md:p-8 rounded-t-4xl bg-white min-h-screen ${inter.className}`}>
-            <div className="max-w-7xl mx-auto py-6 md:py-12">
+        <div className={`px-3 py-4 sm:px-5 sm:py-6 md:px-8 md:py-8 lg:px-10 lg:py-10 rounded-t-3xl md:rounded-t-4xl bg-linear-to-b from-white to-gray-50/60 min-h-screen ${inter.className}`}>
+            <div className="max-w-7xl mx-auto">
 
                 {/* ── Header & Filters ── */}
-                <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="mb-6 sm:mb-8 md:mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-5">
                     <div>
-                        <h1 className="text-xl font-black text-black uppercase tracking-tighter">
+                        <h1 className="text-lg sm:text-xl md:text-2xl font-extrabold text-gray-900 uppercase tracking-tight">
                             Project Pipeline
                         </h1>
-                        <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">
+                        <p className="text-gray-500 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.14em] mt-1.5">
                             {loading
                                 ? "Syncing..."
                                 : `Managing ${filteredProjects.length} assignment${filteredProjects.length !== 1 ? 's' : ''}`}
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <div className="flex flex-col sm:flex-row w-full lg:w-auto items-stretch sm:items-center gap-2.5 sm:gap-3">
                         {/* Search */}
-                        <div className="relative w-full sm:w-64">
+                        <div className="relative w-full sm:w-72 md:w-80">
                             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={14} />
                             {searchTerm && (
                                 <button
                                     onClick={() => setSearchTerm("")}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-600 transition-colors"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-700 transition-colors"
                                 >
                                     <FiX size={14} />
                                 </button>
@@ -111,7 +111,7 @@ const projectsData = useMemo(()=>
                                 placeholder="Search projects or clients…"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:border-black focus:bg-white outline-none transition-all"
+                                className="w-full pl-10 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-800 placeholder:text-gray-400 focus:border-gray-800 focus:ring-2 focus:ring-gray-200 outline-none transition-all"
                             />
                         </div>
 
@@ -119,7 +119,7 @@ const projectsData = useMemo(()=>
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold uppercase tracking-tighter outline-none focus:border-black transition-all cursor-pointer"
+                            className="w-full sm:w-auto pl-4 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 uppercase tracking-tight outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 transition-all cursor-pointer"
                         >
                             {["All", ...STATUSES].map(s => (
                                 <option key={s} value={s}>{s}</option>
@@ -129,18 +129,18 @@ const projectsData = useMemo(()=>
                 </div>
 
                 {/* ── Grid ── */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
                     {loading ? (
                         [...Array(6)].map((_, i) => <SkeletonCard key={i} delay={i * 80} />)
                     ) : filteredProjects.length === 0 ? (
                         /* BUG FIX #6 — empty state */
-                        <div className="col-span-full flex flex-col items-center justify-center py-24 text-gray-300 gap-3">
+                        <div className="col-span-full flex flex-col items-center justify-center py-20 sm:py-24 text-gray-400 gap-3">
                             <FiInbox size={40} strokeWidth={1.2} />
-                            <p className="text-sm font-bold uppercase tracking-widest">No projects found</p>
+                            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-gray-600">No projects found</p>
                             {(searchTerm || statusFilter !== "All") && (
                                 <button
                                     onClick={() => { setSearchTerm(""); setStatusFilter("All"); }}
-                                    className="mt-2 text-xs font-black uppercase tracking-wider text-black border border-black px-4 py-2 rounded-lg hover:bg-black hover:text-white transition-all"
+                                    className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-gray-800 border border-gray-800 px-4 py-2 rounded-lg hover:bg-gray-900 hover:text-white transition-all"
                                 >
                                     Clear filters
                                 </button>
@@ -184,14 +184,14 @@ const ProjectCard = ({ data, onUpdate, onEdit }) => {
         : '—';
 
     return (
-        <div className="group bg-white border border-gray-100 rounded-2xl p-6 flex flex-col h-full transition-all duration-200 hover:shadow-lg hover:shadow-gray-100 hover:-translate-y-0.5 hover:border-gray-200">
+        <div className="group bg-white border border-gray-200/80 rounded-2xl p-4 sm:p-5 md:p-6 flex flex-col h-full transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/70 hover:-translate-y-0.5 hover:border-gray-300">
 
             {/* Top row */}
-            <div className="flex justify-between items-center mb-5">
-                <div className="w-10 h-10 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center shadow-sm overflow-hidden">
+            <div className="flex justify-between items-center mb-4 sm:mb-5">
+                <div className="w-10 h-10 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center shadow-sm overflow-hidden">
                     {data.logo_url
                         ? <img src={data.logo_url} alt={data.project_name} className="w-full h-full object-cover" />
-                        : <User size={18} className="text-gray-300" />
+                        : <User size={18} className="text-gray-400" />
                     }
                 </div>
                 <div className={`px-2.5 py-1 ${status.bg} ${status.text} rounded-full flex items-center gap-1.5`}>
@@ -201,20 +201,20 @@ const ProjectCard = ({ data, onUpdate, onEdit }) => {
             </div>
 
             {/* Content */}
-            <div className="flex-1 mb-5">
-                <h3 className="text-base font-bold text-gray-900 leading-snug mb-2 truncate">{data.project_name}</h3>
-                <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{data.description || 'No description provided.'}</p>
+            <div className="flex-1 mb-4 sm:mb-5">
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 leading-snug mb-2 truncate">{data.project_name}</h3>
+                <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">{data.description || 'No description provided.'}</p>
             </div>
 
             {/* Meta */}
-            <div className="space-y-2.5 mb-5 pt-4 border-t border-gray-50">
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <FiUser size={12} className="text-gray-300 shrink-0" />
-                    <span className="font-semibold text-gray-700 truncate">{data.client_name}</span>
+            <div className="space-y-2.5 mb-4 sm:mb-5 pt-3.5 sm:pt-4 border-t border-gray-100">
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                    <FiUser size={12} className="text-gray-400 shrink-0" />
+                    <span className="font-semibold text-gray-800 truncate">{data.client_name}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
-                        <FiCalendar size={12} className="text-gray-300" />
+                <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+                        <FiCalendar size={12} className="text-gray-400" />
                         <span>{formattedDeadline}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -228,18 +228,18 @@ const ProjectCard = ({ data, onUpdate, onEdit }) => {
             </div>
 
             {/* Footer */}
-            <div className="flex justify-between items-center pt-4 border-t border-gray-50 mt-auto">
+            <div className="flex justify-between items-center pt-3.5 sm:pt-4 border-t border-gray-100 mt-auto">
                 <div className="flex items-center gap-1.5">
                     <button
                         onClick={onEdit}
                         title="Edit project"
-                        className="p-2 rounded-lg text-gray-300 hover:text-black hover:bg-gray-100 transition-all duration-150"
+                        className="p-2 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all duration-150"
                     >
                         <FiEdit3 size={15} />
                     </button>
                     <StatusDropdown projectId={data.project_id} currentStatus={data.status} onUpdate={onUpdate} />
                 </div>
-                <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center text-[11px] font-bold text-white select-none ring-2 ring-white">
+                <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-[11px] font-semibold text-white select-none ring-2 ring-white">
                     {data.client_name?.charAt(0).toUpperCase()}
                 </div>
             </div>
@@ -294,35 +294,35 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
     return (
         <div
             onClick={handleBackdrop}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-100 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/45 backdrop-blur-sm z-100 flex items-center justify-center p-3 sm:p-4"
         >
-            <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transition-all duration-200 scale-100">
+            <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transition-all duration-200 scale-100 max-h-[92vh] overflow-y-auto">
                 {/* Modal header */}
-                <div className="flex justify-between items-center px-8 pt-8 pb-6 border-b border-gray-50">
+                <div className="flex justify-between items-center px-5 sm:px-6 md:px-8 pt-5 sm:pt-6 md:pt-8 pb-4 sm:pb-5 md:pb-6 border-b border-gray-50">
                     <div>
-                        <h2 className="text-base font-black uppercase tracking-tighter text-black">Edit Project</h2>
-                        <p className="text-xs text-gray-400 font-medium mt-0.5 truncate max-w-xs">{project.project_name}</p>
+                        <h2 className="text-base font-extrabold uppercase tracking-tight text-gray-900">Edit Project</h2>
+                        <p className="text-xs text-gray-500 font-medium mt-0.5 truncate max-w-xs">{project.project_name}</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-xl text-gray-400 hover:text-black hover:bg-gray-100 transition-all"
+                        className="p-2 rounded-xl text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all"
                     >
                         <FiX size={18} />
                     </button>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSave} className="px-8 py-6 space-y-4">
+                <form onSubmit={handleSave} className="px-5 sm:px-6 md:px-8 py-5 sm:py-6 space-y-4">
                     {/* Project name */}
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">
+                        <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">
                             Project Name
                         </label>
                         <input
                             type="text"
                             required
                             placeholder="e.g. Redesign Homepage"
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-black focus:bg-white text-sm font-semibold transition-all"
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 transition-all"
                             value={formData.project_name}
                             onChange={patch('project_name')}
                         />
@@ -330,36 +330,36 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
 
                     {/* Description */}
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">
+                        <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">
                             Description
                         </label>
                         <textarea
                             rows={3}
                             placeholder="Brief project overview…"
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-black focus:bg-white text-sm font-medium resize-none transition-all"
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 resize-none transition-all"
                             value={formData.description}
                             onChange={patch('description')}
                         />
                     </div>
 
                     {/* Budget & Deadline — BUG FIX #4: both now have border class */}
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Budget ($)</label>
+                            <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">Budget ($)</label>
                             <input
                                 type="number"
                                 min={0}
                                 placeholder="0"
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-black focus:bg-white text-sm font-semibold transition-all"
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 transition-all"
                                 value={formData.budget}
                                 onChange={patch('budget')}
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Deadline</label>
+                            <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">Deadline</label>
                             <input
                                 type="date"
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-black focus:bg-white text-sm font-semibold transition-all"
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 transition-all"
                                 value={formData.deadline}
                                 onChange={patch('deadline')}
                             />
@@ -367,11 +367,11 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
                     </div>
 
                     {/* Priority & Status */}
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Priority</label>
+                            <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">Priority</label>
                             <select
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-black focus:bg-white text-sm font-semibold transition-all cursor-pointer"
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 transition-all cursor-pointer"
                                 value={formData.priority}
                                 onChange={patch('priority')}
                             >
@@ -381,9 +381,9 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Status</label>
+                            <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">Status</label>
                             <select
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-black focus:bg-white text-sm font-semibold transition-all cursor-pointer"
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 transition-all cursor-pointer"
                                 value={formData.status}
                                 onChange={patch('status')}
                             >
@@ -400,18 +400,18 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
                     )}
 
                     {/* Actions */}
-                    <div className="flex gap-3 pt-2">
+                    <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 pt-2">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-3.5 rounded-xl border border-gray-200 text-sm font-black uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition-all"
+                            className="flex-1 py-3.5 rounded-xl border border-gray-200 text-sm font-semibold uppercase tracking-[0.12em] text-gray-600 hover:bg-gray-50 transition-all"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 py-3.5 bg-black text-white rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:bg-gray-800 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="flex-1 py-3.5 bg-gray-900 text-white rounded-xl text-xs font-semibold uppercase tracking-[0.16em] hover:bg-black active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                             {loading ? "Saving…" : "Save Changes"}
                         </button>
@@ -462,18 +462,18 @@ const StatusDropdown = ({ projectId, currentStatus, onUpdate }) => {
                 onClick={() => setOpen(o => !o)}
                 className={`p-2 rounded-lg transition-all duration-150 ${
                     open
-                        ? 'bg-black text-white'
+                        ? 'bg-gray-900 text-white'
                         : updating
                         ? 'text-gray-300 cursor-wait'
-                        : 'text-gray-300 hover:text-black hover:bg-gray-100'
+                        : 'text-gray-400 hover:text-gray-900 hover:bg-gray-100'
                 }`}
             >
                 <FiMoreVertical size={16} />
             </button>
 
             {open && (
-                <div className="absolute left-0 bottom-full mb-2 w-44 bg-white border border-gray-100 rounded-xl shadow-xl z-50 py-1.5 overflow-hidden">
-                    <p className="px-4 py-2 text-[9px] font-black text-gray-300 uppercase tracking-widest border-b border-gray-50">
+                <div className="absolute right-0 bottom-full mb-2.5 w-48 bg-white border border-gray-200 rounded-xl shadow-[0_8px_20px_rgba(2,6,23,0.1)] z-50 p-1.5">
+                    <p className="px-2.5 pt-1.5 pb-2 text-[10px] font-semibold text-gray-500 uppercase tracking-widest border-b border-gray-100">
                         Change Status
                     </p>
                     {STATUSES.map(s => {
@@ -483,17 +483,19 @@ const StatusDropdown = ({ projectId, currentStatus, onUpdate }) => {
                             <button
                                 key={s}
                                 onClick={() => updateStatus(s)}
-                                className={`w-full flex items-center justify-between px-4 py-2.5 text-xs font-bold uppercase tracking-tight transition-colors ${
-                                    active ? 'bg-gray-50 text-black' : 'text-gray-400 hover:bg-gray-50 hover:text-black'
+                                className={`w-full flex items-center justify-between mt-1 rounded-lg px-2.5 py-2 text-[10px] font-medium uppercase tracking-[0.06em] transition-colors ${
+                                    active
+                                        ? 'bg-gray-100 text-gray-900'
+                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                 }`}
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2.5">
                                     <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`}></span>
                                     {s}
                                 </div>
                                 {active
-                                    ? <FiCheck size={12} className="text-black" />
-                                    : <FiCircle size={8} className="text-gray-200" />
+                                    ? <FiCheck size={12} className="text-gray-900" />
+                                    : <FiCircle size={9} className="text-gray-300" />
                                 }
                             </button>
                         );
