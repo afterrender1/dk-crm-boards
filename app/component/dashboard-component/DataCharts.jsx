@@ -14,7 +14,7 @@ const data = [
 
 export default function DataCharts() {
   return (
-    <div className={`h-[320px] sm:h-[360px] md:h-96 bg-white p-3 sm:p-4 md:p-6 rounded-xl border border-gray-100 ${inter.className}`}>
+    <div className={`h-80 sm:h-90 md:h-96 bg-white p-3 sm:p-4 md:p-6 rounded-xl border border-gray-100 ${inter.className}`}>
       <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 md:mb-6">Revenue Overview</h3>
 
       <ResponsiveContainer width="100%" height="88%">

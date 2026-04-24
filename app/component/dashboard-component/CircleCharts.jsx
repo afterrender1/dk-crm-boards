@@ -50,14 +50,14 @@ export default function CircleCharts() {
 
   if (loading) {
     return (
-      <div className="w-full h-[320px] sm:h-[360px] md:h-[400px] bg-white p-3 sm:p-4 md:p-6 rounded-xl border border-gray-100 flex items-center justify-center animate-pulse">
+      <div className="w-full h-80 sm:h-90 md:h-100 bg-white p-3 sm:p-4 md:p-6 rounded-xl border border-gray-100 flex items-center justify-center animate-pulse">
         <p className="text-xs font-bold text-gray-300 uppercase tracking-widest">Loading Distribution...</p>
       </div>
     );
   }
 
   return (
-    <div className={`w-full h-[320px] sm:h-[360px] md:h-96 bg-white p-3 sm:p-4 md:p-6 rounded-xl border border-gray-100 shadow-sm ${inter.className}`}>
+    <div className={`w-full h-80 sm:h-90 md:h-96 bg-white p-3 sm:p-4 md:p-6 rounded-xl border border-gray-100  ${inter.className}`}>
       <div className="mb-3 sm:mb-4 md:mb-6">
         <h3 className="text-base sm:text-lg font-bold text-gray-800 tracking-tight">Lead Distribution</h3>
         <p className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest">Real-time status breakdown</p>
