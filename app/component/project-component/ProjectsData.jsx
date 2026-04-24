@@ -6,6 +6,9 @@ import {
     FiSearch, FiCheck, FiCircle, FiX, FiInbox
 } from "react-icons/fi";
 import { User } from 'lucide-react';
+import useSWR from 'swr';
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 /* ─────────────────────────────────────────────────────────────
    HELPERS
@@ -38,25 +41,19 @@ const ProjectsGrid = () => {
     const [selectedProject, setSelectedProject] = useState(null);
 
 const CACHE_KEY = 'devskarnel_projects_v2';
-
-const refreshData = async () => {
-    try {
-        const res  = await fetch('/api/project');
-        const data = await res.json();
-        const rows = (data.projects || []).map(p => ({
-            ...p,
-            client_name:  p.Client?.full_name   ?? "Unknown",
-            client_email: p.Client?.email        ?? "",
-            company_name: p.Client?.company_name ?? "",
-        }));
-        setProjects(rows);
-        sessionStorage.setItem(CACHE_KEY, JSON.stringify(rows));
-    } catch (error) {
-        console.error("Fetch error:", error);
-    } finally {
-        setLoading(false);
+const {data , mutate} = useSWR('/api/project' , 
+    fetcher,
+    {
+        revalidateOnFocus: false,
+        dedupingInterval: 60000,
     }
-};
+)
+
+const projectsData = useMemo(()=>
+{
+    if (Array.isArray(data)) return data;
+    return data?.data || [];
+}, [data]);
 
 const fetchProjects = async (forceRefresh = false) => {
     if (!forceRefresh) {
