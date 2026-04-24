@@ -52,7 +52,7 @@ const {data , mutate} = useSWR('/api/project' ,
 const projectsData = useMemo(()=>
 {
     if (Array.isArray(data)) return data;
-    return data?.data || [];
+    return data?.projects || data?.data || [];
 }, [data]);
 
     useEffect(() => {
