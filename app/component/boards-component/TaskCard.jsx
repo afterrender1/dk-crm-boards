@@ -344,9 +344,13 @@ const TaskCard = React.memo(({ card, index, onCardAdded, onCardClick }) => {
                                     />
                                 </div>
                                 <div>
+
                                     <label className="block text-[9px] font-black text-[#9fadbc]/35 uppercase tracking-widest mb-1.5">
                                         Due Date
                                     </label>
+                                   <div className='flex justify-center items-center'>
+                                     <Calendar size={14} className="ml-2 absolute left-2.5 text-[#9fadbc]/50 pointer-events-none" />
+
                                     <input
                                         type="date"
                                         value={editData.due_date ? editData.due_date.split('T')[0] : ""}
@@ -354,6 +358,7 @@ const TaskCard = React.memo(({ card, index, onCardAdded, onCardClick }) => {
                                         className="w-full rounded-md pl-9 pr-2.5 py-1.5 text-[11px] text-[#b6c2cf] outline-none ring-1 ring-[#454f59] focus:ring-2 focus:ring-[#579dff]/50 appearance-none bg-[#1d2125] cursor-pointer transition-all"
                                         style={{ colorScheme: 'dark' }}
                                     />
+                                   </div>
                                 </div>
 
                                 <div className="flex gap-2 pt-1">
