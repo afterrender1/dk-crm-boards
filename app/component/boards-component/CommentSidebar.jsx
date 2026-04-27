@@ -221,7 +221,7 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
 
                 {/* Scrollable body */}
                 <div className="flex-1 overflow-y-auto px-5 py-5 space-y-6 custom-scrollbar">
-                       
+
 
                     {/* Descriptions Section */}
                     <section>
@@ -260,8 +260,8 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
                             ) : (
                                 descriptions.map((desc) => (
                                     <div key={desc.description_id} className="group/desc">
-                                        <div className="flex items-start justify-between mb-2">
-                                            <span className="text-[10px] text-[#3dd816] tracking-widest font-medium">{relativeTime(desc.createdAt)}</span>
+                                        <div className="flex items-start justify-between mb-0">
+                                            <span className="text-[8px] text-[#3dd816] tracking-widest font-medium">{relativeTime(desc.createdAt)}</span>
                                             <div className="flex items-center gap-1 opacity-0 group-hover/desc:opacity-100 transition-opacity">
                                                 <button onClick={() => { setEditingId(desc.description_id); setEditText(desc.text); }}
                                                     className="p-1 text-[#9ca3af] hover:text-[#579dff] transition-colors"><Pencil size={12} /></button>
@@ -286,10 +286,9 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="bg-[#1d2125] border border-[#454f59]/40 px-4 py-3 rounded-lg hover:border-[#454f59]/70 transition-colors">
+                                            <div className="bg-[#1d2125] border border-[#454f59]/40 px-4 py-2 rounded-lg hover:border-[#454f59]/70 transition-colors">
                                                 <p className="text-[14px] sm:text-[15px] text-[#9ca3af] leading-relaxed whitespace-pre-wrap">{desc.text}</p>
-                                                {console.log(desc?.text || " no des")
-                                                }
+
                                             </div>
                                         )}
                                     </div>
