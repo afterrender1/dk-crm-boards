@@ -48,7 +48,7 @@ export async function DELETE(req, { params }) {
 export async function PATCH(req, { params }) {
     try {
         await connectDB();
-        
+
         const { id } = await params;
         const data = await req.json();
 
@@ -63,13 +63,13 @@ export async function PATCH(req, { params }) {
         }
         await comment.update({
             text: data.text || comment.text,
-            card_id: data.card_id || comment.card_id 
+            card_id: data.card_id || comment.card_id
         });
 
         return NextResponse.json({
             success: true,
             message: "Comment updated successfully",
-            updatedComment: comment // This now contains the actual updated data
+            updatedComment: comment
         }, { status: 200 });
 
     } catch (error) {
