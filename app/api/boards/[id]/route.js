@@ -1,11 +1,12 @@
 import { connectDB } from "@/config/sequelize";
-import { Board, List, Card, Comment } from "@/models/index";
+import { Board, List, Card, Comment , Description } from "@/models/index";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
     try {
         await connectDB();
         const { id } = await params;
+
         const boardDetail = await Board.findByPk(id, {
             include: [
                 {
@@ -19,6 +20,10 @@ export async function GET(req, { params }) {
                                 {
                                     model: Comment,
                                     as: "comments"
+                                },
+                                {
+                                    model: Description,
+                                    as: "descriptions"
                                 }
                             ]
                         }
@@ -32,7 +37,10 @@ export async function GET(req, { params }) {
         });
 
         if (!boardDetail) {
-            return NextResponse.json({ success: false, message: "Board nahi mila!" }, { status: 404 });
+            return NextResponse.json({
+                success: false,
+                message: "Board nahi mila! Check your ID."
+            }, { status: 404 });
         }
 
         return NextResponse.json({
@@ -42,25 +50,25 @@ export async function GET(req, { params }) {
 
     } catch (error) {
         console.error("Get Board Detail Error:", error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        return NextResponse.json({
+            success: false,
+            message: "Server mein koi masla hua",
+            error: error.message
+        }, { status: 500 });
     }
 }
-
 
 
 export async function DELETE(req, { params }) {
     try {
         await connectDB();
 
-        // 1. URL se Board ki ID pakrein (e.g., /api/boards/5)
         const { id } = await params;
 
-        // 2. Database mein dhoonden aur khatam karein
         const deleted = await Board.destroy({
             where: { board_id: id }
         });
 
-        // 3. Agar ID ghalat ho ya board na mile
         if (!deleted) {
             return NextResponse.json({
                 success: false,

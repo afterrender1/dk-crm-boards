@@ -58,6 +58,7 @@ const fetcher = (url) => fetch(url).then(r => r.json());
 // ── Main Component ────────────────────────────────────────────────
 const CommentSidebar = ({ card, isOpen, onClose }) => {
     const [commentText, setCommentText] = useState('');
+    const [descriptionText, setDescriptionText] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Edit States
@@ -72,6 +73,16 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
     );
 
     const comments = data?.comments ?? [];
+
+    // SWR: fetching descriptions
+    const { data: desData, mutate: mutateDes, isLoading: isLoadingDes } = useSWR(
+        isOpen && card?.card_id ? `/api/cards/${card.card_id}/descriptions` : null,
+        fetcher,
+        { revalidateOnFocus: false, dedupingInterval: 60_000 }
+    );
+
+    const descriptions = desData?.descriptions ?? [];
+
 
     // ── Handlers ───────────────────────────────────────────────────
 
@@ -120,6 +131,51 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handlePost(e);
+    };
+
+    // ── Description Handlers ───────────────────────────────────────
+
+    const handlePostDescription = async (e) => {
+        e.preventDefault();
+        if (!descriptionText.trim()) return;
+        setIsSubmitting(true);
+        try {
+            const res = await fetch(`/api/cards/${card.card_id}/descriptions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: descriptionText }),
+            });
+            if (res.ok) {
+                setDescriptionText('');
+                mutateDes();
+            }
+        } catch (err) { console.error('Post description failed:', err); }
+        finally { setIsSubmitting(false); }
+    };
+
+    const handleDeleteDescription = async (descriptionId) => {
+        if (!confirm("Delete this description?")) return;
+        try {
+            const res = await fetch(`/api/descriptions/${descriptionId}`, { method: 'DELETE' });
+            if (res.ok) mutateDes();
+        } catch (err) { console.error('Delete description failed:', err); }
+    };
+
+    const handleUpdateDescription = async (descriptionId) => {
+        if (!editText.trim()) return;
+        setIsSubmitting(true);
+        try {
+            const res = await fetch(`/api/descriptions/${descriptionId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description: editText }),
+            });
+            if (res.ok) {
+                setEditingId(null);
+                mutateDes();
+            }
+        } catch (err) { console.error('Update description failed:', err); }
+        finally { setIsSubmitting(false); }
     };
 
     if (!card) return null;
@@ -172,6 +228,82 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
                             <div className="h-px bg-[#454f59]/30 mt-6" />
                         </section>
                     )}
+
+                    {/* Descriptions Section */}
+                    <section>
+                        <div className="flex items-center justify-between mb-4">
+                            <p className="text-xs sm:text-sm font-black text-[#9ca3af]/60 uppercase tracking-widest">Descriptions</p>
+                        </div>
+
+                        {/* Add Description Form */}
+                        <form onSubmit={handlePostDescription} className="mb-6">
+                            <div className="bg-[#1d2125] border border-[#454f59]/50 rounded-lg overflow-hidden focus-within:border-[#579dff]/50 transition-all">
+                                <textarea
+                                    value={descriptionText}
+                                    onChange={(e) => setDescriptionText(e.target.value)}
+                                    disabled={isSubmitting}
+                                    placeholder="Add a description…"
+                                    rows={2}
+                                    className="w-full bg-transparent px-4 py-3 text-sm sm:text-base text-[#d1d5db] placeholder:text-[#9fadbc]/40 resize-none outline-none leading-relaxed"
+                                />
+                                <div className="flex items-center justify-between px-4 py-2.5 border-t border-[#454f59]/25 bg-black/10">
+                                    <span className="text-[10px] text-[#9ca3af]/40 uppercase font-bold tracking-tighter">⌘ + Enter to post</span>
+                                    <button type="submit" disabled={isSubmitting || !descriptionText.trim()}
+                                        className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-md text-[#579dff] hover:bg-[#579dff]/10 disabled:opacity-30 transition-colors">
+                                        {isSubmitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        {/* Descriptions List */}
+                        <div className="space-y-4 mb-8">
+                            {isLoadingDes ? (
+                                <div className="flex justify-center py-8"><Loader2 size={20} className="animate-spin text-[#579dff]" /></div>
+                            ) : descriptions.length === 0 ? (
+                                <div className="text-center py-6 text-[#9ca3af]/40 text-sm">No descriptions yet</div>
+                            ) : (
+                                descriptions.map((desc) => (
+                                    <div key={desc.description_id} className="group/desc">
+                                        <div className="flex items-start justify-between mb-2">
+                                            <span className="text-[10px] text-[#3dd816] tracking-widest font-medium">{relativeTime(desc.createdAt)}</span>
+                                            <div className="flex items-center gap-1 opacity-0 group-hover/desc:opacity-100 transition-opacity">
+                                                <button onClick={() => { setEditingId(desc.description_id); setEditText(desc.text); }}
+                                                    className="p-1 text-[#9ca3af] hover:text-[#579dff] transition-colors"><Pencil size={12} /></button>
+                                                <button onClick={() => handleDeleteDescription(desc.description_id)}
+                                                    className="p-1 text-[#9ca3af] hover:text-[#f87168] transition-colors"><Trash2 size={12} /></button>
+                                            </div>
+                                        </div>
+
+                                        {/* Description Bubble / Edit Mode */}
+                                        {editingId === desc.description_id ? (
+                                            <div className="space-y-2">
+                                                <textarea
+                                                    autoFocus
+                                                    value={editText}
+                                                    onChange={(e) => setEditText(e.target.value)}
+                                                    className="w-full bg-[#1d2125] border border-[#579dff]/50 rounded-lg p-3 text-sm text-[#d1d5db] outline-none resize-none"
+                                                    rows={2}
+                                                />
+                                                <div className="flex justify-end gap-2">
+                                                    <button onClick={() => setEditingId(null)} className="p-1 text-[#9ca3af] hover:text-white"><XCircle size={16} /></button>
+                                                    <button onClick={() => handleUpdateDescription(desc.description_id)} className="p-1 text-[#4bce97] hover:text-[#4bce97]/80"><Check size={16} /></button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="bg-[#1d2125] border border-[#454f59]/40 px-4 py-3 rounded-lg hover:border-[#454f59]/70 transition-colors">
+                                                <p className="text-[14px] sm:text-[15px] text-[#9ca3af] leading-relaxed whitespace-pre-wrap">{desc.text}</p>
+                                                {console.log(desc?.text || " no des")
+                                                }
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                        <div className="h-px bg-[#454f59]/30 mb-4" />
+                    </section>
 
                     {/* Discussion */}
                     <section>

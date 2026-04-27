@@ -47,3 +47,40 @@ export async function POST(req, { params }) {
         }, { status: 500 });
     }
 }
+
+
+
+
+export async function GET(req, { params }) {
+    try {
+        await connectDB();
+        const { id } = await params;
+        const card = await Card.findByPk(id);
+        if (!card) {
+            return NextResponse.json({
+                success: false,
+                message: "card not found"
+            }, { status: 404 })
+        }
+        const descriptions = await Description.findAll({
+            where: { card_id: id },
+            order: [["createdAt", "DESC"]]
+        })
+
+        return NextResponse.json({
+            success: true,
+            message: "all descriptions :",
+            descriptions
+        })
+
+
+
+    } catch (error) {
+        return NextResponse.json({
+            success: true,
+            message: "error fetching description",
+            error: error.message
+
+        }, { status: 500 })
+    }
+}
