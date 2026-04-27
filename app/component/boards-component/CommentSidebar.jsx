@@ -168,7 +168,7 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
             const res = await fetch(`/api/descriptions/${descriptionId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ description: editText }),
+                body: JSON.stringify({ text: editText }),
             });
             if (res.ok) {
                 setEditingId(null);
