@@ -183,63 +183,76 @@ const ProjectCard = ({ data, onUpdate, onEdit }) => {
         ? new Date(data.deadline).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' })
         : '—';
 
+    const formattedBudget = data.budget
+        ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(data.budget)
+        : 'Not set';
+
     return (
-        <div className="group bg-white border border-gray-200/80 rounded-2xl p-4 sm:p-5 md:p-6 flex flex-col h-full transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/70 hover:-translate-y-0.5 hover:border-gray-300">
+        <div className="group relative isolate overflow-visible rounded-3xl border border-white/80 bg-linear-to-b from-white via-white to-slate-50/80 p-4 sm:p-5 md:p-6 flex flex-col h-full shadow-[0_10px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-200/70 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(15,23,42,0.12)] hover:ring-slate-300/80">
+            <div className="pointer-events-none absolute -top-16 right-0 h-36 w-36 rounded-full bg-linear-to-br from-slate-200/40 to-transparent blur-2xl transition-opacity duration-300 group-hover:opacity-80 opacity-40" />
+            <div className="pointer-events-none absolute -bottom-20 -left-12 h-40 w-40 rounded-full bg-linear-to-tr from-emerald-100/60 to-transparent blur-2xl transition-opacity duration-300 group-hover:opacity-70 opacity-40" />
 
             {/* Top row */}
-            <div className="flex justify-between items-center mb-4 sm:mb-5">
-                <div className="w-10 h-10 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center shadow-sm overflow-hidden">
+            <div className="relative z-10 flex justify-between items-center mb-4 sm:mb-5">
+                <div className="w-11 h-11 bg-white border border-slate-200 rounded-2xl flex items-center justify-center shadow-[0_4px_16px_rgba(15,23,42,0.08)] overflow-hidden">
                     {data.logo_url
                         ? <img src={data.logo_url} alt={data.project_name} className="w-full h-full object-cover" />
-                        : <User size={18} className="text-gray-400" />
+                        : <User size={18} className="text-slate-400" />
                     }
                 </div>
-                <div className={`px-2.5 py-1 ${status.bg} ${status.text} rounded-full flex items-center gap-1.5`}>
+                <div className={`px-3 py-1.5 ${status.bg} ${status.text} rounded-full flex items-center gap-1.5 ring-1 ring-black/5 backdrop-blur`}>
                     <span className={`w-1.5 h-1.5 ${status.dot} rounded-full animate-pulse`}></span>
-                    <span className="text-[10px] font-black uppercase tracking-wider">{data.status}</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.14em]">{data.status}</span>
                 </div>
             </div>
 
             {/* Content */}
-            <div className="flex-1 mb-4 sm:mb-5">
-                <h3 className="text-sm sm:text-base font-semibold text-gray-900 leading-snug mb-2 truncate">{data.project_name}</h3>
-                <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">{data.description || 'No description provided.'}</p>
+            <div className="relative z-10 flex-1 mb-4 sm:mb-5">
+                <h3 className="text-[15px] sm:text-base font-bold text-slate-900 leading-snug mb-2 tracking-tight line-clamp-1">{data.project_name}</h3>
+                <p className="text-xs text-slate-600/90 line-clamp-2 leading-relaxed">{data.description || 'No description provided.'}</p>
             </div>
 
             {/* Meta */}
-            <div className="space-y-2.5 mb-4 sm:mb-5 pt-3.5 sm:pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <FiUser size={12} className="text-gray-400 shrink-0" />
-                    <span className="font-semibold text-gray-800 truncate">{data.client_name}</span>
+            <div className="relative z-10 space-y-3 mb-4 sm:mb-5 pt-3.5 sm:pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-2 text-xs text-slate-600">
+                    <FiUser size={12} className="text-slate-400 shrink-0" />
+                    <span className="font-semibold text-slate-800 truncate">{data.client_name}</span>
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
-                        <FiCalendar size={12} className="text-gray-400" />
-                        <span>{formattedDeadline}</span>
+                <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-xl border border-slate-200/80 bg-white/80 px-2.5 py-2">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Deadline</p>
+                        <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-700 font-semibold">
+                            <FiCalendar size={12} className="text-slate-400" />
+                            <span className="truncate">{formattedDeadline}</span>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                        {/* BUG FIX #3 — priority bar uses correct colour */}
-                        <div className={`w-1 h-3.5 rounded-full ${priority.bar}`}></div>
-                        <span className={`text-[10px] font-black uppercase tracking-wider ${priority.label}`}>
-                            {data.priority}
-                        </span>
+                    <div className="rounded-xl border border-slate-200/80 bg-white/80 px-2.5 py-2">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Budget</p>
+                        <p className="mt-1 text-xs font-semibold text-slate-700 truncate">{formattedBudget}</p>
                     </div>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    {/* BUG FIX #3 — priority bar uses correct colour */}
+                    <div className={`w-1 h-3.5 rounded-full ${priority.bar}`}></div>
+                    <span className={`text-[10px] font-black uppercase tracking-[0.14em] ${priority.label}`}>
+                        {data.priority}
+                    </span>
                 </div>
             </div>
 
             {/* Footer */}
-            <div className="flex justify-between items-center pt-3.5 sm:pt-4 border-t border-gray-100 mt-auto">
+            <div className="relative z-10 flex justify-between items-center pt-3.5 sm:pt-4 border-t border-slate-100 mt-auto">
                 <div className="flex items-center gap-1.5">
                     <button
                         onClick={onEdit}
                         title="Edit project"
-                        className="p-2 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all duration-150"
+                        className="p-2 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all duration-150"
                     >
                         <FiEdit3 size={15} />
                     </button>
                     <StatusDropdown projectId={data.project_id} currentStatus={data.status} onUpdate={onUpdate} />
                 </div>
-                <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-[11px] font-semibold text-white select-none ring-2 ring-white">
+                <div className="w-9 h-9 bg-linear-to-br from-slate-900 to-slate-700 rounded-full flex items-center justify-center text-[11px] font-semibold text-white select-none ring-2 ring-white shadow-sm">
                     {data.client_name?.charAt(0).toUpperCase()}
                 </div>
             </div>
