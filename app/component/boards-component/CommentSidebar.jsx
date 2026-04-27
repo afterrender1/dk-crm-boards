@@ -221,13 +221,7 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
 
                 {/* Scrollable body */}
                 <div className="flex-1 overflow-y-auto px-5 py-5 space-y-6 custom-scrollbar">
-                    {card.description && (
-                        <section>
-                            <p className="text-xs sm:text-sm font-black text-[#9ca3af]/60 uppercase tracking-widest mb-2">Description</p>
-                            <p className="text-sm sm:text-base text-[#9ca3af] leading-relaxed">{card.description}</p>
-                            <div className="h-px bg-[#454f59]/30 mt-6" />
-                        </section>
-                    )}
+                       
 
                     {/* Descriptions Section */}
                     <section>
