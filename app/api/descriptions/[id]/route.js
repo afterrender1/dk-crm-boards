@@ -32,3 +32,43 @@ export async function DELETE(req, { params }) {
     }
 
 }
+
+
+
+export async function PATCH(req, { params }) {
+    try {
+        await connectDB();
+        const { id } = await params;
+        const data = await req.json();
+        const { text } = data;
+
+        const description = await Description.findByPk(id);
+        if (!description) {
+            return NextResponse.json({
+                success: false,
+                message: "description not exist"
+            }, { status: 404 })
+        }
+
+        const updatedDescription = await description.update({
+            text: text || description.text,
+            description_id: description.description_id,
+            card_id: description.card_id
+        })
+
+        return NextResponse.json({
+            success: true,
+            message: "description updated",
+            updatedDescription: updatedDescription
+        }, { status: 200 })
+
+
+
+    } catch (error) {
+        return NextResponse.json({
+            success: false,
+            message: "description not updated or server error!"
+        }, { status: 500 })
+    }
+
+}
