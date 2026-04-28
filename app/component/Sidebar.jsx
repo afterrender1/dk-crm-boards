@@ -52,6 +52,26 @@ const Sidebar = () => {
         };
     }, [isMobileOpen]);
 
+   const handleLogout = async () => {
+    try {
+        // 1. API ko hit karein (Method POST lazmi hai)
+        const res = await fetch(`/api/auth/logout`, { 
+            method: 'POST' 
+        });
+        
+        const data = await res.json();
+
+        if (data.success) {
+          
+            window.location.href = '/login';
+        } else {
+            console.error("Logout failed:", data.message);
+        }
+    } catch (error) {
+        console.error("Error during logout:", error);
+    }
+};
+
     return (
         <>
             {/* Mobile Top Navbar */}
@@ -184,7 +204,7 @@ const Sidebar = () => {
                         </div>
 
                         {/* Logout Button */}
-                        <div className="relative group">
+                        <div className="relative group" onClick={handleLogout}>
                             {!isExpanded && (
                                 <div className="hidden md:block absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 whitespace-nowrap z-50">
                                     Logout
