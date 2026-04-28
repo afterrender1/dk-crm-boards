@@ -1,3 +1,29 @@
+/**
+ * @swagger
+ * /api/project:
+ *   post:
+ *     summary: Create a new project
+ *     tags: [Project]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Project created successfully
+ *       500:
+ *         description: Server error
+ *   get:
+ *     summary: Get all projects
+ *     tags: [Project]
+ *     responses:
+ *       200:
+ *         description: Projects retrieved successfully
+ *       500:
+ *         description: Server error
+ */
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";

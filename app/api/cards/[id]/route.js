@@ -1,3 +1,58 @@
+/**
+ * @swagger
+ * /api/cards/{id}:
+ *   delete:
+ *     summary: Delete a card by ID
+ *     tags: [Cards]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Card deleted successfully
+ *       404:
+ *         description: Card not found
+ *       500:
+ *         description: Server error
+ *   patch:
+ *     summary: Update a card by ID
+ *     tags: [Cards]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               list_id:
+ *                 type: integer
+ *               due_date:
+ *                 type: string
+ *               order_index:
+ *                 type: integer
+ *               priority:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Card updated successfully
+ *       404:
+ *         description: Card not found
+ *       500:
+ *         description: Server error
+ */
 import { NextResponse } from "next/server";
 import { Card } from "@/models";
 import { connectDB } from "@/config/sequelize";

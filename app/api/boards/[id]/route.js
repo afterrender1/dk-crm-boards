@@ -1,3 +1,39 @@
+/**
+ * @swagger
+ * /api/boards/{id}:
+ *   get:
+ *     summary: Get a board by ID
+ *     tags: [Boards]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Board retrieved successfully
+ *       404:
+ *         description: Board not found
+ *       500:
+ *         description: Server error
+ *   delete:
+ *     summary: Delete a board by ID
+ *     tags: [Boards]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Board deleted successfully
+ *       404:
+ *         description: Board not found
+ *       500:
+ *         description: Server error
+ */
 import { connectDB } from "@/config/sequelize";
 import { Board, List, Card, Comment , Description } from "@/models/index";
 import { NextResponse } from "next/server";

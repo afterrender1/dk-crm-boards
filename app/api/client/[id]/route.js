@@ -1,3 +1,61 @@
+/**
+ * @swagger
+ * /api/client/{id}:
+ *   get:
+ *     summary: Get a client by ID
+ *     tags: [Client]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Client retrieved successfully
+ *       404:
+ *         description: Client not found
+ *       500:
+ *         description: Server error
+ *   put:
+ *     summary: Replace a client by ID
+ *     tags: [Client]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Client updated successfully
+ *       404:
+ *         description: Client not found
+ *       500:
+ *         description: Server error
+ *   delete:
+ *     summary: Delete a client by ID
+ *     tags: [Client]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Client deleted successfully
+ *       404:
+ *         description: Client not found
+ *       500:
+ *         description: Server error
+ */
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";

@@ -1,3 +1,50 @@
+/**
+ * @swagger
+ * /api/lists/{id}:
+ *   patch:
+ *     summary: Update a list by ID
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               order_index:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: List updated successfully
+ *       404:
+ *         description: List not found
+ *       500:
+ *         description: Server error
+ *   delete:
+ *     summary: Delete a list by ID
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List deleted successfully
+ *       404:
+ *         description: List not found
+ *       500:
+ *         description: Server error
+ */
 import { connectDB } from "@/config/sequelize";
 import List from "@/models/List";
 import { NextResponse } from "next/server";

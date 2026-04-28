@@ -1,3 +1,42 @@
+/**
+ * @swagger
+ * /api/boards:
+ *   post:
+ *     summary: Create a new board
+ *     tags: [Boards]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *               bg_color:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Board created successfully
+ *       400:
+ *         description: Invalid request payload
+ *       500:
+ *         description: Server error
+ *   get:
+ *     summary: Get all boards
+ *     tags: [Boards]
+ *     responses:
+ *       200:
+ *         description: Boards retrieved successfully
+ *       500:
+ *         description: Server error
+ */
+
+// ... your existing imports and code ...
 import Board from "@/models/Board";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/config/sequelize";

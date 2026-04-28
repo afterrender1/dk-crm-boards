@@ -1,3 +1,53 @@
+/**
+ * @swagger
+ * /api/project/{id}:
+ *   put:
+ *     summary: Replace a project by ID
+ *     tags: [Project]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Project updated successfully
+ *       404:
+ *         description: Project not found
+ *       500:
+ *         description: Server error
+ *   patch:
+ *     summary: Partially update a project by ID
+ *     tags: [Project]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Project updated successfully
+ *       400:
+ *         description: Invalid request payload
+ *       404:
+ *         description: Project not found
+ *       500:
+ *         description: Server error
+ */
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";

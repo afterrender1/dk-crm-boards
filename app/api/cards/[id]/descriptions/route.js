@@ -1,3 +1,50 @@
+/**
+ * @swagger
+ * /api/cards/{id}/descriptions:
+ *   post:
+ *     summary: Create a description for a card
+ *     tags: [Descriptions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               text:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Description created successfully
+ *       400:
+ *         description: Invalid request payload
+ *       404:
+ *         description: Parent card not found
+ *       500:
+ *         description: Server error
+ *   get:
+ *     summary: Get descriptions for a card
+ *     tags: [Descriptions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Descriptions retrieved successfully
+ *       404:
+ *         description: Card not found
+ *       500:
+ *         description: Server error
+ */
 import { NextResponse } from "next/server";
 import { connectDB } from "@/config/sequelize";
 import Description from "@/models/Description";

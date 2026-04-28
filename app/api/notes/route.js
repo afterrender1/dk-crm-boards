@@ -1,3 +1,15 @@
+/**
+ * @swagger
+ * /api/notes:
+ *   get:
+ *     summary: Get all notes
+ *     tags: [Notes]
+ *     responses:
+ *       200:
+ *         description: Notes retrieved successfully
+ *       500:
+ *         description: Server error
+ */
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";

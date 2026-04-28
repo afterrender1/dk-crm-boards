@@ -1,3 +1,32 @@
+/**
+ * @swagger
+ * /api/notes/{id}:
+ *   post:
+ *     summary: Create a note for a client
+ *     tags: [Notes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               note:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Note created successfully
+ *       400:
+ *         description: Invalid request payload
+ *       500:
+ *         description: Server error
+ */
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";

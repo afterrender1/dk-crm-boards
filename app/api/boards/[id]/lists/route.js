@@ -1,3 +1,77 @@
+/**
+ * @swagger
+ * /api/boards/{id}/lists:
+ *   post:
+ *     summary: Create a list for a board
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               index_order:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: List created successfully
+ *       400:
+ *         description: Invalid request payload
+ *       500:
+ *         description: Server error
+ *   patch:
+ *     summary: Update a list by ID
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               index_order:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: List updated successfully
+ *       404:
+ *         description: List not found
+ *       500:
+ *         description: Server error
+ *   delete:
+ *     summary: Delete a list by ID
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List deleted successfully
+ *       404:
+ *         description: List not found
+ *       500:
+ *         description: Server error
+ */
 import { connectDB } from "@/config/sequelize";
 import List from "@/models/List";
 import { NextResponse } from "next/server";

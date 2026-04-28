@@ -1,3 +1,48 @@
+/**
+ * @swagger
+ * /api/cards/{id}/comments:
+ *   get:
+ *     summary: Get comments for a card
+ *     tags: [Comments]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Comments retrieved successfully
+ *       500:
+ *         description: Server error
+ *   post:
+ *     summary: Create a comment for a card
+ *     tags: [Comments]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               text:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Comment created successfully
+ *       400:
+ *         description: Invalid request payload
+ *       404:
+ *         description: Parent card not found
+ *       500:
+ *         description: Server error
+ */
 import { NextResponse } from "next/server";
 import Comment from "@/models/Comment";
 import Card from "@/models/Card"; // Card model bhi import karein

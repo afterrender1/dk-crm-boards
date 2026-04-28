@@ -1,3 +1,38 @@
+/**
+ * @swagger
+ * /api/client:
+ *   post:
+ *     summary: Create a new client
+ *     tags: [Client]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               full_name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               company_name:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Client created successfully
+ *       400:
+ *         description: Invalid request payload
+ *       500:
+ *         description: Server error
+ *   get:
+ *     summary: Get all clients
+ *     tags: [Client]
+ *     responses:
+ *       200:
+ *         description: Clients retrieved successfully
+ *       500:
+ *         description: Server error
+ */
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";

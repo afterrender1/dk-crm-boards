@@ -1,3 +1,13 @@
+/**
+ * @swagger
+ * /api/test-db:
+ *   get:
+ *     summary: Test the database connection
+ *     tags: [Test Db]
+ *     responses:
+ *       200:
+ *         description: Database check completed
+ */
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
