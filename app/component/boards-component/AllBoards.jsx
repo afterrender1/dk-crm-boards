@@ -30,22 +30,17 @@ const AllBoards = () => {
 
 
 
-    const formatRelativeTime = (date) => {
-        const diffInSeconds = Math.floor((new Date() - new Date(date)) / 1000);
-        if (diffInSeconds < 60) return 'Just now';
-
-        const intervals = {
-            year: 31536000, month: 2592000, week: 604800,
-            day: 86400, hour: 3600, minute: 60
-        };
-
-        for (const [unit, seconds] of Object.entries(intervals)) {
-            const interval = Math.floor(diffInSeconds / seconds);
-            if (interval >= 1) {
-                return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
-            }
-        }
-        return 'Just now';
+    const formatDateTime = (date) => {
+        if (!date) return '';
+        return new Date(date).toLocaleString('en-GB', {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        });
     };
 
     const handleDelete = async (boardId) => {
@@ -300,9 +295,9 @@ const AllBoards = () => {
                                                     </span>
                                                     <span
                                                         className="text-xs font-semibold text-neutral-600 cursor-help"
-                                                        title={new Date(board.created_at).toLocaleString()} // Shows full date on hover
+                                                        title={formatDateTime(board.created_at)}
                                                     >
-                                                        {formatRelativeTime(board.created_at)}
+                                                        {formatDateTime(board.created_at)}
                                                     </span>
                                                 </div>
                                             </div>

@@ -1,90 +1,409 @@
 "use client"
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import useSWR from 'swr';
-import { X, MessageSquare, Send, Loader2, Clock, Trash2, Pencil, Check, XCircle } from 'lucide-react';
+import {
+    X,
+    MessageSquare,
+    Send,
+    Loader2,
+    Clock,
+    Trash2,
+    Pencil,
+    Check,
+    XCircle,
+    FileText,
+} from 'lucide-react';
 
-const PRIORITY_COLORS = {
-    High: '#f87168',
-    Medium: '#f5a623',
-    Low: '#4bce97',
+const COLORS = {
+    bg: '#1c1f24',
+    panel: '#20242a',
+    surface: '#24292f',
+    border: '#2f363d',
+    textPrimary: '#e6edf3',
+    textSecondary: '#9da7b3',
+    accent: '#4f8cff',
+    danger: '#f87171',
+};
+
+const PRIORITY_STYLES = {
+    High: { color: '#f87171', background: 'rgba(248, 113, 113, 0.14)' },
+    Medium: { color: '#f5a623', background: 'rgba(245, 166, 35, 0.14)' },
+    Low: { color: '#4bce97', background: 'rgba(75, 206, 151, 0.14)' },
 };
 
 const DUE_DATE_COLORS = {
-    overdue: '#f87168',
+    overdue: '#f87171',
     today: '#f5a623',
-    future: '#9fadbc',
-    none: '#9fadbc',
+    future: '#9da7b3',
+    none: '#9da7b3',
 };
 
-// ── Utils ──────────────────────────────────────────────────────────
+const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+const URL_PART_REGEX = /^https?:\/\/[^\s]+$/;
+const fetcher = (url) => fetch(url).then((r) => r.json());
+const scrollClass = "[scrollbar-width:thin] [scrollbar-color:#2f363d_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#2f363d] scroll-smooth";
+
 const formatDueDate = (dateString) => {
     if (!dateString) return null;
     const d = new Date(dateString);
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const target = new Date(d); target.setHours(0, 0, 0, 0);
-    const tmrw = new Date(today); tmrw.setDate(tmrw.getDate() + 1);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const target = new Date(d);
+    target.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
     if (target.getTime() === today.getTime()) return 'Today';
-    if (target.getTime() === tmrw.getTime()) return 'Tomorrow';
+    if (target.getTime() === tomorrow.getTime()) return 'Tomorrow';
     return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 };
 
 const getDueDateStatus = (dateString) => {
     if (!dateString) return 'none';
     const d = new Date(dateString);
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const target = new Date(d); target.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const target = new Date(d);
+    target.setHours(0, 0, 0, 0);
 
     if (target < today) return 'overdue';
     if (target.getTime() === today.getTime()) return 'today';
     return 'future';
 };
 
-const relativeTime = (dateString) => {
-    const diffMs = Date.now() - new Date(dateString).getTime();
-    const diffMins = Math.floor(diffMs / 60_000);
-    const diffHrs = Math.floor(diffMs / 3_600_000);
-    const diffDays = Math.floor(diffMs / 86_400_000);
-
-    if (diffMins < 1) return 'just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHrs < 24) return `${diffHrs}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return new Date(dateString).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+const formatDateTime = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleString('en-GB', {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+    });
 };
 
-const fetcher = (url) => fetch(url).then(r => r.json());
+const renderLinkedText = (text) => {
+    if (!text) return null;
+    const parts = text.split(URL_REGEX);
 
-// ── Main Component ────────────────────────────────────────────────
+    return parts.map((part, index) => {
+        if (URL_PART_REGEX.test(part)) {
+            return (
+                <a
+                    key={`${part}-${index}`}
+                    href={part}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="break-all underline decoration-transparent transition-colors duration-200 hover:decoration-current"
+                    style={{ color: COLORS.accent }}
+                >
+                    {part}
+                </a>
+            );
+        }
+
+        return (
+            <React.Fragment key={`${part}-${index}`}>
+                {part}
+            </React.Fragment>
+        );
+    });
+};
+
+const RichText = ({ text, className = "" }) => (
+    <p className={className} style={{ color: COLORS.textPrimary }}>
+        {String(text || '').split('\n').map((line, lineIndex) => (
+            <React.Fragment key={`line-${lineIndex}`}>
+                {renderLinkedText(line)}
+                {lineIndex < String(text || '').split('\n').length - 1 ? <br /> : null}
+            </React.Fragment>
+        ))}
+    </p>
+);
+
+const SectionHeader = ({ icon: Icon, title, count, action }) => (
+    <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+            <Icon size={15} style={{ color: COLORS.textSecondary }} />
+            <h3 className="text-sm font-semibold" style={{ color: COLORS.textPrimary }}>
+                {title}
+            </h3>
+            {typeof count === 'number' && (
+                <span
+                    className="rounded-full px-2 py-0.5 text-[11px] font-medium"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: COLORS.textSecondary }}
+                >
+                    {count}
+                </span>
+            )}
+        </div>
+        {action}
+    </div>
+);
+
+const GhostActionButtons = ({ onEdit, onDelete }) => (
+    <div className="flex items-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+        <button
+            type="button"
+            onClick={onEdit}
+            className="rounded-lg p-1.5 text-[#9da7b3] transition-all duration-200 hover:bg-white/5 hover:text-[#4f8cff] active:scale-95"
+        >
+            <Pencil size={13} />
+        </button>
+        <button
+            type="button"
+            onClick={onDelete}
+            className="rounded-lg p-1.5 text-[#9da7b3] transition-all duration-200 hover:bg-white/5 hover:text-[#f87171] active:scale-95"
+        >
+            <Trash2 size={13} />
+        </button>
+    </div>
+);
+
+const InlineEditor = ({ value, onChange, onCancel, onSave, isSubmitting }) => (
+    <div className="space-y-3">
+        <textarea
+            autoFocus
+            rows={4}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-full resize-none rounded-2xl border px-4 py-3 text-[15px] leading-6 outline-none transition-all duration-200"
+            style={{
+                backgroundColor: COLORS.bg,
+                borderColor: COLORS.border,
+                color: COLORS.textPrimary,
+                boxShadow: `0 0 0 1px ${COLORS.accent} inset`,
+            }}
+        />
+        <div className="flex items-center justify-end gap-2">
+            <button
+                type="button"
+                onClick={onCancel}
+                className="rounded-lg p-2 text-[#9da7b3] transition-all duration-200 hover:bg-white/5 hover:text-white active:scale-95"
+            >
+                <XCircle size={16} />
+            </button>
+            <button
+                type="button"
+                disabled={isSubmitting || !value.trim()}
+                onClick={onSave}
+                className="rounded-lg p-2 text-[#4f8cff] transition-all duration-200 hover:bg-white/5 hover:text-[#79a7ff] active:scale-95 disabled:opacity-40"
+            >
+                {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+            </button>
+        </div>
+    </div>
+);
+
+const InputBox = ({
+    value,
+    onChange,
+    onSubmit,
+    onKeyDown,
+    placeholder,
+    buttonLabel,
+    disabled,
+    rows = 3,
+}) => (
+    <form onSubmit={onSubmit}>
+        <div
+            className="overflow-hidden rounded-2xl border transition-all duration-200 focus-within:shadow-[0_0_0_1px_#4f8cff]"
+            style={{ backgroundColor: COLORS.surface, borderColor: COLORS.border }}
+        >
+            <textarea
+                rows={rows}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                onKeyDown={onKeyDown}
+                disabled={disabled}
+                placeholder={placeholder}
+                className="w-full resize-none border-none px-4 py-4 text-[15px] leading-6 outline-none placeholder:text-[#6f7a86]"
+                style={{ backgroundColor: COLORS.bg, color: COLORS.textPrimary }}
+            />
+            <div
+                className="flex items-center justify-between px-4 py-3"
+                style={{ backgroundColor: COLORS.surface, borderTop: `1px solid ${COLORS.border}` }}
+            >
+                <span className="text-[11px]" style={{ color: COLORS.textSecondary }}>
+                    Ctrl/Cmd + Enter
+                </span>
+                <button
+                    type="submit"
+                    disabled={disabled || !value.trim()}
+                    className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:brightness-110 active:scale-95 disabled:opacity-40"
+                    style={{ backgroundColor: COLORS.accent }}
+                >
+                    {disabled ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                    {buttonLabel}
+                </button>
+            </div>
+        </div>
+    </form>
+);
+
+const DescriptionItem = ({
+    item,
+    isEditing,
+    editText,
+    setEditText,
+    setEditing,
+    onDelete,
+    onSave,
+    isSubmitting,
+}) => (
+    <div className="group rounded-2xl">
+        {isEditing ? (
+            <InlineEditor
+                value={editText}
+                onChange={setEditText}
+                onCancel={() => setEditing(null)}
+                onSave={onSave}
+                isSubmitting={isSubmitting}
+            />
+        ) : (
+            <div
+                className="relative rounded-2xl px-4 py-4 pr-24 transition-all duration-200 hover:bg-[#2a3037]"
+                style={{ backgroundColor: COLORS.surface }}
+            >
+                <div className="absolute right-3 top-3 flex items-center gap-2">
+                    <span className="text-xs" style={{ color: COLORS.textSecondary }}>
+                        {formatDateTime(item.createdAt)}
+                    </span>
+                    <GhostActionButtons
+                        onEdit={() => {
+                            setEditing(item.description_id);
+                            setEditText(item.text);
+                        }}
+                        onDelete={() => onDelete(item.description_id)}
+                    />
+                </div>
+                <RichText text={item.text} className="pr-2 text-[15px] leading-6 whitespace-pre-wrap" />
+            </div>
+        )}
+    </div>
+);
+
+const CommentItem = ({
+    item,
+    isEditing,
+    editText,
+    setEditText,
+    setEditing,
+    onDelete,
+    onSave,
+    isSubmitting,
+}) => (
+    <div className="group flex gap-3">
+        <div
+            className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+            style={{ backgroundColor: 'rgba(79, 140, 255, 0.12)', color: COLORS.accent }}
+        >
+            {item.author_name?.[0] || 'G'}
+        </div>
+        <div className="min-w-0 flex-1">
+            {isEditing ? (
+                <InlineEditor
+                    value={editText}
+                    onChange={setEditText}
+                    onCancel={() => setEditing(null)}
+                    onSave={onSave}
+                    isSubmitting={isSubmitting}
+                />
+            ) : (
+                <div
+                    className="relative rounded-2xl px-4 py-4 pr-24 transition-all duration-200 hover:bg-[#2a3037]"
+                    style={{ backgroundColor: COLORS.surface }}
+                >
+                    <div className="mb-2 flex items-center gap-2">
+                        <span className="text-sm font-semibold" style={{ color: COLORS.textPrimary }}>
+                            Guest
+                        </span>
+                    </div>
+                    <div className="absolute right-3 top-3 flex items-center gap-2">
+                        <span className="text-xs" style={{ color: COLORS.textSecondary }}>
+                            {formatDateTime(item.createdAt)}
+                        </span>
+                        <GhostActionButtons
+                            onEdit={() => {
+                                setEditing(item.comment_id);
+                                setEditText(item.text);
+                            }}
+                            onDelete={() => onDelete(item.comment_id)}
+                        />
+                    </div>
+                    <RichText text={item.text} className="text-[15px] leading-6 whitespace-pre-wrap" />
+                </div>
+            )}
+        </div>
+    </div>
+);
+
+const MetaPill = ({ children, style }) => (
+    <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium" style={style}>
+        {children}
+    </span>
+);
+
+const CloseButton = ({ onClick }) => (
+    <button
+        type="button"
+        onClick={onClick}
+        aria-label="Close details"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-xl border text-[#9da7b3] transition-all duration-200 hover:bg-white/5 hover:text-white active:scale-95"
+        style={{ borderColor: COLORS.border, backgroundColor: 'rgba(255,255,255,0.03)' }}
+    >
+        <X size={18} />
+    </button>
+);
+
 const CommentSidebar = ({ card, isOpen, onClose }) => {
     const [commentText, setCommentText] = useState('');
     const [descriptionText, setDescriptionText] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [commentEditingId, setCommentEditingId] = useState(null);
+    const [descriptionEditingId, setDescriptionEditingId] = useState(null);
+    const [commentEditText, setCommentEditText] = useState('');
+    const [descriptionEditText, setDescriptionEditText] = useState('');
 
-    // Edit States
-    const [editingId, setEditingId] = useState(null);
-    const [editText, setEditText] = useState('');
+    useEffect(() => {
+        if (!isOpen) {
+            setCommentText('');
+            setDescriptionText('');
+            setCommentEditingId(null);
+            setDescriptionEditingId(null);
+            setCommentEditText('');
+            setDescriptionEditText('');
+        }
+    }, [isOpen, card?.card_id]);
 
-    // SWR: fetching comments
     const { data, mutate, isLoading } = useSWR(
         isOpen && card?.card_id ? `/api/cards/${card.card_id}/comments` : null,
         fetcher,
         { revalidateOnFocus: false, dedupingInterval: 60_000 }
     );
 
-    const comments = data?.comments ?? [];
-
-    // SWR: fetching descriptions
-    const { data: desData, mutate: mutateDes, isLoading: isLoadingDes } = useSWR(
+    const { data: desData, mutate: mutateDes, isLoading: isLoadingDescriptions } = useSWR(
         isOpen && card?.card_id ? `/api/cards/${card.card_id}/descriptions` : null,
         fetcher,
         { revalidateOnFocus: false, dedupingInterval: 60_000 }
     );
 
+    if (!card) return null;
+
+    const comments = data?.comments ?? [];
     const descriptions = desData?.descriptions ?? [];
+    const priorityStyle = PRIORITY_STYLES[card.priority] ?? PRIORITY_STYLES.Medium;
+    const dueDateLabel = formatDueDate(card.due_date);
+    const dueDateStatus = getDueDateStatus(card.due_date);
+    const dueDateColor = DUE_DATE_COLORS[dueDateStatus];
 
-
-    // ── Handlers ───────────────────────────────────────────────────
+    const handleKeyDown = (e, submitFn) => {
+        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+            submitFn(e);
+        }
+    };
 
     const handlePost = async (e) => {
         e.preventDefault();
@@ -100,40 +419,12 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
                 setCommentText('');
                 mutate();
             }
-        } catch (err) { console.error(err); }
-        finally { setIsSubmitting(false); }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
-
-    const handleDelete = async (commentId) => {
-        if (!confirm("Delete this comment?")) return;
-        try {
-            const res = await fetch(`/api/comments/${commentId}`, { method: 'DELETE' });
-            if (res.ok) mutate();
-        } catch (err) { console.error('Delete failed:', err); }
-    };
-
-    const handleUpdate = async (commentId) => {
-        if (!editText.trim()) return;
-        setIsSubmitting(true);
-        try {
-            const res = await fetch(`/api/comments/${commentId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: editText }),
-            });
-            if (res.ok) {
-                setEditingId(null);
-                mutate();
-            }
-        } catch (err) { console.error('Update failed:', err); }
-        finally { setIsSubmitting(false); }
-    };
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handlePost(e);
-    };
-
-    // ── Description Handlers ───────────────────────────────────────
 
     const handlePostDescription = async (e) => {
         e.preventDefault();
@@ -149,8 +440,21 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
                 setDescriptionText('');
                 mutateDes();
             }
-        } catch (err) { console.error('Post description failed:', err); }
-        finally { setIsSubmitting(false); }
+        } catch (err) {
+            console.error('Post description failed:', err);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDelete = async (commentId) => {
+        if (!confirm("Delete this comment?")) return;
+        try {
+            const res = await fetch(`/api/comments/${commentId}`, { method: 'DELETE' });
+            if (res.ok) mutate();
+        } catch (err) {
+            console.error('Delete failed:', err);
+        }
     };
 
     const handleDeleteDescription = async (descriptionId) => {
@@ -158,236 +462,205 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
         try {
             const res = await fetch(`/api/descriptions/${descriptionId}`, { method: 'DELETE' });
             if (res.ok) mutateDes();
-        } catch (err) { console.error('Delete description failed:', err); }
+        } catch (err) {
+            console.error('Delete description failed:', err);
+        }
+    };
+
+    const handleUpdate = async (commentId) => {
+        if (!commentEditText.trim()) return;
+        setIsSubmitting(true);
+        try {
+            const res = await fetch(`/api/comments/${commentId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: commentEditText }),
+            });
+            if (res.ok) {
+                setCommentEditingId(null);
+                setCommentEditText('');
+                mutate();
+            }
+        } catch (err) {
+            console.error('Update failed:', err);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleUpdateDescription = async (descriptionId) => {
-        if (!editText.trim()) return;
+        if (!descriptionEditText.trim()) return;
         setIsSubmitting(true);
         try {
             const res = await fetch(`/api/descriptions/${descriptionId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: editText }),
+                body: JSON.stringify({ text: descriptionEditText }),
             });
             if (res.ok) {
-                setEditingId(null);
+                setDescriptionEditingId(null);
+                setDescriptionEditText('');
                 mutateDes();
             }
-        } catch (err) { console.error('Update description failed:', err); }
-        finally { setIsSubmitting(false); }
+        } catch (err) {
+            console.error('Update description failed:', err);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
-    if (!card) return null;
-
-    const priorityColor = PRIORITY_COLORS[card.priority] ?? PRIORITY_COLORS.Medium;
-    const dueDateLabel = formatDueDate(card.due_date);
-    const dueDateStatus = getDueDateStatus(card.due_date);
-    const dueDateColor = DUE_DATE_COLORS[dueDateStatus];
-
     return (
-        <>
-            {/* Overlay */}
-            <div
-                className={`fixed inset-0 z-40 bg-black/25 backdrop-blur-[2px] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-                onClick={onClose}
-            />
+        <div
+            className={`fixed inset-0 z-50 transition-all duration-200 ${isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}
+        >
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
-            {/* Sidebar panel */}
-            <aside
-                className={`fixed top-0 right-0 h-screen z-50 w-full sm:w-150 bg-[#22272b] border-l border-[#454f59]/40 flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
-            >
-                {/* Header */}
-                <header className="shrink-0 px-5 py-4 bg-[#1d2125] border-b border-[#454f59]/40">
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1 min-w-0 space-y-2">
-                            <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-md"
-                                style={{ color: priorityColor, background: `${priorityColor}18` }}>
-                                <span className="w-1.5 h-1.5 rounded-full" style={{ background: priorityColor }} />
-                                {card.priority}
-                            </span>
-                            <h2 className="text-base sm:text-lg font-semibold text-[#d1d5db] leading-snug line-clamp-2">{card.title}</h2>
-                            {dueDateLabel && (
-                                <div className="flex items-center gap-1.5 text-xs sm:text-sm font-medium" style={{ color: dueDateColor }}>
-                                    <Clock size={11} /> {dueDateLabel} {dueDateStatus === 'overdue' && <span className="font-bold">· Overdue</span>}
+            <div className="absolute inset-0 p-2 sm:p-4 lg:p-6">
+                <div
+                    className={`mx-auto grid h-full max-w-[1280px] grid-cols-1 overflow-hidden rounded-[24px] border shadow-2xl transition-all duration-200 md:grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_380px] xl:grid-cols-[minmax(0,1.3fr)_420px] ${scrollClass} ${isOpen ? 'scale-100' : 'scale-[0.98]'}`}
+                    style={{
+                        backgroundColor: COLORS.panel,
+                        borderColor: COLORS.border,
+                        boxShadow: '0 30px 90px rgba(0, 0, 0, 0.45)',
+                    }}
+                >
+                    <section className={`min-h-0 overflow-y-auto p-4 sm:p-5 lg:p-6 ${scrollClass}`}>
+                        <div className="flex items-start justify-between gap-3 sm:gap-4">
+                            <div className="min-w-0 flex-1 space-y-4">
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <MetaPill style={priorityStyle}>
+                                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: priorityStyle.color }} />
+                                        {card.priority || 'Medium'}
+                                    </MetaPill>
+                                    {dueDateLabel && (
+                                        <MetaPill style={{ color: dueDateColor, background: 'rgba(255,255,255,0.05)' }}>
+                                            <Clock size={13} />
+                                            {dueDateLabel}
+                                            {dueDateStatus === 'overdue' ? ' · Overdue' : ''}
+                                        </MetaPill>
+                                    )}
                                 </div>
-                            )}
-                        </div>
-                        <button onClick={onClose} className="shrink-0 p-1.5 rounded-lg text-[#9ca3af] hover:bg-[#454f59]/40 hover:text-[#d1d5db] transition-colors">
-                            <X size={18} />
-                        </button>
-                    </div>
-                </header>
 
-                {/* Scrollable body */}
-                <div className="flex-1 overflow-y-auto px-5 py-5 space-y-6 custom-scrollbar">
-
-
-                    {/* Descriptions Section */}
-                    <section>
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-xs sm:text-sm font-black text-[#9ca3af]/60 uppercase tracking-widest">Descriptions</p>
-                        </div>
-
-                        {/* Add Description Form */}
-                        <form onSubmit={handlePostDescription} className="mb-6">
-                            <div className="bg-[#1d2125] border border-[#454f59]/50 rounded-lg overflow-hidden focus-within:border-[#579dff]/50 transition-all">
-                                <textarea
-                                    value={descriptionText}
-                                    onChange={(e) => setDescriptionText(e.target.value)}
-                                    disabled={isSubmitting}
-                                    placeholder="Add a description…"
-                                    rows={2}
-                                    className="w-full bg-transparent px-4 py-3 text-sm sm:text-base text-[#d1d5db] placeholder:text-[#9fadbc]/40 resize-none outline-none leading-relaxed"
-                                />
-                                <div className="flex items-center justify-between px-4 py-2.5 border-t border-[#454f59]/25 bg-black/10">
-                                    <span className="text-[10px] text-[#9ca3af]/40 uppercase font-bold tracking-tighter">⌘ + Enter to post</span>
-                                    <button type="submit" disabled={isSubmitting || !descriptionText.trim()}
-                                        className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-md text-[#579dff] hover:bg-[#579dff]/10 disabled:opacity-30 transition-colors">
-                                        {isSubmitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-                                        Add
-                                    </button>
+                                <div className="space-y-3">
+                                    <h2 className="text-xl font-semibold tracking-tight sm:text-2xl lg:text-[30px]" style={{ color: COLORS.textPrimary }}>
+                                        {card.title}
+                                    </h2>
+                                    {card.description ? (
+                                        <RichText
+                                            text={card.description}
+                                            className="text-[15px] leading-7 whitespace-pre-wrap"
+                                        />
+                                    ) : null}
                                 </div>
                             </div>
-                        </form>
 
-                        {/* Descriptions List */}
-                        <div className="space-y-4 mb-8">
-                            {isLoadingDes ? (
-                                <div className="flex justify-center py-8"><Loader2 size={20} className="animate-spin text-[#579dff]" /></div>
-                            ) : descriptions.length === 0 ? (
-                                <div className="text-center py-6 text-[#9ca3af]/40 text-sm">No descriptions yet</div>
-                            ) : (
-                                descriptions.map((desc) => (
-                                    <div key={desc.description_id} className="group/desc">
-                                        <div className="flex items-start justify-between mb-0">
-                                            <span className="text-[8px] text-[#3dd816] tracking-widest font-medium">{relativeTime(desc.createdAt)}</span>
-                                            <div className="flex items-center gap-1 opacity-0 group-hover/desc:opacity-100 transition-opacity">
-                                                <button onClick={() => { setEditingId(desc.description_id); setEditText(desc.text); }}
-                                                    className="p-1 text-[#9ca3af] hover:text-[#579dff] transition-colors"><Pencil size={12} /></button>
-                                                <button onClick={() => handleDeleteDescription(desc.description_id)}
-                                                    className="p-1 text-[#9ca3af] hover:text-[#f87168] transition-colors"><Trash2 size={12} /></button>
-                                            </div>
-                                        </div>
-
-                                        {/* Description Bubble / Edit Mode */}
-                                        {editingId === desc.description_id ? (
-                                            <div className="space-y-2">
-                                                <textarea
-                                                    autoFocus
-                                                    value={editText}
-                                                    onChange={(e) => setEditText(e.target.value)}
-                                                    className="w-full bg-[#1d2125] border border-[#579dff]/50 rounded-lg p-3 text-sm text-[#d1d5db] outline-none resize-none"
-                                                    rows={2}
-                                                />
-                                                <div className="flex justify-end gap-2">
-                                                    <button onClick={() => setEditingId(null)} className="p-1 text-[#9ca3af] hover:text-white"><XCircle size={16} /></button>
-                                                    <button onClick={() => handleUpdateDescription(desc.description_id)} className="p-1 text-[#4bce97] hover:text-[#4bce97]/80"><Check size={16} /></button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="bg-[#1d2125] border border-[#454f59]/40 px-4 py-2 rounded-lg hover:border-[#454f59]/70 transition-colors">
-                                                <p className="text-[14px] sm:text-[15px] text-[#9ca3af] leading-relaxed whitespace-pre-wrap">{desc.text}</p>
-
-                                            </div>
-                                        )}
-                                    </div>
-                                ))
-                            )}
+                            <CloseButton onClick={onClose} />
                         </div>
-                        <div className="h-px bg-[#454f59]/30 mb-4" />
+
+                        <div className="mt-6 space-y-4 sm:mt-7 sm:space-y-5">
+                            <SectionHeader icon={FileText} title="Description" count={descriptions.length} />
+                            <InputBox
+                                value={descriptionText}
+                                onChange={setDescriptionText}
+                                onSubmit={handlePostDescription}
+                                onKeyDown={(e) => handleKeyDown(e, handlePostDescription)}
+                                placeholder="Add a more detailed description..."
+                                buttonLabel="Save"
+                                disabled={isSubmitting}
+                                rows={4}
+                            />
+
+                            <div className="space-y-3 sm:space-y-4">
+                                {isLoadingDescriptions ? (
+                                    <div className="flex justify-center py-8">
+                                        <Loader2 size={18} className="animate-spin" style={{ color: COLORS.accent }} />
+                                    </div>
+                                ) : descriptions.length === 0 ? (
+                                    <div
+                                        className="rounded-2xl px-4 py-5 text-sm"
+                                        style={{ backgroundColor: COLORS.surface, color: COLORS.textSecondary }}
+                                    >
+                                        No descriptions yet
+                                    </div>
+                                ) : (
+                                    descriptions.map((desc) => (
+                                        <DescriptionItem
+                                            key={desc.description_id}
+                                            item={desc}
+                                            isEditing={descriptionEditingId === desc.description_id}
+                                            editText={descriptionEditText}
+                                            setEditText={setDescriptionEditText}
+                                            setEditing={setDescriptionEditingId}
+                                            onDelete={handleDeleteDescription}
+                                            onSave={() => handleUpdateDescription(desc.description_id)}
+                                            isSubmitting={isSubmitting}
+                                        />
+                                    ))
+                                )}
+                            </div>
+                        </div>
                     </section>
 
-                    {/* Discussion */}
-                    <section>
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-xs sm:text-sm font-black text-[#9ca3af]/60 capitalize tracking-widest flex items-center gap-1.5">
-                                <MessageSquare size={12} /> Comments
-                            </p>
-                        </div>
-
-                        {/* Input Form */}
-                        <form onSubmit={handlePost} className="mb-8">
-                            <div className="bg-[#1d2125] border border-[#454f59]/50 rounded-lg overflow-hidden focus-within:border-[#579dff]/50 transition-all">
-                                <textarea
-                                    value={commentText}
-                                    onChange={(e) => setCommentText(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                    disabled={isSubmitting}
-                                    placeholder="Add a comment…"
-                                    rows={3}
-                                    className="w-full bg-transparent px-4 py-3 text-sm sm:text-base text-[#d1d5db] placeholder:text-[#9fadbc]/40 resize-none outline-none leading-relaxed"
+                    <aside
+                        className={`min-h-0 overflow-y-auto border-t p-4 sm:p-5 lg:border-l lg:border-t-0 lg:p-6 ${scrollClass}`}
+                        style={{ backgroundColor: '#1b1f24', borderColor: COLORS.border }}
+                    >
+                        <div className="space-y-4 sm:space-y-5">
+                            <div className="flex items-center justify-between gap-3">
+                                <SectionHeader
+                                    icon={MessageSquare}
+                                    title="Comments and activity"
+                                    count={comments.length}
                                 />
-                                <div className="flex items-center justify-between px-4 py-2.5 border-t border-[#454f59]/25 bg-black/10">
-                                    <span className="text-[10px] text-[#9ca3af]/40 uppercase font-bold tracking-tighter">⌘ + Enter to post</span>
-                                    <button type="submit" disabled={isSubmitting || !commentText.trim()}
-                                        className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-md text-[#579dff] hover:bg-[#579dff]/10 disabled:opacity-30 transition-colors">
-                                        {isSubmitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-                                        Post
-                                    </button>
+                                <div className="lg:hidden">
+                                    <CloseButton onClick={onClose} />
                                 </div>
                             </div>
-                        </form>
 
-                        {/* Comments List */}
-                        <div className="space-y-6">
-                            {isLoading ? (
-                                <div className="flex justify-center py-10"><Loader2 size={20} className="animate-spin text-[#579dff]" /></div>
-                            ) : comments.length === 0 ? (
-                                <div className="text-center py-10 text-[#9ca3af]/40 text-sm">No comments yet</div>
-                            ) : (
-                                comments.map((comment) => (
-                                    <div key={comment.comment_id} className="flex gap-3 group/comment">
-                                        {/* Avatar */}
-                                        <div className="shrink-0 w-8 h-8 rounded-lg bg-[#579dff]/10 border border-[#579dff]/20 flex items-center justify-center text-xs font-bold text-[#579dff]">
-                                            {comment.author_name?.[0] || 'G'}
-                                        </div>
+                            <InputBox
+                                value={commentText}
+                                onChange={setCommentText}
+                                onSubmit={handlePost}
+                                onKeyDown={(e) => handleKeyDown(e, handlePost)}
+                                placeholder="Write a comment..."
+                                buttonLabel="Post"
+                                disabled={isSubmitting}
+                                rows={3}
+                            />
 
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between mb-1.5">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-sm capitalize font-bold text-[#d1d5db]">guest</span>
-                                                    <span className="text-[10px] text-[#3dd816] tracking-widest font-medium">{relativeTime(comment.createdAt)}</span>
-                                                </div>
-
-                                                {/* Actions: Edit/Delete (Show on hover) */}
-                                                <div className="flex items-center gap-1 opacity-0 group-hover/comment:opacity-100 transition-opacity">
-                                                    <button onClick={() => { setEditingId(comment.comment_id); setEditText(comment.text); }}
-                                                        className="p-1 text-[#9ca3af] hover:text-[#579dff] transition-colors"><Pencil size={12} /></button>
-                                                    <button onClick={() => handleDelete(comment.comment_id)}
-                                                        className="p-1 text-[#9ca3af] hover:text-[#f87168] transition-colors"><Trash2 size={12} /></button>
-                                                </div>
-                                            </div>
-
-                                            {/* Comment Bubble / Edit Mode */}
-                                            {editingId === comment.comment_id ? (
-                                                <div className="space-y-2">
-                                                    <textarea
-                                                        autoFocus
-                                                        value={editText}
-                                                        onChange={(e) => setEditText(e.target.value)}
-                                                        className="w-full bg-[#1d2125] border border-[#579dff]/50 rounded-lg p-3 text-sm text-[#d1d5db] outline-none resize-none"
-                                                        rows={2}
-                                                    />
-                                                    <div className="flex justify-end gap-2">
-                                                        <button onClick={() => setEditingId(null)} className="p-1 text-[#9ca3af] hover:text-white"><XCircle size={16} /></button>
-                                                        <button onClick={() => handleUpdate(comment.comment_id)} className="p-1 text-[#4bce97] hover:text-[#4bce97]/80"><Check size={16} /></button>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="bg-[#1d2125] border border-[#454f59]/40 px-4 py-3 rounded-xl rounded-tl-none hover:border-[#454f59]/70 transition-colors">
-                                                    <p className="text-[14px] sm:text-[15px] text-[#9ca3af] leading-relaxed whitespace-pre-wrap">{comment.text}</p>
-                                                </div>
-                                            )}
-                                        </div>
+                            <div className="space-y-3 sm:space-y-4">
+                                {isLoading ? (
+                                    <div className="flex justify-center py-8">
+                                        <Loader2 size={18} className="animate-spin" style={{ color: COLORS.accent }} />
                                     </div>
-                                ))
-                            )}
+                                ) : comments.length === 0 ? (
+                                    <div
+                                        className="rounded-2xl px-4 py-5 text-sm"
+                                        style={{ backgroundColor: COLORS.surface, color: COLORS.textSecondary }}
+                                    >
+                                        No comments yet
+                                    </div>
+                                ) : (
+                                    comments.map((comment) => (
+                                        <CommentItem
+                                            key={comment.comment_id}
+                                            item={comment}
+                                            isEditing={commentEditingId === comment.comment_id}
+                                            editText={commentEditText}
+                                            setEditText={setCommentEditText}
+                                            setEditing={setCommentEditingId}
+                                            onDelete={handleDelete}
+                                            onSave={() => handleUpdate(comment.comment_id)}
+                                            isSubmitting={isSubmitting}
+                                        />
+                                    ))
+                                )}
+                            </div>
                         </div>
-                    </section>
+                    </aside>
                 </div>
-            </aside>
-        </>
+            </div>
+        </div>
     );
 };
 
