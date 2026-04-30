@@ -10,28 +10,26 @@ import { AiOutlineUser } from "react-icons/ai";
 import { PiUsersThreeLight } from "react-icons/pi";
 import { inter } from '../fonts';
 import Image from 'next/image';
+import { useUser } from '../hooks/useUser';
 const Sidebar = () => {
     const pathname = usePathname();
     const [isHovered, setIsHovered] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const { user, loading } = useUser();
 
     const menuItems = [
         { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: LuLayoutDashboard },
         { id: 'clients', href: '/clients', label: 'Clients', icon: PiUsersThreeLight },
         { id: 'projects', href: '/projects', label: 'Projects', icon: IoBriefcaseOutline },
-        // { id: 'messages', href: '/messages', label: 'Messages', icon: LuMessageSquareDot },
-        // { id: 'analytics', href: '/analytics', label: 'Analytics', icon: BsBarChartLine },
         { id: 'settings', href: '/settings', label: 'Settings', icon: IoSettingsOutline }
     ];
 
     const isExpanded = isHovered || isMobileOpen;
 
-    // Close mobile menu on route change
     useEffect(() => {
         setIsMobileOpen(false);
     }, [pathname]);
 
-    // Close mobile menu on escape key
     useEffect(() => {
         const handleEscape = (e) => {
             if (e.key === 'Escape') setIsMobileOpen(false);
@@ -40,7 +38,6 @@ const Sidebar = () => {
         return () => document.removeEventListener('keydown', handleEscape);
     }, []);
 
-    // Prevent body scroll when mobile menu is open
     useEffect(() => {
         if (isMobileOpen) {
             document.body.style.overflow = 'hidden';
@@ -52,29 +49,27 @@ const Sidebar = () => {
         };
     }, [isMobileOpen]);
 
-   const handleLogout = async () => {
-    try {
-        // 1. API ko hit karein (Method POST lazmi hai)
-        const res = await fetch(`/api/auth/logout`, { 
-            method: 'POST' 
-        });
-        
-        const data = await res.json();
+    const handleLogout = async () => {
+        try {
+            const res = await fetch(`/api/auth/logout`, {
+                method: 'POST'
+            });
 
-        if (data.success) {
-          
-            window.location.href = '/login';
-        } else {
-            console.error("Logout failed:", data.message);
+            const data = await res.json();
+
+            if (data.success) {
+
+                window.location.href = '/login';
+            } else {
+                console.error("Logout failed:", data.message);
+            }
+        } catch (error) {
+            console.error("Error during logout:", error);
         }
-    } catch (error) {
-        console.error("Error during logout:", error);
-    }
-};
+    };
 
     return (
         <>
-            {/* Mobile Top Navbar */}
             <div className={` ${inter.className}`}>
                 <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-40 flex items-center px-4">
                     <button
@@ -114,15 +109,12 @@ const Sidebar = () => {
                         <LuX size={20} className="text-gray-600" />
                     </button>
 
-                    {/* Logo Section */}
                     <div className="shrink-0 px-4 py-6 border-b border-gray-200 flex items-center h-20">
                         <div className="flex items-center gap-4">
-                            {/* Perfect Alignment Container for Logo */}
                             <div>
                                 <Image loading='eager' src="/logo/dklogo.png" alt="Devskarnel CRM" width={40} height={40} />
                             </div>
 
-                            {/* Logo Text */}
                             <div className={`flex flex-col overflow-hidden whitespace-nowrap transition-all duration-300 ${isExpanded ? 'opacity-100 w-32' : 'opacity-0 w-0'
                                 }`}>
                                 <h1 className="text-gray-900 font-bold text-lg tracking-tight">
@@ -132,8 +124,6 @@ const Sidebar = () => {
                         </div>
                     </div>
 
-                    {/* Navigation Menu */}
-                    {/* overflow-x-hidden ensures no horizontal shifts. custom scrollbar-hide classes clean up vertical scrolls */}
                     <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 space-y-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                         {menuItems.map((item) => {
                             const Icon = item.icon;
@@ -156,7 +146,6 @@ const Sidebar = () => {
                                         ${isActive ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}
                                     `}
                                     >
-                                        {/* Active Indicator Line */}
                                         {isActive && (
                                             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gray-900 rounded-r" />
                                         )}
@@ -166,7 +155,6 @@ const Sidebar = () => {
                                             <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                                         </div>
 
-                                        {/* Text Label */}
                                         <span className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ${isExpanded ? 'opacity-100 w-full ml-2' : 'opacity-0 w-0 ml-0'
                                             }`}>
                                             {item.label}
@@ -177,7 +165,6 @@ const Sidebar = () => {
                         })}
                     </nav>
 
-                    {/* Bottom Section - Profile & Logout */}
                     <div className="shrink-0 px-3 py-4 border-t border-gray-200 space-y-1">
                         {/* User Profile */}
                         <div className="relative group">
@@ -203,8 +190,7 @@ const Sidebar = () => {
                             </button>
                         </div>
 
-                        {/* Logout Button */}
-                        <div className="relative group" onClick={handleLogout}>
+                        {user && <div className="relative group" onClick={handleLogout}>
                             {!isExpanded && (
                                 <div className="hidden md:block absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 whitespace-nowrap z-50">
                                     Logout
@@ -221,11 +207,10 @@ const Sidebar = () => {
                                     Logout
                                 </span>
                             </button>
-                        </div>
+                        </div>}
                     </div>
                 </aside>
 
-                {/* Desktop Content Spacer (prevents content from hiding behind fixed sidebar) */}
                 <div className={`hidden md:block transition-all duration-300 shrink-0 ${isHovered ? 'w-64' : 'w-20'}`} />
 
                 {/* Mobile Content Spacer */}

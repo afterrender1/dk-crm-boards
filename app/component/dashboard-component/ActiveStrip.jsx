@@ -5,6 +5,8 @@ import { FiUsers, FiUserCheck, FiClock, FiUserMinus } from "react-icons/fi";
 import { MdOutlineChevronRight } from "react-icons/md";
 import { HiOutlineDownload } from "react-icons/hi";
 import useSWR from 'swr';
+import { FaAngleDown } from "react-icons/fa";
+
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -42,57 +44,64 @@ const ActiveStrip = () => {
     }
 
     return (
-        <div className={`mt-6 sm:mt-10 md:mt-12 mx-auto max-w-425 px-3 sm:px-5 md:px-6 lg:px-8 ${urbanist.className}`}>
+        <>
 
-            {/* Main Wrapper like the Image Container */}
-            <div className="bg-white/70 border border-gray-100 p-3 sm:p-4 md:p-6 rounded-xl">
+            <div className={`text-center mx-auto max-w-auto flex justify-center items-center ${urbanist.className}`}>
+                See boards <FaAngleDown/>
+            </div>
+            <div className={`border border-emerald-300 rounded-lg mt-6 sm:mt-10 md:mt-0 mx-auto max-w-425 px-3 sm:px-5 md:px-6 lg:px-1 ${urbanist.className}`}>
 
-                {/* Header Section from Image */}
-                <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 sm:mb-6 px-1 sm:px-2 gap-2.5 sm:gap-3">
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">Client performance</h2>
-                    <div className="flex flex-wrap gap-2 sm:gap-3">
-                        <button className="bg-[#eef5f9] text-[#3f86a8] px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1">
-                            Last 30 Days <MdOutlineChevronRight className="rotate-90 text-xl" />
-                        </button>
-                        <button className="bg-[#eef5f9] text-[#3f86a8] px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
-                            <HiOutlineDownload className="text-lg" /> Export Report
-                        </button>
+                {/* Main Wrapper like the Image Container */}
+                <div className="bg-white/70 border border-gray-100 p-3 sm:p-4 md:p-6 rounded-xl">
+
+                    {/* Header Section from Image */}
+                    <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 sm:mb-6 px-1 sm:px-2 gap-2.5 sm:gap-3">
+                        <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">Client performance</h2>
+                        <div className="flex flex-wrap gap-2 sm:gap-3">
+                            <button className="bg-[#eef5f9] text-[#3f86a8] px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1">
+                                Last 30 Days <MdOutlineChevronRight className="rotate-90 text-xl" />
+                            </button>
+                            <button className="bg-[#eef5f9] text-[#3f86a8] px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
+                                <HiOutlineDownload className="text-lg" /> Export Report
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Grid Container */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+                        <StatBox
+                            label="Total Clients"
+                            value={stats.total}
+                            icon={<FiUsers />}
+                            iconBg="bg-[#e0f2fe]"
+                            iconColor="text-[#0ea5e9]"
+                        />
+                        <StatBox
+                            label="Active Clients"
+                            value={stats.active}
+                            icon={<FiUserCheck />}
+                            iconBg="bg-[#f5f3ff]"
+                            iconColor="text-[#8b5cf6]"
+                        />
+                        <StatBox
+                            label="Pending Leads"
+                            value={stats.pending}
+                            icon={<FiClock />}
+                            iconBg="bg-[#fff7ed]"
+                            iconColor="text-[#f97316]"
+                        />
+                        <StatBox
+                            label="Closed Clients"
+                            value={stats.closed}
+                            icon={<FiUserMinus />}
+                            iconBg="bg-[#f0fdf4]"
+                            iconColor="text-[#22c55e]"
+                        />
                     </div>
                 </div>
-
-                {/* Grid Container */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
-                    <StatBox
-                        label="Total Clients"
-                        value={stats.total}
-                        icon={<FiUsers />}
-                        iconBg="bg-[#e0f2fe]"
-                        iconColor="text-[#0ea5e9]"
-                    />
-                    <StatBox
-                        label="Active Clients"
-                        value={stats.active}
-                        icon={<FiUserCheck />}
-                        iconBg="bg-[#f5f3ff]"
-                        iconColor="text-[#8b5cf6]"
-                    />
-                    <StatBox
-                        label="Pending Leads"
-                        value={stats.pending}
-                        icon={<FiClock />}
-                        iconBg="bg-[#fff7ed]"
-                        iconColor="text-[#f97316]"
-                    />
-                    <StatBox
-                        label="Closed Clients"
-                        value={stats.closed}
-                        icon={<FiUserMinus />}
-                        iconBg="bg-[#f0fdf4]"
-                        iconColor="text-[#22c55e]"
-                    />
-                </div>
             </div>
-        </div>
+
+        </>
     )
 }
 
