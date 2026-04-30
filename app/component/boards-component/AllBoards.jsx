@@ -7,6 +7,7 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import CreateNewBoardFormModel from './CreateNewBoardFormModel'
 import { useRouter } from 'next/navigation'
 import useSWR from 'swr'
+import Link from 'next/link'
 
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
@@ -185,7 +186,9 @@ const AllBoards = () => {
                             </div>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight 
                bg-linear-to-r from-[#3d9ca8] to-[#128fa0] bg-clip-text text-transparent">
-                                Devskarnel<br className=" hidden" /> Private Trello
+                                Devskarnel<br className=" hidden" /> Private Trello <Link href={"/chats"} className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-green-500 rounded-full shadow-lg hover:bg-green-600 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer">
+  Chat
+</Link>
                             </h1>
                             <p className="text-neutral-500 text-lg md:text-xl max-w-md leading-relaxed">
                                 Your private space for ideas, tasks, and everything that matters.
