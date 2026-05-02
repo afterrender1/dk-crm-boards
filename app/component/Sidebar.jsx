@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LuLayoutDashboard, LuMenu, LuX } from "react-icons/lu";
+import { LuLayoutDashboard, LuMenu, LuX, LuMessageSquare } from "react-icons/lu";
 import { IoSettingsOutline, IoBriefcaseOutline } from "react-icons/io5";
 import { IoIosLogOut } from "react-icons/io";
 import { AiOutlineUser } from "react-icons/ai";
@@ -127,7 +127,12 @@ const Sidebar = () => {
                     <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 space-y-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                         {menuItems.map((item) => {
                             const Icon = item.icon;
-                            const isActive = pathname === item.href || (pathname === '/' && item.id === 'dashboard');
+                            const isActive =
+                                item.id === "chats"
+                                    ? pathname.startsWith("/chats")
+                                    : pathname === item.href ||
+                                      (pathname === "/" &&
+                                          item.id === "dashboard");
 
                             return (
                                 <div key={item.id} className="relative group">

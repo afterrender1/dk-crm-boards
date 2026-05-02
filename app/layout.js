@@ -13,9 +13,12 @@ export default function RootLayout({ children }) {
       // suppressContentEditableWarning={true}
       suppressHydrationWarning={true}
       lang="en"
-      className="h-full antialiased"
+      className="h-full overflow-x-clip antialiased"
     >
-      <body suppressHydrationWarning={true} className="min-h-full flex flex-col">
+      <body
+        suppressHydrationWarning={true}
+        className="flex min-h-dvh min-w-0 flex-col overflow-x-clip"
+      >
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

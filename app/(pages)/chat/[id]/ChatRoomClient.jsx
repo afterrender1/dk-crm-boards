@@ -11,6 +11,7 @@ import React, {
 } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import useSWR from "swr";
 import { useSocket } from "@/app/hooks/useSocket";
 import { useUser } from "@/app/hooks/useUser";
 import { useChatMessageNotifications } from "@/app/hooks/useChatMessageNotifications";
@@ -152,6 +153,8 @@ const getDayDividerLabel = (dateString, prevDateString) => {
     return null;
 };
 
+const roomsFetcher = (url) => fetch(url).then((res) => res.json());
+
 const renderWithMentions = (text) => {
     if (!text) return null;
     const parts = String(text).split(/(@[\w.-]+)/g);
@@ -166,9 +169,23 @@ const renderWithMentions = (text) => {
     );
 };
 
-export default function ChatRoomClient() {
-    const { id: roomId } = useParams();
+export default function ChatRoomClient({ roomId: roomIdProp, embedded = false }) {
+    const params = useParams();
+    const roomId = roomIdProp ?? params?.id;
     const { user } = useUser();
+    const { data: roomsPayload } = useSWR(
+        roomId ? "/api/chat/rooms" : null,
+        roomsFetcher,
+        { revalidateOnFocus: true, dedupingInterval: 20_000 }
+    );
+    const resolvedRoomName = useMemo(() => {
+        const list = roomsPayload?.rooms;
+        if (!list || !roomId) return null;
+        const hit = list.find(
+            (r) => String(r.room_id) === String(roomId)
+        );
+        return hit?.name ?? null;
+    }, [roomsPayload, roomId]);
     const socket = useSocket();
     const {
         toast,
@@ -465,20 +482,46 @@ export default function ChatRoomClient() {
         input.trim() && socket?.connected && user
     );
 
+    const roomTitle = resolvedRoomName || "Group Chat";
+
+    if (!roomId) {
+        return (
+            <div
+                className={`flex min-h-[40vh] flex-1 items-center justify-center text-sm text-slate-500 ${inter.className}`}
+            >
+                Missing conversation.
+            </div>
+        );
+    }
+
     return (
         <div
-            className={`relative flex min-h-screen justify-center overflow-hidden bg-linear-to-b from-slate-100 via-slate-50 to-teal-50/30 px-3 py-4 sm:px-6 sm:py-8 ${inter.className}`}
+            className={
+                embedded
+                    ? `relative flex h-full min-h-0 w-full min-w-0 max-w-full flex-1 flex-col overflow-x-clip overflow-y-hidden bg-linear-to-b from-slate-100 via-slate-50 to-teal-50/30 px-2 pb-1 pt-0 sm:px-3 sm:pb-2 sm:pt-2 md:px-4 ${inter.className}`
+                    : `relative flex min-h-screen justify-center overflow-x-clip overflow-y-auto bg-linear-to-b from-slate-100 via-slate-50 to-teal-50/30 px-3 py-4 sm:px-6 sm:py-8 ${inter.className}`
+            }
         >
             <div
-                className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_75%_45%_at_50%_-8%,rgba(13,148,136,0.09),transparent)]"
+                className={
+                    embedded
+                        ? "pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_45%_at_50%_-8%,rgba(13,148,136,0.09),transparent)]"
+                        : "pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_75%_45%_at_50%_-8%,rgba(13,148,136,0.09),transparent)]"
+                }
                 aria-hidden
             />
-            <div className="relative flex h-[calc(100dvh-2rem)] w-full max-w-[440px] flex-col overflow-hidden rounded-[32px] border border-white/70 bg-white/95 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.18),0_0_0_1px_rgba(15,23,42,0.04)] ring-1 ring-slate-200/50 backdrop-blur-sm sm:h-[min(736px,calc(100dvh-4rem))] sm:max-w-[460px]">
-                <header className="shrink-0 border-b border-slate-100/90 bg-linear-to-b from-white via-white to-slate-50/40 px-4 pb-3 pt-4 sm:px-5 sm:pt-5">
+            <div
+                className={
+                    embedded
+                        ? "relative mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col overflow-hidden rounded-lg border border-slate-200/70 bg-white/95 shadow-sm ring-1 ring-slate-200/40 backdrop-blur-sm sm:rounded-xl md:max-w-md md:rounded-2xl md:shadow-[0_20px_40px_-14px_rgba(15,23,42,0.1)] lg:max-w-lg"
+                        : "relative flex h-[calc(100dvh-2rem)] w-full max-w-[400px] flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/95 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.18),0_0_0_1px_rgba(15,23,42,0.04)] ring-1 ring-slate-200/50 backdrop-blur-sm sm:h-[min(680px,calc(100dvh-4rem))] sm:max-w-[420px]"
+                }
+            >
+                <header className="shrink-0 border-b border-slate-100/90 bg-linear-to-b from-white via-white to-slate-50/40 px-3 pb-2 pt-2.5 sm:px-4 sm:pb-2.5 sm:pt-3 md:px-4">
                     <div className="flex items-start gap-2 sm:gap-3">
                         <Link
                             href="/chats"
-                            className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                            className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 ${embedded ? "md:hidden" : ""}`}
                             aria-label="Back to messages"
                         >
                             <ChevronLeft size={22} strokeWidth={2} />
@@ -487,8 +530,8 @@ export default function ChatRoomClient() {
                             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
                                 Team chat
                             </p>
-                            <h1 className="mt-0.5 text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
-                                Group Chat
+                            <h1 className="mt-0.5 truncate text-base font-semibold tracking-tight text-slate-900 sm:text-lg md:text-xl">
+                                {roomTitle}
                             </h1>
                             {user && (
                                 <p className="mt-1.5 text-[13px] leading-snug text-slate-500">
@@ -556,7 +599,7 @@ export default function ChatRoomClient() {
                         </div>
                     )}
                     <div
-                        className="mt-4 flex rounded-full bg-slate-200/60 p-1 shadow-inner"
+                        className="mt-3 flex rounded-full bg-slate-200/60 p-1 shadow-inner sm:mt-4"
                         role="tablist"
                     >
                         <button
@@ -603,7 +646,7 @@ export default function ChatRoomClient() {
                         ref={messagesPanelRef}
                         className="flex min-h-0 flex-1 flex-col"
                     >
-                        <div className="min-h-0 flex-1 overflow-y-auto bg-linear-to-b from-slate-50/90 to-white px-3 pb-2 sm:px-4 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]">
+                        <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain bg-linear-to-b from-slate-50/90 to-white px-2.5 pb-2 sm:px-3 md:px-4 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]">
                             {messages.length === 0 ? (
                                 <div className="flex h-full min-h-[220px] flex-col items-center justify-center px-6 text-center">
                                     <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-md ring-1 ring-slate-100">
@@ -624,7 +667,7 @@ export default function ChatRoomClient() {
                             ) : (
                                 <ul
                                     ref={messagesListRef}
-                                    className="flex flex-col gap-5 py-2"
+                                    className="flex min-w-0 flex-col gap-4 py-2 sm:gap-5"
                                 >
                                     {messages.map((msg, index) => {
                                         const isOwn =
@@ -678,10 +721,10 @@ export default function ChatRoomClient() {
                                                     )}
 
                                                     <div
-                                                        className={`flex min-w-0 max-w-[88%] flex-col gap-1.5 ${
+                                                        className={`flex min-w-0 max-w-[88%] flex-col gap-1.5 sm:max-w-[80%] md:max-w-[75%] ${
                                                             isOwn
-                                                                ? "items-end pl-6"
-                                                                : "items-start pr-4"
+                                                                ? "items-end pl-4 sm:pl-6"
+                                                                : "items-start pr-2 sm:pr-4"
                                                         }`}
                                                     >
                                                         <span
@@ -694,7 +737,7 @@ export default function ChatRoomClient() {
                                                             {displayName}
                                                         </span>
                                                         <div
-                                                            className={`rounded-[22px] px-4 py-3 text-[15px] leading-relaxed text-slate-800 antialiased wrap-anywhere ${
+                                                            className={`rounded-[20px] px-3.5 py-2.5 text-[14px] leading-relaxed text-slate-800 antialiased wrap-anywhere sm:rounded-[22px] sm:px-4 sm:py-3 sm:text-[15px] ${
                                                                 isOwn
                                                                     ? "rounded-br-lg bg-linear-to-br from-violet-100/90 to-indigo-100/80 text-slate-900 shadow-sm ring-1 ring-violet-200/40"
                                                                     : "rounded-bl-lg border border-slate-200/70 bg-white shadow-md shadow-slate-200/25 ring-1 ring-white/80"
@@ -734,12 +777,12 @@ export default function ChatRoomClient() {
                             <div ref={scrollRef} className="h-2 shrink-0" />
                         </div>
 
-                        <div className="shrink-0 border-t border-slate-100/90 bg-linear-to-t from-slate-50/95 to-white px-3 pb-5 pt-4 sm:px-4">
+                        <div className="shrink-0 border-t border-slate-100/90 bg-linear-to-t from-slate-50/95 to-white px-2.5 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:px-3 sm:pt-3 sm:pb-[max(1rem,env(safe-area-inset-bottom,0px))] md:px-4">
                             <form
                                 onSubmit={handleSend}
-                                className="flex items-end gap-3"
+                                className="flex items-end gap-2 sm:gap-3"
                             >
-                                <div className="relative min-w-0 flex-1 rounded-2xl border border-slate-200/80 bg-white py-1.5 pl-4 pr-2 shadow-inner shadow-slate-100/80 ring-1 ring-slate-100/50 transition-all focus-within:border-teal-300/60 focus-within:shadow-[0_0_0_3px_rgba(13,148,136,0.12)] focus-within:ring-teal-100">
+                                <div className="relative min-w-0 flex-1 rounded-2xl border border-slate-200/80 bg-white py-1.5 pl-3 pr-1.5 shadow-inner shadow-slate-100/80 ring-1 ring-slate-100/50 transition-all focus-within:border-teal-300/60 focus-within:shadow-[0_0_0_3px_rgba(13,148,136,0.12)] focus-within:ring-teal-100 sm:pl-4 sm:pr-2">
                                     {emojiOpen && (
                                         <div
                                             ref={emojiPopoverRef}
@@ -789,7 +832,7 @@ export default function ChatRoomClient() {
                                                 setInput(e.target.value)
                                             }
                                             placeholder="Message the team…"
-                                            className="min-w-0 flex-1 bg-transparent py-3 pr-2 text-[15px] text-slate-800 outline-none placeholder:text-slate-400"
+                                            className="min-w-0 flex-1 bg-transparent py-2.5 pr-1 text-[15px] text-slate-800 outline-none placeholder:text-slate-400 sm:py-3 sm:pr-2"
                                             autoComplete="off"
                                         />
                                         <div className="flex shrink-0 items-center gap-0.5 pr-1">
@@ -828,7 +871,7 @@ export default function ChatRoomClient() {
                                 <button
                                     type="submit"
                                     disabled={!canSend}
-                                    className="mb-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/35 transition-all hover:from-teal-600 hover:to-emerald-700 hover:shadow-teal-500/45 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-35 disabled:shadow-none disabled:hover:from-teal-500 disabled:hover:to-emerald-600"
+                                    className="mb-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/35 transition-all hover:from-teal-600 hover:to-emerald-700 hover:shadow-teal-500/45 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-35 disabled:shadow-none disabled:hover:from-teal-500 disabled:hover:to-emerald-600 sm:h-12 sm:w-12"
                                     aria-label="Send message"
                                 >
                                     <Send
@@ -842,7 +885,7 @@ export default function ChatRoomClient() {
                 ) : (
                     <div
                         ref={participantsPanelRef}
-                        className="min-h-0 flex-1 overflow-y-auto bg-linear-to-b from-slate-50/90 to-white px-4 pb-8 pt-2"
+                        className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain bg-linear-to-b from-slate-50/90 to-white px-2.5 pb-8 pt-2 sm:px-3 md:px-4"
                     >
                         <p className="mb-4 px-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                             In this room · {participants.length}
