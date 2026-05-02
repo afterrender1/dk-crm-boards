@@ -189,8 +189,8 @@ const Sidebar = () => {
 
                                 <div className={`flex flex-col text-left overflow-hidden whitespace-nowrap transition-all duration-300 ${isExpanded ? 'opacity-100 w-full ml-2' : 'opacity-0 w-0 ml-0'
                                     }`}>
-                                    <span className="text-sm font-medium text-gray-900">John Doe</span>
-                                    <span className="text-xs text-gray-500">Administrator</span>
+                                    <span className="text-sm font-medium text-gray-900">{user.name}</span>
+                                    <span className="text-xs text-gray-500">{user.role}</span>
                                 </div>
                             </button>
                         </div>
