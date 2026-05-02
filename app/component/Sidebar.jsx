@@ -11,11 +11,13 @@ import { PiUsersThreeLight } from "react-icons/pi";
 import { inter } from '../fonts';
 import Image from 'next/image';
 import { useUser } from '../hooks/useUser';
+import { useRouter } from 'next/navigation';
 const Sidebar = () => {
     const pathname = usePathname();
     const [isHovered, setIsHovered] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const { user, loading } = useUser();
+    const router = useRouter();
 
     const menuItems = [
         { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: LuLayoutDashboard },
@@ -131,8 +133,8 @@ const Sidebar = () => {
                                 item.id === "chats"
                                     ? pathname.startsWith("/chats")
                                     : pathname === item.href ||
-                                      (pathname === "/" &&
-                                          item.id === "dashboard");
+                                    (pathname === "/" &&
+                                        item.id === "dashboard");
 
                             return (
                                 <div key={item.id} className="relative group">
@@ -180,7 +182,9 @@ const Sidebar = () => {
                                 </div>
                             )}
 
-                            <button className="w-full flex items-center px-2 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors duration-200">
+                            <button title='profile' onClick={()=> {
+                                router.push(`/profile/${user.name}`)
+                            }} className="cursor-pointer w-full flex items-center px-2 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors duration-200">
                                 <div className="w-10 flex items-center justify-center shrink-0 md:mx-1">
                                     <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center">
                                         <AiOutlineUser size={16} className="text-white" />
@@ -189,8 +193,8 @@ const Sidebar = () => {
 
                                 <div className={`flex flex-col text-left overflow-hidden whitespace-nowrap transition-all duration-300 ${isExpanded ? 'opacity-100 w-full ml-2' : 'opacity-0 w-0 ml-0'
                                     }`}>
-                                    <span className="text-sm font-medium text-gray-900">{user.name}</span>
-                                    <span className="text-xs text-gray-500">{user.role}</span>
+                                    <span className="text-sm font-medium text-gray-900">{user?.name}</span>
+                                    <span className="text-xs text-gray-500">{user?.role}</span>
                                 </div>
                             </button>
                         </div>
