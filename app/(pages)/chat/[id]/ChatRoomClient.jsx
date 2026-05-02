@@ -10,7 +10,8 @@ import React, {
 import { useParams } from "next/navigation";
 import { useSocket } from "@/app/hooks/useSocket";
 import { useUser } from "@/app/hooks/useUser";
-import { Send, Paperclip, Smile } from "lucide-react";
+import { useChatMessageNotifications } from "@/app/hooks/useChatMessageNotifications";
+import { Send, Paperclip, Smile, Bell, BellOff, X } from "lucide-react";
 import { inter } from "@/app/fonts";
 import gsap from "gsap";
 
@@ -43,6 +44,14 @@ export default function ChatRoomClient() {
     const { id: roomId } = useParams();
     const { user } = useUser();
     const socket = useSocket();
+    const {
+        toast,
+        dismissToast,
+        notifyIncomingMessage,
+        permission: notifyPermission,
+        requestBrowserPermission,
+        notificationsSupported,
+    } = useChatMessageNotifications(roomId, user?.user_id);
 
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
@@ -79,6 +88,7 @@ export default function ChatRoomClient() {
             setMessages((prev) => {
                 const id = newMsg.id;
                 if (id != null && prev.some((m) => m.id === id)) return prev;
+                queueMicrotask(() => notifyIncomingMessage(newMsg));
                 return [...prev, newMsg];
             });
         };
@@ -96,7 +106,7 @@ export default function ChatRoomClient() {
             socket.off("receive_msg", onReceive);
             socket.emit("leave_room", room);
         };
-    }, [socket, roomId]);
+    }, [socket, roomId, notifyIncomingMessage]);
 
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -274,19 +284,75 @@ export default function ChatRoomClient() {
         >
             <div className="flex h-[calc(100dvh-2rem)] sm:h-[min(720px,calc(100dvh-4rem))] w-full max-w-[440px] flex-col overflow-hidden rounded-[28px] border border-white/80 bg-white shadow-[0_24px_64px_-12px_rgba(15,23,42,0.12)] sm:max-w-[480px]">
                 <header className="shrink-0 px-5 pt-5 pb-4">
-                    <h1 className="text-lg font-semibold tracking-tight text-[#1e293b] sm:text-xl">
-                        Group Chat
-                    </h1>
-                    {user && (
-                        <p className="mt-1.5 text-[13px] leading-snug text-[#64748b]">
-                            You are chatting as{" "}
-                            <span
-                                className="font-semibold text-[#134e4a]"
-                                style={{ color: TEAL }}
+                    <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                            <h1 className="text-lg font-semibold tracking-tight text-[#1e293b] sm:text-xl">
+                                Group Chat
+                            </h1>
+                            {user && (
+                                <p className="mt-1.5 text-[13px] leading-snug text-[#64748b]">
+                                    You are chatting as{" "}
+                                    <span
+                                        className="font-semibold text-[#134e4a]"
+                                        style={{ color: TEAL }}
+                                    >
+                                        {user.name?.trim() || "You"}
+                                    </span>
+                                </p>
+                            )}
+                        </div>
+                        {notificationsSupported && (
+                            <button
+                                type="button"
+                                onClick={() => requestBrowserPermission()}
+                                className={`mt-0.5 shrink-0 rounded-xl p-2.5 transition-colors ${
+                                    notifyPermission === "granted"
+                                        ? "bg-teal-50 text-teal-700"
+                                        : "bg-[#f1f5f9] text-[#64748b] hover:bg-[#e2e8f0]"
+                                }`}
+                                title={
+                                    notifyPermission === "granted"
+                                        ? "Background notifications on"
+                                        : notifyPermission === "denied"
+                                          ? "Notifications blocked — enable in browser settings"
+                                          : "Enable notifications when this tab is in the background"
+                                }
+                                aria-label={
+                                    notifyPermission === "granted"
+                                        ? "Notifications enabled"
+                                        : "Enable notifications"
+                                }
                             >
-                                {user.name?.trim() || "You"}
-                            </span>
-                        </p>
+                                {notifyPermission === "granted" ? (
+                                    <Bell size={20} strokeWidth={2} />
+                                ) : (
+                                    <BellOff size={20} strokeWidth={2} />
+                                )}
+                            </button>
+                        )}
+                    </div>
+                    {toast && (
+                        <div
+                            role="status"
+                            className="mt-3 flex gap-2 rounded-2xl border border-[#e2e8f0] bg-white px-3 py-2.5 shadow-md"
+                        >
+                            <div className="min-w-0 flex-1">
+                                <p className="text-xs font-semibold text-[#134e4a]">
+                                    {toast.name}
+                                </p>
+                                <p className="mt-0.5 line-clamp-2 text-[13px] text-[#475569]">
+                                    {toast.preview}
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={dismissToast}
+                                className="shrink-0 rounded-lg p-1 text-[#94a3b8] hover:bg-[#f8fafc] hover:text-[#64748b]"
+                                aria-label="Dismiss notification"
+                            >
+                                <X size={16} />
+                            </button>
+                        </div>
                     )}
                     <div
                         className="mt-4 flex rounded-full bg-[#e8eaee] p-1"
