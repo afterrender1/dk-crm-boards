@@ -2,6 +2,7 @@
 import { inter } from '@/app/fonts'
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const LoginPage = () => {
         password: '',
     })
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -22,21 +24,22 @@ const LoginPage = () => {
         e.preventDefault();
         setLoading(true);
         console.log("Attempting Login:", formData.email);
-        
+
         try {
             const res = await fetch(`/api/auth/login`, {
                 method: "POST",
                 headers: { 'Content-type': 'application/json' },
                 body: JSON.stringify(formData)
             });
-            
+
             const data = await res.json();
-            
+
             if (data.success) {
                 console.log("Login Successful ✨");
                 // Yahan aap redirect kar sakte hain, e.g., window.location.href = '/dashboard'
-          
-            window.location.href = '/dashboard';
+
+                window.location.href = '/dashboard';
+                // router.push("/dashboard")
             } else {
                 alert(data.message || "Invalid credentials");
             }
@@ -69,11 +72,11 @@ const LoginPage = () => {
                     <div className="flex flex-col gap-1.5">
                         <label className="text-sm font-medium text-gray-700">Email Address</label>
                         <input
-                            name="email" 
-                            value={formData.email} 
+                            name="email"
+                            value={formData.email}
                             onChange={handleChange}
-                            type="email" 
-                            placeholder="example@gmail.com" 
+                            type="email"
+                            placeholder="example@gmail.com"
                             required
                             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-[#5833b6] transition-all text-sm sm:text-base"
                         />
@@ -86,11 +89,11 @@ const LoginPage = () => {
                             <a href="#" className="text-xs font-semibold text-[#5833b6] hover:underline">Forgot?</a>
                         </div>
                         <input
-                            name="password" 
-                            value={formData.password} 
+                            name="password"
+                            value={formData.password}
                             onChange={handleChange}
-                            type="password" 
-                            placeholder="••••••••" 
+                            type="password"
+                            placeholder="••••••••"
                             required
                             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-[#5833b6] transition-all text-sm sm:text-base"
                         />
