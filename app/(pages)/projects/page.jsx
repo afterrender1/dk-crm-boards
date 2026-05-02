@@ -32,7 +32,7 @@ const Page = () => {
 
   return (
     <>
-      <div className={`min-h-screen lg:ml-20 bg-[#F4F6F8] p-4 md:p-6 lg:p-8 ${inter.className}`}>
+      <div className={`min-h-screen w-full min-w-0 max-w-full overflow-x-clip bg-[#F4F6F8] p-4 md:p-6 lg:p-8 ${inter.className}`}>
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">

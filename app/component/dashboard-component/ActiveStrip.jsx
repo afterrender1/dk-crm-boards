@@ -1,18 +1,21 @@
-"use client"
-import React, { useMemo } from 'react';
-import { urbanist } from '@/app/fonts';
-import { FiUsers, FiUserCheck, FiClock, FiUserMinus } from "react-icons/fi";
-import { MdOutlineChevronRight } from "react-icons/md";
-import { HiOutlineDownload } from "react-icons/hi";
-import useSWR from 'swr';
-import { FaAngleDown } from "react-icons/fa";
+"use client";
 
+import React, { useMemo } from "react";
+import { inter } from "@/app/fonts";
+import {
+    Users,
+    UserCheck,
+    Clock,
+    UserMinus,
+    ChevronDown,
+    Download,
+} from "lucide-react";
+import useSWR from "swr";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-
-const ActiveStrip = () => {
-    const { data: clientsData = [], isLoading } = useSWR('/api/client', fetcher, {
+export default function ActiveStrip() {
+    const { data: clientsData = [], isLoading } = useSWR("/api/client", fetcher, {
         revalidateOnFocus: false,
         revalidateIfStale: true,
         dedupingInterval: 60000,
@@ -22,113 +25,128 @@ const ActiveStrip = () => {
         fallbackData: [],
     });
 
+    const list = Array.isArray(clientsData) ? clientsData : [];
+
     const stats = useMemo(() => {
-        if (clientsData.length === 0) return { total: 0, active: 0, pending: 0, closed: 0, projects: 0 };
+        if (list.length === 0) {
+            return { total: 0, active: 0, pending: 0, closed: 0 };
+        }
         return {
-            total: clientsData.length,
-            active: clientsData.filter(c => c.status === 'Active').length,
-            pending: clientsData.filter(c => c.status === 'Pending').length,
-            closed: clientsData.filter(c => c.status === 'Closed').length,
-            projects: clientsData.length
+            total: list.length,
+            active: list.filter((c) => c.status === "Active").length,
+            pending: list.filter((c) => c.status === "Pending").length,
+            closed: list.filter((c) => c.status === "Closed").length,
         };
-    }, [clientsData]);
+    }, [list]);
 
     if (isLoading) {
         return (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 mb-6 sm:mb-8 animate-pulse px-3 sm:px-5 md:px-6 mt-6 sm:mt-10">
+            <div
+                className={`grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 ${inter.className}`}
+            >
                 {[...Array(4)].map((_, i) => (
-                    <div key={i} className="h-28 sm:h-32 bg-gray-100 rounded-xl border border-gray-100"></div>
+                    <div
+                        key={i}
+                        className="h-32 animate-pulse rounded-2xl bg-white/80 ring-1 ring-slate-200/60"
+                    />
                 ))}
             </div>
         );
     }
 
     return (
-        <>
-
-            <div className={`text-center mx-auto max-w-auto flex justify-center items-center ${urbanist.className}`}>
-                See boards <FaAngleDown/>
-            </div>
-            <div className={`border border-emerald-300 rounded-lg mt-6 sm:mt-10 md:mt-0 mx-auto max-w-425 px-3 sm:px-5 md:px-6 lg:px-1 ${urbanist.className}`}>
-
-                {/* Main Wrapper like the Image Container */}
-                <div className="bg-white/70 border border-gray-100 p-3 sm:p-4 md:p-6 rounded-xl">
-
-                    {/* Header Section from Image */}
-                    <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 sm:mb-6 px-1 sm:px-2 gap-2.5 sm:gap-3">
-                        <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">Client performance</h2>
-                        <div className="flex flex-wrap gap-2 sm:gap-3">
-                            <button className="bg-[#eef5f9] text-[#3f86a8] px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1">
-                                Last 30 Days <MdOutlineChevronRight className="rotate-90 text-xl" />
-                            </button>
-                            <button className="bg-[#eef5f9] text-[#3f86a8] px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
-                                <HiOutlineDownload className="text-lg" /> Export Report
-                            </button>
-                        </div>
+        <section
+            className={`w-full min-w-0 max-w-full overflow-x-clip rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm ${inter.className}`}
+        >
+            <div className="border-b border-slate-100/90 bg-linear-to-b from-white to-slate-50/50 px-3 py-4 sm:px-6 sm:py-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                        <h2 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
+                            Client performance
+                        </h2>
+                        <p className="mt-1 text-sm text-slate-500">
+                            Live counts from your client directory
+                        </p>
                     </div>
-
-                    {/* Grid Container */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
-                        <StatBox
-                            label="Total Clients"
-                            value={stats.total}
-                            icon={<FiUsers />}
-                            iconBg="bg-[#e0f2fe]"
-                            iconColor="text-[#0ea5e9]"
-                        />
-                        <StatBox
-                            label="Active Clients"
-                            value={stats.active}
-                            icon={<FiUserCheck />}
-                            iconBg="bg-[#f5f3ff]"
-                            iconColor="text-[#8b5cf6]"
-                        />
-                        <StatBox
-                            label="Pending Leads"
-                            value={stats.pending}
-                            icon={<FiClock />}
-                            iconBg="bg-[#fff7ed]"
-                            iconColor="text-[#f97316]"
-                        />
-                        <StatBox
-                            label="Closed Clients"
-                            value={stats.closed}
-                            icon={<FiUserMinus />}
-                            iconBg="bg-[#f0fdf4]"
-                            iconColor="text-[#22c55e]"
-                        />
+                    <div className="flex w-full min-w-0 flex-wrap gap-2 sm:w-auto sm:justify-end">
+                        <button
+                            type="button"
+                            className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 sm:flex-initial"
+                        >
+                            <span className="truncate">Last 30 days</span>
+                            <ChevronDown className="h-4 w-4 shrink-0 opacity-60" />
+                        </button>
+                        <button
+                            type="button"
+                            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-slate-800 sm:flex-initial"
+                        >
+                            <Download className="h-4 w-4 shrink-0" strokeWidth={2} />
+                            Export
+                        </button>
                     </div>
                 </div>
             </div>
 
-        </>
-    )
+            <div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 sm:gap-4 sm:p-6 lg:grid-cols-4">
+                <StatBox
+                    label="Total clients"
+                    value={stats.total}
+                    icon={<Users className="h-5 w-5" strokeWidth={2} />}
+                    accent="sky"
+                />
+                <StatBox
+                    label="Active"
+                    value={stats.active}
+                    icon={<UserCheck className="h-5 w-5" strokeWidth={2} />}
+                    accent="violet"
+                />
+                <StatBox
+                    label="Pending"
+                    value={stats.pending}
+                    icon={<Clock className="h-5 w-5" strokeWidth={2} />}
+                    accent="amber"
+                />
+                <StatBox
+                    label="Closed"
+                    value={stats.closed}
+                    icon={<UserMinus className="h-5 w-5" strokeWidth={2} />}
+                    accent="emerald"
+                />
+            </div>
+        </section>
+    );
 }
 
-/* Updated Stat Card Component to match Image */
-const StatBox = ({ label, value, icon, iconBg, iconColor }) => (
-    <div className="bg-[#F4F6F8] border border-gray-100 p-4 sm:p-5 md:p-6 rounded-xl relative group transition-all duration-300">
+const accentStyles = {
+    sky: "bg-sky-50 text-sky-600 ring-sky-100/80",
+    violet: "bg-violet-50 text-violet-600 ring-violet-100/80",
+    amber: "bg-amber-50 text-amber-600 ring-amber-100/80",
+    emerald: "bg-emerald-50 text-emerald-600 ring-emerald-100/80",
+};
 
-        {/* Top Section: Label and Icon */}
-        <div className="flex justify-between items-start mb-3 sm:mb-4">
-            <p className="text-[13px] sm:text-[15px] font-semibold text-gray-600 tracking-tight">
-                {label}
-            </p>
-            <div className={`w-9 h-9 sm:w-10 sm:h-10 ${iconColor} rounded-full flex items-center justify-center text-lg sm:text-xl`}>
-                {icon}
+function StatBox({ label, value, icon, accent }) {
+    const ring = accentStyles[accent] || accentStyles.sky;
+    const display =
+        value >= 1000 ? `${(value / 1000).toFixed(1)}k` : String(value);
+
+    return (
+        <div className="group min-w-0 rounded-2xl border border-slate-100/90 bg-slate-50/40 p-4 transition hover:border-teal-200/50 hover:bg-white hover:shadow-md hover:shadow-slate-200/50 sm:p-5">
+            <div className="flex items-start justify-between gap-3">
+                <p className="text-[13px] font-medium text-slate-600 sm:text-sm">
+                    {label}
+                </p>
+                <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 ${ring}`}
+                >
+                    {icon}
+                </div>
             </div>
-        </div>
-
-        {/* Bottom Section: Value and Subtitle */}
-        <div className="flex items-baseline gap-1.5 sm:gap-2">
-            <h4 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-                {value >= 1000 ? (value / 1000).toFixed(1) + 'k' : value}
-            </h4>
-            <p className="text-[10px] sm:text-xs font-semibold text-gray-500">
-                From this agency
+            <p className="mt-4 text-3xl font-semibold tabular-nums tracking-tight text-slate-900 sm:text-4xl">
+                {display}
+            </p>
+            <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                In workspace
             </p>
         </div>
-    </div>
-);
-
-export default ActiveStrip;
+    );
+}
