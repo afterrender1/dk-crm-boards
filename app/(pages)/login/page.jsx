@@ -68,7 +68,7 @@ const LoginPage = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
-                    {/* Email */}
+                    {/* Email */}   
                     <div className="flex flex-col gap-1.5">
                         <label className="text-sm font-medium text-gray-700">Email Address</label>
                         <input
