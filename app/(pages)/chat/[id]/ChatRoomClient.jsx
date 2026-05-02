@@ -530,7 +530,7 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
                                 Team chat
                             </p>
-                            <h1 className="mt-0.5 truncate text-base font-semibold tracking-tight text-slate-900 sm:text-lg md:text-xl">
+                            <h1 className="mt-0.5 capitalize truncate text-base font-semibold tracking-tight text-slate-900 sm:text-lg md:text-xl">
                                 {roomTitle}
                             </h1>
                             {user && (
