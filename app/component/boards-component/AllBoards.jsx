@@ -57,7 +57,6 @@ const AllBoards = () => {
                 const data = await res.json();
                 throw new Error(data.message || 'Failed to delete board');
             }
-            // Refresh SWR cache after deletion
             try { await mutate(); } catch (e) { setBoards(prev => prev.filter(board => board.board_id !== boardId)); }
         } catch (err) {
             console.error("Delete error:", err);
@@ -65,7 +64,6 @@ const AllBoards = () => {
         }
     }
 
-    // Sync local state with SWR cache
     useEffect(() => {
         if (swrLoading) {
             setLoading(true)
@@ -89,27 +87,24 @@ const AllBoards = () => {
         }
     }, [data, swrError, swrLoading])
 
-    // GSAP entrance animations
     useEffect(() => {
         if (!loading && boards.length > 0) {
             const ctx = gsap.context(() => {
-                // Header fade in
                 gsap.fromTo(headerRef.current,
-                    { opacity: 0, y: -30 },
-                    { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+                    { opacity: 0, y: -20 },
+                    { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }
                 )
 
-                // Staggered card entrance
                 gsap.fromTo(cardsRef.current,
-                    { opacity: 0, y: 60, scale: 0.9 },
+                    { opacity: 0, y: 40, scale: 0.96 },
                     {
                         opacity: 1,
                         y: 0,
                         scale: 1,
-                        duration: 0.7,
-                        stagger: 0.12,
-                        ease: "back.out(1.4)",
-                        delay: 0.3
+                        duration: 0.55,
+                        stagger: 0.08,
+                        ease: "back.out(1.2)",
+                        delay: 0.2
                     }
                 )
             })
@@ -118,47 +113,45 @@ const AllBoards = () => {
         }
     }, [loading, boards])
 
-    // Hover animation handler
     const handleCardHover = (index, isEntering) => {
         const card = cardsRef.current[index]
         if (!card) return
 
         gsap.to(card, {
-            scale: isEntering ? 1.03 : 1,
-            y: isEntering ? -8 : 0,
-            duration: 0.4,
+            scale: isEntering ? 1.02 : 1,
+            y: isEntering ? -4 : 0,
+            duration: 0.35,
             ease: "power2.out"
         })
 
-        // Inner glow effect
         const inner = card.querySelector('.inner-card')
         if (!inner) return
 
         gsap.to(inner, {
             boxShadow: isEntering
-                ? "0 20px 40px -10px rgba(0,0,0,0.15)"
+                ? "0 16px 32px -8px rgba(0,0,0,0.12)"
                 : "0 4px 6px -1px rgba(0,0,0,0.05)",
-            duration: 0.4
+            duration: 0.35
         })
     }
 
     if (loading) return (
-        <div className={`min-h-screen bg-neutral-50 flex items-center justify-center ${urbanist.className}`}>
-            <div className="flex flex-col items-center gap-4">
-                <div className="w-8 h-8 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />
-                <span className="text-sm text-neutral-500 tracking-wide">Loading workspace...</span>
+        <div className={`min-h-[50vh] bg-neutral-50 flex items-center justify-center py-8 ${urbanist.className}`}>
+            <div className="flex flex-col items-center gap-2">
+                <div className="w-7 h-7 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />
+                <span className="text-xs text-neutral-500 tracking-wide">Loading workspace…</span>
             </div>
         </div>
     )
 
     if (error) return (
-        <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-8">
-            <div className="text-center">
-                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="w-8 h-8 text-red-400" />
+        <div className="min-h-[50vh] bg-neutral-50 flex items-center justify-center p-4 sm:p-6">
+            <div className="text-center max-w-sm">
+                <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Sparkles className="w-6 h-6 text-red-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-red-900 mb-2">Something went wrong</h3>
-                <p className="text-red-600/80 text-sm">{error}</p>
+                <h3 className="text-base font-semibold text-red-900 mb-1">Something went wrong</h3>
+                <p className="text-red-600/80 text-xs sm:text-sm">{error}</p>
             </div>
         </div>
     )
@@ -169,53 +162,56 @@ const AllBoards = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSuccess={async () => {
-                    // Refresh board list from cache after creating a new board
                     await mutate();
                     setIsModalOpen(false);
                 }}
             />
 
-            <div className={`min-h-screen bg-[#ebf5f7] p-6 md:p-12 lg:p-16 font-sans selection:bg-neutral-900 selection:text-white ${urbanist.className}`}>
-                <div className="max-w-7xl mx-auto">
-                    {/* Header Section */}
-                    <header ref={headerRef} className="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-12 md:mb-16 opacity-0">
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-neutral-400 uppercase">
-                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                Workspace Overview
+            <div className={`min-h-screen bg-[#ebf5f7] px-3 py-4 sm:px-4 sm:py-5 md:px-6 md:py-7 lg:px-8 lg:py-8 font-sans selection:bg-neutral-900 selection:text-white ${urbanist.className}`}>
+                <div className="max-w-7xl mx-auto w-full min-w-0">
+                    <header ref={headerRef} className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-6 md:mb-8 opacity-0">
+                        <div className="space-y-2 min-w-0">
+                            <div className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.16em] text-neutral-400 uppercase">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                                Workspace
                             </div>
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight 
-               bg-linear-to-r from-[#3d9ca8] to-[#128fa0] bg-clip-text text-transparent">
-                                Devskarnel<br className=" hidden" /> Private Trello <Link href={"/chats"} className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-green-500 rounded-full shadow-lg hover:bg-green-600 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer">
-  Chat
-</Link>
-                            </h1>
-                            <p className="text-neutral-500 text-lg md:text-xl max-w-md leading-relaxed">
-                                Your private space for ideas, tasks, and everything that matters.
+                            <div className="flex flex-wrap items-center gap-2 gap-y-2">
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight bg-linear-to-r from-[#3d9ca8] to-[#128fa0] bg-clip-text text-transparent">
+                                    Your boards
+                                </h1>
+                                <Link
+                                    href="/chats"
+                                    className="inline-flex items-center rounded-full bg-emerald-500 px-3 py-1 text-[11px] font-semibold text-white shadow-sm hover:bg-emerald-600 transition-colors"
+                                >
+                                    Chat
+                                </Link>
+                            </div>
+                            <p className="text-neutral-500 text-sm md:text-base max-w-md leading-snug">
+                                Ideas, tasks, and everything that matters — in one place.
                             </p>
                         </div>
 
-                        <div className="flex bg-white p-4 border-6 rounded-2xl border-[#3d9ca8] items-center justify-between gap-6">
-                            <div className="text-right">
-                                <div className="text-start text-5xl md:text-6xl font-bold text-[#128fa0] tabular-nums leading-none">
+                        <div className="flex bg-white p-3 rounded-xl border-2 border-[#3d9ca8]/80 items-center justify-between gap-3 shrink-0 w-full md:w-auto">
+                            <div className="text-right min-w-0">
+                                <div className="text-start text-3xl sm:text-4xl font-bold text-[#128fa0] tabular-nums leading-none">
                                     {boards.length}
                                 </div>
-                                <div className="text-base font-semibold  text-neutral-800 uppercase mt-2">
-                                    Active Boards
+                                <div className="text-xs font-semibold text-neutral-800 uppercase mt-1 tracking-wide">
+                                    Active boards
                                 </div>
                             </div>
                             <button
+                                type="button"
                                 onClick={() => setIsModalOpen(true)}
-                                className="hidden md:flex items-center gap-2 bg-[#49bac9] text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-[#1fd6ee] transition-colors active:scale-95">
-                                <Plus className="w-4 h-4" />
-
-                                New Board
+                                className="hidden md:inline-flex items-center gap-1.5 bg-[#49bac9] text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-[#3aa8b7] transition-colors active:scale-95 shrink-0"
+                            >
+                                <Plus className="w-3.5 h-3.5" />
+                                New board
                             </button>
                         </div>
                     </header>
 
-                    {/* Boards Grid */}
-                    <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-10">
+                    <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5 lg:gap-6">
                         {boards.map((board, index) => (
                             <div
                                 key={board.board_id}
@@ -225,131 +221,114 @@ const AllBoards = () => {
                                 className="group relative cursor-pointer opacity-0 perspective-1000"
                                 onClick={() => router.push(`/board/${board.board_id}`)}
                             >
-                                {/* Card Shadow & Lift Effect Container */}
-                                <div className="relative aspect-16/10 rounded-[32px] p-4 transition-all duration-500 ease-out 
-                            group-hover:-translate-y-2 group-hover:rotate-[0.5deg]">
+                                <div className="relative aspect-16/10 rounded-2xl p-2.5 sm:p-3 transition-all duration-400 ease-out group-hover:-translate-y-1">
 
-                                    {/* Main Colored Background */}
                                     <div
-                                        className="absolute inset-0 rounded-[32px] transition-transform duration-500 group-hover:scale-[1.02] shadow-[0_20px_50px_rgba(0,0,0,0.05)]"
+                                        className="absolute inset-0 rounded-2xl transition-transform duration-400 group-hover:scale-[1.01] shadow-[0_12px_36px_rgba(0,0,0,0.06)]"
                                         style={{ backgroundColor: board.bg_color || '#57C9D8' }}
                                     >
-                                        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/20 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                        <div className="absolute -bottom-8 -left-8 w-28 h-28 bg-white/20 rounded-full blur-[48px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                     </div>
 
-                                    {/* Refined Delete Button */}
                                     <button
+                                        type="button"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleDelete(board.board_id);
                                         }}
-                                        className="absolute top-2 right-6 z-30 p-1.5 rounded-xl
-                               bg-white/20 backdrop-blur-md text-white border border-red-300
-                               hover:bg-red-500 hover:border-red-500
-                               opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0
-                               transition-all duration-300 ease-spring "
-                                        title="Delete Board"
+                                        className="absolute top-1.5 right-4 z-30 p-1 rounded-lg bg-white/25 backdrop-blur-md text-white border border-red-200/60 hover:bg-red-500 hover:border-red-500 opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300"
+                                        title="Delete board"
                                     >
-                                        <MdOutlineDeleteOutline size={20} />
+                                        <MdOutlineDeleteOutline size={17} />
                                     </button>
 
-                                    {/* Inner Card (The Premium Glass) */}
-                                    <div className="inner-card relative h-full w-full bg-white/75 backdrop-blur-xl rounded-[24px] p-6 
-                                shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] 
-                                border border-white/60 flex flex-col justify-between overflow-hidden">
+                                    <div className="inner-card relative h-full w-full bg-white/75 backdrop-blur-xl rounded-[18px] p-4 sm:p-4 shadow-[0_6px_24px_0_rgba(31,38,135,0.06)] border border-white/60 flex flex-col justify-between overflow-hidden">
 
-                                        {/* Hover Shine Effect */}
-                                        <div className="absolute -inset-full top-0 block w-1/2 h-full z-5 bg-linear-to-r from-transparent via-white/40 to-transparent -skew-x-12 group-hover:animate-shine" />
+                                        <div className="absolute -inset-full top-0 block w-1/2 h-full z-5 bg-linear-to-r from-transparent via-white/35 to-transparent -skew-x-12 group-hover:animate-shine" />
 
-                                        <div className="flex justify-between items-start z-10">
-                                            <div className="space-y-1.5">
-                                                <h2 className="text-2xl font-bold text-neutral-800 tracking-tight leading-none">
+                                        <div className="flex justify-between items-start gap-2 z-10 min-w-0">
+                                            <div className="space-y-1 min-w-0 flex-1">
+                                                <h2 className="text-lg sm:text-xl font-bold text-neutral-800 tracking-tight leading-tight line-clamp-2">
                                                     {board.name}
                                                 </h2>
                                                 {board.description ? (
-                                                    <p className="text-xs font-medium text-neutral-500/80 line-clamp-2 leading-relaxed max-w-45">
+                                                    <p className="text-[11px] font-medium text-neutral-500/90 line-clamp-2 leading-snug max-w-56">
                                                         {board.description}
                                                     </p>
                                                 ) : (
-                                                    <p className="text-xs italic text-neutral-400">No description provided</p>
+                                                    <p className="text-[11px] italic text-neutral-400">No description</p>
                                                 )}
                                             </div>
 
                                             <div
                                                 style={{ "--hover-color": board?.bg_color }}
                                                 className={`
-    w-12 h-12 rounded-2xl bg-neutral-50 border border-neutral-100 
+    w-10 h-10 shrink-0 rounded-xl bg-neutral-50 border border-neutral-100 
     flex items-center justify-center 
-    duration-500 shadow-sm
+    duration-400 shadow-sm
     group-hover:bg-(--hover-color)
     group-hover:text-white 
     group-hover:border-(--hover-color)
   `}
                                             >
-                                                <Layers className="w-5 h-5" strokeWidth={1.8} />
+                                                <Layers className="w-4 h-4" strokeWidth={1.8} />
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center justify-between z-10 mt-6">
-                                            <div className="flex flex-col">
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold">
-                                                        Activity
-                                                    </span>
-                                                    <span
-                                                        className="text-xs font-semibold text-neutral-600 cursor-help"
-                                                        title={formatDateTime(board.created_at)}
-                                                    >
-                                                        {formatDateTime(board.created_at)}
-                                                    </span>
-                                                </div>
+                                        <div className="flex items-center justify-between gap-2 z-10 mt-4 min-w-0">
+                                            <div className="min-w-0">
+                                                <span className="text-[9px] uppercase tracking-wider text-neutral-400 font-bold block">
+                                                    Activity
+                                                </span>
+                                                <span
+                                                    className="text-[11px] font-semibold text-neutral-600 cursor-help line-clamp-1"
+                                                    title={formatDateTime(board.created_at)}
+                                                >
+                                                    {formatDateTime(board.created_at)}
+                                                </span>
                                             </div>
 
-                                            <button className="group/btn flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-xl text-xs font-bold 
-                                         hover:bg-[#1fd6ee] transition-all duration-300 active:scale-95 shadow-lg shadow-neutral-900/10">
-                                                Open Board
-                                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                                            </button>
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 text-white rounded-lg text-[11px] font-bold shadow-md shadow-neutral-900/10 shrink-0 pointer-events-none">
+                                                Open
+                                                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         ))}
 
-                        {/* Add New Board Card (The "Ghost" Style) */}
                         <div
                             onClick={() => setIsModalOpen(true)}
                             className="group relative cursor-pointer opacity-0"
                             ref={el => cardsRef.current[boards.length] = el}
                         >
-                            <div className="aspect-16/10 rounded-[32px] border-2 border-dashed border-neutral-200 
-                        bg-neutral-50/50 hover:bg-white hover:border-[#1fd6ee] hover:shadow-2xl hover:shadow-[#1fd6ee]/10
-                        flex flex-col items-center justify-center gap-4 transition-all duration-500 group-hover:-translate-y-1">
-                                <div className="w-16 h-16 rounded-3xl bg-white shadow-xl shadow-neutral-200/50 flex items-center justify-center 
-                            group-hover:scale-110 border border-neutral-50">
-                                    <Plus className="w-8 h-8 text-[#49bac9]" strokeWidth={2.5} />
+                            <div className="aspect-16/10 rounded-2xl border-2 border-dashed border-neutral-200 bg-neutral-50/50 hover:bg-white hover:border-[#1fd6ee] hover:shadow-lg hover:shadow-[#1fd6ee]/10 flex flex-col items-center justify-center gap-2.5 py-6 transition-all duration-400 group-hover:-translate-y-0.5">
+                                <div className="w-12 h-12 rounded-2xl bg-white shadow-lg shadow-neutral-200/40 flex items-center justify-center group-hover:scale-105 border border-neutral-100 transition-transform">
+                                    <Plus className="w-6 h-6 text-[#49bac9]" strokeWidth={2.25} />
                                 </div>
-                                <div className="text-center">
-                                    <span className="block text-sm font-bold text-neutral-800">Create New Board</span>
-                                    <span className="text-[10px] font-medium text-neutral-400 uppercase tracking-widest">Add to workspace</span>
+                                <div className="text-center px-2">
+                                    <span className="block text-xs font-bold text-neutral-800">Create new board</span>
+                                    <span className="text-[9px] font-medium text-neutral-400 uppercase tracking-wider">Add to workspace</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Empty State */}
                     {!boards.length && (
-                        <div className="text-center py-20">
-                            <div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <Layers className="w-10 h-10 text-neutral-300" />
+                        <div className="text-center py-12 sm:py-14">
+                            <div className="w-14 h-14 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <Layers className="w-7 h-7 text-neutral-300" />
                             </div>
-                            <h3 className="text-xl font-semibold text-neutral-900 mb-2">No boards yet</h3>
-                            <p className="text-neutral-500 mb-6">Create your first board to get started</p>
+                            <h3 className="text-base font-semibold text-neutral-900 mb-1">No boards yet</h3>
+                            <p className="text-neutral-500 text-sm mb-4">Create your first board to get started</p>
                             <button
+                                type="button"
                                 onClick={() => setIsModalOpen(true)}
-                                className="inline-flex items-center gap-2 bg-neutral-900 text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors">
-                                <Plus className="w-4 h-4" />
-                                Create Board
+                                className="inline-flex items-center gap-1.5 bg-neutral-900 text-white px-4 py-2 rounded-full text-xs font-medium hover:bg-neutral-800 transition-colors"
+                            >
+                                <Plus className="w-3.5 h-3.5" />
+                                Create board
                             </button>
                         </div>
                     )}
