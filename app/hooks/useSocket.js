@@ -10,39 +10,59 @@ export const useSocket = () => {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const socketInitializer = async () => {
-            // 1. Backend trigger karna
-            // Next.js (Pages API) mein socket server ko start karne ke liye 
-            // pehle us endpoint ko fetch karna zaroori hai.
-            await fetch('/api/socket');
+        let socketInstance = null;
+        let cancelled = false;
 
-            // 2. Socket connection establish karna
-            // Hum 'io()' ko bina URL ke call kar rahe hain taake wo same domain use kare
-            const socketInstance = io(undefined, {
-                path: '/api/socket', // Yeh path aapke backend 'path' se match hona chahiye
+        const socketInitializer = async () => {
+            try {
+                await fetch('/api/socket', { method: 'GET', cache: 'no-store' });
+            } catch {
+                /* bootstrap request failed; client may still connect */
+            }
+            if (cancelled) return;
+
+            const origin =
+                typeof window !== 'undefined' ? window.location.origin : '';
+
+            socketInstance = io(origin, {
+                path: '/api/socket',
                 addTrailingSlash: false,
+                transports: ['polling', 'websocket'],
+                withCredentials: true,
+                reconnection: true,
+                reconnectionAttempts: 12,
+                reconnectionDelay: 800,
+                reconnectionDelayMax: 5000,
             });
 
-            // Connection events monitor karna
+            let loggedConnectError = false;
             socketInstance.on('connect', () => {
-                console.log('✅ Connected to Socket Server - ID:', socketInstance.id);
+                loggedConnectError = false;
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('Connected to Socket Server —', socketInstance.id);
+                }
             });
 
             socketInstance.on('connect_error', (err) => {
-                console.error('❌ Socket Connection Error:', err.message);
+                if (process.env.NODE_ENV !== 'development') return;
+                if (!loggedConnectError) {
+                    loggedConnectError = true;
+                    console.warn('[socket] connect_error:', err?.message || err);
+                }
             });
 
-            setSocket(socketInstance);
+            if (!cancelled) {
+                setSocket(socketInstance);
+            }
         };
 
-        // Initializer ko run karein
         socketInitializer();
 
-        // 3. Cleanup: Jab component unmount ho toh disconnect kar dein
         return () => {
-            if (socket) {
-                console.log('🔌 Disconnecting Socket...');
-                socket.disconnect();
+            cancelled = true;
+            if (socketInstance) {
+                socketInstance.removeAllListeners();
+                socketInstance.disconnect();
             }
         };
     }, []);

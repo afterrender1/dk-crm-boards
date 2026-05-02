@@ -1,4 +1,4 @@
-import Sidebar from "./component/Sidebar";
+import ClientLayout from "./ClientLayout";
 import "./globals.css";
 
 
@@ -16,8 +16,7 @@ export default function RootLayout({ children }) {
       className="h-full antialiased"
     >
       <body suppressHydrationWarning={true} className="min-h-full flex flex-col">
-        <Sidebar />
-        {children}
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
