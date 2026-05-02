@@ -9,6 +9,7 @@ import React, {
     useCallback,
     Fragment,
 } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useSocket } from "@/app/hooks/useSocket";
 import { useUser } from "@/app/hooks/useUser";
@@ -21,6 +22,8 @@ import {
     BellOff,
     X,
     Clock,
+    ChevronLeft,
+    MessageSquare,
 } from "lucide-react";
 import { inter } from "@/app/fonts";
 import gsap from "gsap";
@@ -464,20 +467,34 @@ export default function ChatRoomClient() {
 
     return (
         <div
-            className={`flex min-h-screen justify-center bg-[#eef0f3] px-3 py-4 sm:px-6 sm:py-8 ${inter.className}`}
+            className={`relative flex min-h-screen justify-center overflow-hidden bg-linear-to-b from-slate-100 via-slate-50 to-teal-50/30 px-3 py-4 sm:px-6 sm:py-8 ${inter.className}`}
         >
-            <div className="flex h-[calc(100dvh-2rem)] sm:h-[min(720px,calc(100dvh-4rem))] w-full max-w-[440px] flex-col overflow-hidden rounded-[28px] border border-white/80 bg-white shadow-[0_24px_64px_-12px_rgba(15,23,42,0.12)] sm:max-w-[480px]">
-                <header className="shrink-0 px-5 pt-5 pb-4">
-                    <div className="flex items-start justify-between gap-3">
+            <div
+                className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_75%_45%_at_50%_-8%,rgba(13,148,136,0.09),transparent)]"
+                aria-hidden
+            />
+            <div className="relative flex h-[calc(100dvh-2rem)] w-full max-w-[440px] flex-col overflow-hidden rounded-[32px] border border-white/70 bg-white/95 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.18),0_0_0_1px_rgba(15,23,42,0.04)] ring-1 ring-slate-200/50 backdrop-blur-sm sm:h-[min(736px,calc(100dvh-4rem))] sm:max-w-[460px]">
+                <header className="shrink-0 border-b border-slate-100/90 bg-linear-to-b from-white via-white to-slate-50/40 px-4 pb-3 pt-4 sm:px-5 sm:pt-5">
+                    <div className="flex items-start gap-2 sm:gap-3">
+                        <Link
+                            href="/chats"
+                            className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                            aria-label="Back to messages"
+                        >
+                            <ChevronLeft size={22} strokeWidth={2} />
+                        </Link>
                         <div className="min-w-0 flex-1">
-                            <h1 className="text-lg font-semibold tracking-tight text-[#1e293b] sm:text-xl">
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                                Team chat
+                            </p>
+                            <h1 className="mt-0.5 text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
                                 Group Chat
                             </h1>
                             {user && (
-                                <p className="mt-1.5 text-[13px] leading-snug text-[#64748b]">
-                                    You are chatting as{" "}
+                                <p className="mt-1.5 text-[13px] leading-snug text-slate-500">
+                                    Signed in as{" "}
                                     <span
-                                        className="font-semibold capitalize text-[#134e4a]"
+                                        className="font-semibold capitalize text-teal-700"
                                         style={{ color: TEAL }}
                                     >
                                         {user.name?.trim() || "You"}
@@ -489,10 +506,10 @@ export default function ChatRoomClient() {
                             <button
                                 type="button"
                                 onClick={() => requestBrowserPermission()}
-                                className={`mt-0.5 shrink-0 rounded-xl p-2.5 transition-colors ${
+                                className={`mt-0.5 shrink-0 rounded-xl p-2.5 shadow-sm transition-all ${
                                     notifyPermission === "granted"
-                                        ? "bg-teal-50 text-teal-700"
-                                        : "bg-[#f1f5f9] text-[#64748b] hover:bg-[#e2e8f0]"
+                                        ? "bg-teal-50 text-teal-700 ring-1 ring-teal-100"
+                                        : "bg-slate-100/90 text-slate-500 hover:bg-slate-200/80 hover:text-slate-700"
                                 }`}
                                 title={
                                     notifyPermission === "granted"
@@ -518,20 +535,20 @@ export default function ChatRoomClient() {
                     {toast && (
                         <div
                             role="status"
-                            className="mt-3 flex gap-2 rounded-2xl border border-[#e2e8f0] bg-white px-3 py-2.5 shadow-md"
+                            className="mt-3 flex gap-2 rounded-2xl border border-slate-200/80 bg-white/90 px-3.5 py-2.5 shadow-lg shadow-slate-200/40 backdrop-blur-sm"
                         >
                             <div className="min-w-0 flex-1">
-                                <p className="text-xs font-semibold text-[#134e4a]">
+                                <p className="text-xs font-semibold text-teal-800">
                                     {toast.name}
                                 </p>
-                                <p className="mt-0.5 line-clamp-2 text-[13px] text-[#475569]">
+                                <p className="mt-0.5 line-clamp-2 text-[13px] leading-snug text-slate-600">
                                     {toast.preview}
                                 </p>
                             </div>
                             <button
                                 type="button"
                                 onClick={dismissToast}
-                                className="shrink-0 rounded-lg p-1 text-[#94a3b8] hover:bg-[#f8fafc] hover:text-[#64748b]"
+                                className="shrink-0 rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
                                 aria-label="Dismiss notification"
                             >
                                 <X size={16} />
@@ -539,7 +556,7 @@ export default function ChatRoomClient() {
                         </div>
                     )}
                     <div
-                        className="mt-4 flex rounded-full bg-[#e8eaee] p-1"
+                        className="mt-4 flex rounded-full bg-slate-200/60 p-1 shadow-inner"
                         role="tablist"
                     >
                         <button
@@ -549,8 +566,8 @@ export default function ChatRoomClient() {
                             onClick={() => setActiveTab("messages")}
                             className={`flex-1 rounded-full py-2.5 text-sm font-semibold transition-all duration-200 ${
                                 activeTab === "messages"
-                                    ? "text-[#134e4a] shadow-sm"
-                                    : "text-[#64748b] hover:text-[#475569]"
+                                    ? "text-teal-900 shadow-sm ring-1 ring-slate-200/60"
+                                    : "text-slate-500 hover:text-slate-700"
                             }`}
                             style={
                                 activeTab === "messages"
@@ -567,8 +584,8 @@ export default function ChatRoomClient() {
                             onClick={() => setActiveTab("participants")}
                             className={`flex-1 rounded-full py-2.5 text-sm font-semibold transition-all duration-200 ${
                                 activeTab === "participants"
-                                    ? "text-[#134e4a] shadow-sm"
-                                    : "text-[#64748b] hover:text-[#475569]"
+                                    ? "text-teal-900 shadow-sm ring-1 ring-slate-200/60"
+                                    : "text-slate-500 hover:text-slate-700"
                             }`}
                             style={
                                 activeTab === "participants"
@@ -586,15 +603,22 @@ export default function ChatRoomClient() {
                         ref={messagesPanelRef}
                         className="flex min-h-0 flex-1 flex-col"
                     >
-                        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-2 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]">
+                        <div className="min-h-0 flex-1 overflow-y-auto bg-linear-to-b from-slate-50/90 to-white px-3 pb-2 sm:px-4 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]">
                             {messages.length === 0 ? (
-                                <div className="flex h-full min-h-[200px] flex-col items-center justify-center px-6 text-center">
-                                    <p className="text-sm font-medium text-[#94a3b8]">
+                                <div className="flex h-full min-h-[220px] flex-col items-center justify-center px-6 text-center">
+                                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-md ring-1 ring-slate-100">
+                                        <MessageSquare
+                                            className="text-teal-600"
+                                            size={26}
+                                            strokeWidth={1.75}
+                                        />
+                                    </div>
+                                    <p className="text-sm font-semibold text-slate-600">
                                         No messages yet
                                     </p>
-                                    <p className="mt-2 max-w-[240px] text-xs leading-relaxed text-[#cbd5e1]">
-                                        Start the conversation — say hello to the
-                                        team.
+                                    <p className="mt-2 max-w-[260px] text-xs leading-relaxed text-slate-400">
+                                        Say hello — your team will see messages
+                                        here in real time.
                                     </p>
                                 </div>
                             ) : (
@@ -630,7 +654,7 @@ export default function ChatRoomClient() {
                                                         className="flex list-none justify-center py-1"
                                                         aria-hidden
                                                     >
-                                                        <span className="rounded-full border border-[#e8eaee] bg-[#f8fafc] px-3.5 py-1 text-[11px] font-medium tracking-wide text-[#64748b] shadow-sm">
+                                                        <span className="rounded-full border border-slate-200/80 bg-white/90 px-4 py-1.5 text-[11px] font-semibold tracking-wide text-slate-500 shadow-sm shadow-slate-200/30">
                                                             {dayLabel}
                                                         </span>
                                                     </li>
@@ -644,7 +668,7 @@ export default function ChatRoomClient() {
                                                     }`}
                                                 >
                                                     {!isOwn && (
-                                                        <div className="mt-7 h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-sm">
+                                                        <div className="mt-7 h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-md shadow-slate-200/50">
                                                             <img
                                                                 src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.user_id}`}
                                                                 alt=""
@@ -661,7 +685,7 @@ export default function ChatRoomClient() {
                                                         }`}
                                                     >
                                                         <span
-                                                            className={`px-1 text-[12px] font-semibold tracking-tight text-[#334155] ${
+                                                            className={`px-1 text-[12px] font-semibold tracking-tight text-slate-600 ${
                                                                 isOwn
                                                                     ? "text-right"
                                                                     : "text-left"
@@ -670,10 +694,10 @@ export default function ChatRoomClient() {
                                                             {displayName}
                                                         </span>
                                                         <div
-                                                            className={`rounded-[20px] px-4 py-3 text-[15px] leading-relaxed text-[#1e293b] wrap-anywhere ${
+                                                            className={`rounded-[22px] px-4 py-3 text-[15px] leading-relaxed text-slate-800 antialiased wrap-anywhere ${
                                                                 isOwn
-                                                                    ? "rounded-br-md bg-[#e8e4f0]"
-                                                                    : "rounded-bl-md border border-[#f1f5f9] bg-white shadow-[0_2px_8px_-2px_rgba(15,23,42,0.06)]"
+                                                                    ? "rounded-br-lg bg-linear-to-br from-violet-100/90 to-indigo-100/80 text-slate-900 shadow-sm ring-1 ring-violet-200/40"
+                                                                    : "rounded-bl-lg border border-slate-200/70 bg-white shadow-md shadow-slate-200/25 ring-1 ring-white/80"
                                                             }`}
                                                         >
                                                             {renderWithMentions(
@@ -686,7 +710,7 @@ export default function ChatRoomClient() {
                                                                 undefined
                                                             }
                                                             title={fullTs}
-                                                            className={`flex items-center gap-1 px-1 text-[11px] tabular-nums leading-none text-[#94a3b8] ${
+                                                            className={`flex items-center gap-1 px-1 text-[11px] tabular-nums leading-none text-slate-400 ${
                                                                 isOwn
                                                                     ? "flex-row-reverse text-right"
                                                                     : ""
@@ -710,16 +734,16 @@ export default function ChatRoomClient() {
                             <div ref={scrollRef} className="h-2 shrink-0" />
                         </div>
 
-                        <div className="shrink-0 border-t border-[#f1f5f9] bg-[#fafbfc] px-4 pb-5 pt-4">
+                        <div className="shrink-0 border-t border-slate-100/90 bg-linear-to-t from-slate-50/95 to-white px-3 pb-5 pt-4 sm:px-4">
                             <form
                                 onSubmit={handleSend}
                                 className="flex items-end gap-3"
                             >
-                                <div className="relative min-w-0 flex-1 rounded-[22px] border border-[#e2e8f0] bg-white py-1 pl-4 pr-2 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.08)] transition-shadow focus-within:border-[#99f6e4] focus-within:shadow-[0_4px_20px_-6px_rgba(13,148,136,0.2)]">
+                                <div className="relative min-w-0 flex-1 rounded-2xl border border-slate-200/80 bg-white py-1.5 pl-4 pr-2 shadow-inner shadow-slate-100/80 ring-1 ring-slate-100/50 transition-all focus-within:border-teal-300/60 focus-within:shadow-[0_0_0_3px_rgba(13,148,136,0.12)] focus-within:ring-teal-100">
                                     {emojiOpen && (
                                         <div
                                             ref={emojiPopoverRef}
-                                            className="absolute bottom-[calc(100%+6px)] left-0 right-0 z-50 rounded-2xl border border-[#e8eaee] bg-white p-2 shadow-[0_12px_40px_-8px_rgba(15,23,42,0.18)]"
+                                            className="absolute bottom-[calc(100%+8px)] left-0 right-0 z-50 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 p-2 shadow-2xl shadow-slate-300/30 ring-1 ring-slate-100/80 backdrop-blur-md"
                                             role="dialog"
                                             aria-label="Emoji picker"
                                         >
@@ -744,15 +768,15 @@ export default function ChatRoomClient() {
                                                     ))}
                                                 </div>
                                             </div>
-                                            <p className="border-t border-[#f1f5f9] px-2 py-1.5 text-[10px] leading-snug text-[#94a3b8]">
-                                                <span className="font-medium text-[#64748b]">
+                                            <p className="border-t border-slate-100 bg-slate-50/50 px-2.5 py-2 text-[10px] leading-snug text-slate-400">
+                                                <span className="font-semibold text-slate-500">
                                                     ⊞ + ;
                                                 </span>{" "}
                                                 or{" "}
-                                                <span className="font-medium text-[#64748b]">
+                                                <span className="font-semibold text-slate-500">
                                                     Ctrl + ;
                                                 </span>{" "}
-                                                · also click the smile icon
+                                                · smile button
                                             </p>
                                         </div>
                                     )}
@@ -764,8 +788,8 @@ export default function ChatRoomClient() {
                                             onChange={(e) =>
                                                 setInput(e.target.value)
                                             }
-                                            placeholder="Write your message..."
-                                            className="min-w-0 flex-1 bg-transparent py-3 pr-2 text-[15px] text-[#334155] outline-none placeholder:text-[#94a3b8]"
+                                            placeholder="Message the team…"
+                                            className="min-w-0 flex-1 bg-transparent py-3 pr-2 text-[15px] text-slate-800 outline-none placeholder:text-slate-400"
                                             autoComplete="off"
                                         />
                                         <div className="flex shrink-0 items-center gap-0.5 pr-1">
@@ -774,8 +798,8 @@ export default function ChatRoomClient() {
                                                 data-emoji-toggle
                                                 className={`rounded-xl p-2 transition-colors ${
                                                     emojiOpen
-                                                        ? "bg-[#e8f7f4] text-teal-700"
-                                                        : "text-[#94a3b8] hover:bg-[#f8fafc] hover:text-[#64748b]"
+                                                        ? "bg-teal-50 text-teal-700 ring-1 ring-teal-100"
+                                                        : "text-slate-400 hover:bg-slate-100 hover:text-slate-600"
                                                 }`}
                                                 aria-label="Emoji picker"
                                                 aria-expanded={emojiOpen}
@@ -790,7 +814,7 @@ export default function ChatRoomClient() {
                                             </button>
                                             <button
                                                 type="button"
-                                                className="rounded-xl p-2 text-[#94a3b8] transition-colors hover:bg-[#f8fafc] hover:text-[#64748b]"
+                                                className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
                                                 aria-label="Attach file"
                                             >
                                                 <Paperclip
@@ -804,8 +828,7 @@ export default function ChatRoomClient() {
                                 <button
                                     type="submit"
                                     disabled={!canSend}
-                                    className="mb-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white shadow-[0_4px_14px_-3px_rgba(13,148,136,0.55)] transition-all hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-35 disabled:shadow-none"
-                                    style={{ backgroundColor: TEAL }}
+                                    className="mb-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/35 transition-all hover:from-teal-600 hover:to-emerald-700 hover:shadow-teal-500/45 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-35 disabled:shadow-none disabled:hover:from-teal-500 disabled:hover:to-emerald-600"
                                     aria-label="Send message"
                                 >
                                     <Send
@@ -819,21 +842,21 @@ export default function ChatRoomClient() {
                 ) : (
                     <div
                         ref={participantsPanelRef}
-                        className="min-h-0 flex-1 overflow-y-auto px-4 pb-6"
+                        className="min-h-0 flex-1 overflow-y-auto bg-linear-to-b from-slate-50/90 to-white px-4 pb-8 pt-2"
                     >
-                        <p className="mb-4 text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
-                            In this room ({participants.length})
+                        <p className="mb-4 px-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                            In this room · {participants.length}
                         </p>
                         <ul
                             ref={participantsListRef}
-                            className="flex flex-col gap-2"
+                            className="flex flex-col gap-2.5"
                         >
                             {participants.map((p) => (
                                 <li
                                     key={p.user_id}
-                                    className="flex items-center gap-3 rounded-2xl border border-[#f1f5f9] bg-white px-4 py-3 "
+                                    className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-white/95 px-4 py-3.5 shadow-sm shadow-slate-200/30 ring-1 ring-white/60"
                                 >
-                                    <div className="h-10 w-10 overflow-hidden rounded-full ring-2 ring-[#f8fafc]">
+                                    <div className="h-11 w-11 overflow-hidden rounded-full ring-2 ring-slate-100 shadow-sm">
                                         <img
                                             src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${p.user_id}`}
                                             alt=""
@@ -841,14 +864,14 @@ export default function ChatRoomClient() {
                                         />
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <p className="truncate text-sm capitalize font-semibold text-[#1e293b]">
+                                        <p className="truncate text-sm font-semibold capitalize text-slate-800">
                                             {p.name}
                                             {p.isSelf && (
                                                 <span
-                                                    className="ml-2 text-xs font-normal"
+                                                    className="ml-2 text-xs font-medium text-teal-600"
                                                     style={{ color: TEAL }}
                                                 >
-                                                    (you)
+                                                    You
                                                 </span>
                                             )}
                                         </p>
@@ -857,9 +880,9 @@ export default function ChatRoomClient() {
                             ))}
                         </ul>
                         {participants.length === 0 && (
-                            <p className="py-8 text-center text-sm text-[#94a3b8]">
-                                No participants yet. Send a message to appear
-                                here.
+                            <p className="py-12 text-center text-sm leading-relaxed text-slate-400">
+                                No one here yet. Send a message to appear in
+                                this list.
                             </p>
                         )}
                     </div>
