@@ -6,7 +6,7 @@ import { inter } from "@/app/fonts";
 export default function ChatsIndexPage() {
     return (
         <div
-            className={`relative flex h-full min-h-0 min-w-0 max-w-full flex-1 flex-col items-center justify-center overflow-x-clip overflow-y-auto bg-linear-to-b from-slate-100 via-slate-50 to-teal-50/25 px-4 py-8 text-center sm:px-6 md:px-8 ${inter.className}`}
+            className={`relative flex h-full min-h-0 min-w-0 max-w-full flex-1 basis-0 flex-col items-center justify-center overflow-x-clip overflow-y-auto overscroll-y-contain bg-linear-to-b from-slate-100 via-slate-50 to-teal-50/25 px-4 py-8 text-center sm:px-6 md:px-8 ${inter.className}`}
         >
             <div
                 className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_45%_at_50%_-8%,rgba(13,148,136,0.08),transparent)]"

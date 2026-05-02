@@ -14,7 +14,7 @@ export default function ChatsShell({ children }) {
 
     return (
         <div
-            className={`flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-clip overflow-y-hidden bg-slate-100 md:flex-row ${inter.className}`}
+            className={`flex min-h-0 min-w-0 w-full max-w-full flex-1 basis-0 flex-col overflow-x-clip overflow-y-hidden bg-slate-100 md:flex-row ${inter.className}`}
         >
             <aside
                 className={

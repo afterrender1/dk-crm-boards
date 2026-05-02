@@ -646,7 +646,10 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                         ref={messagesPanelRef}
                         className="flex min-h-0 flex-1 flex-col"
                     >
-                        <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain bg-linear-to-b from-slate-50/90 to-white px-2.5 pb-2 sm:px-3 md:px-4 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]">
+                        <div
+                            className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain bg-linear-to-b from-slate-50/90 to-white px-2.5 pb-2 sm:px-3 md:px-4 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]"
+                            style={{ WebkitOverflowScrolling: "touch" }}
+                        >
                             {messages.length === 0 ? (
                                 <div className="flex h-full min-h-[220px] flex-col items-center justify-center px-6 text-center">
                                     <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-md ring-1 ring-slate-100">
@@ -886,6 +889,7 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                     <div
                         ref={participantsPanelRef}
                         className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain bg-linear-to-b from-slate-50/90 to-white px-2.5 pb-8 pt-2 sm:px-3 md:px-4"
+                        style={{ WebkitOverflowScrolling: "touch" }}
                     >
                         <p className="mb-4 px-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                             In this room · {participants.length}

@@ -29,7 +29,7 @@ const ChatRoomClient = dynamic(
 
 export default function ChatRoomView({ roomId }) {
     return (
-        <div className="flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-x-clip">
+        <div className="flex min-h-0 min-w-0 max-w-full flex-1 basis-0 flex-col overflow-x-clip overflow-y-hidden">
             <ChatRoomClient roomId={roomId} embedded />
         </div>
     );

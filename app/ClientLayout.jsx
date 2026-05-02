@@ -17,12 +17,20 @@ export default function ClientLayout({ children }) {
     const pathname = usePathname() || "";
     const isAuthPage =
         pathname.startsWith("/login") || pathname.startsWith("/signup");
+    const isChatsRoute = pathname.startsWith("/chats");
+
     const mainClass = isAuthPage
         ? "flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-clip"
-        : "flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-clip md:ml-20";
+        : isChatsRoute
+          ? "flex min-h-0 min-w-0 w-full max-w-full flex-1 basis-0 flex-col overflow-x-clip overflow-y-hidden md:ml-20"
+          : "flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-clip md:ml-20";
+
+    const rootClass = isChatsRoute
+        ? "flex h-dvh max-h-dvh min-h-0 w-full max-w-full flex-col overflow-x-clip overflow-y-hidden"
+        : "flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-clip";
 
     return (
-        <div className="flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-clip">
+        <div className={rootClass}>
             <Sidebar />
             <main className={mainClass}>{children}</main>
         </div>
