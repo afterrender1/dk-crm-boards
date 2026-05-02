@@ -6,6 +6,7 @@ import React, {
     useLayoutEffect,
     useRef,
     useMemo,
+    useCallback,
     Fragment,
 } from "react";
 import { useParams } from "next/navigation";
@@ -26,6 +27,49 @@ import gsap from "gsap";
 
 const TEAL = "#0d9488";
 const TEAL_SOFT = "#ccfbf1";
+
+const EMOJI_GRID = [
+    "😀",
+    "😃",
+    "😄",
+    "😁",
+    "😅",
+    "😂",
+    "🤣",
+    "😊",
+    "😇",
+    "🙂",
+    "😉",
+    "😍",
+    "🥰",
+    "😘",
+    "😋",
+    "😛",
+    "🤗",
+    "🤔",
+    "😴",
+    "😢",
+    "😭",
+    "😤",
+    "🤯",
+    "👍",
+    "👎",
+    "👏",
+    "🙏",
+    "💪",
+    "🔥",
+    "✨",
+    "💯",
+    "❤️",
+    "🎉",
+    "👋",
+    "✅",
+    "⭐",
+    "📝",
+    "📎",
+    "☕",
+    "🚀",
+];
 
 const startOfDay = (d) =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
@@ -134,8 +178,11 @@ export default function ChatRoomClient() {
 
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
+    const [emojiOpen, setEmojiOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("messages");
     const scrollRef = useRef(null);
+    const inputRef = useRef(null);
+    const emojiPopoverRef = useRef(null);
     const messagesPanelRef = useRef(null);
     const participantsPanelRef = useRef(null);
     const messagesListRef = useRef(null);
@@ -190,6 +237,61 @@ export default function ChatRoomClient() {
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, activeTab]);
+
+    const insertEmoji = useCallback(
+        (emoji) => {
+            const el = inputRef.current;
+            if (!el) {
+                setInput((prev) => prev + emoji);
+                return;
+            }
+            const start = el.selectionStart ?? input.length;
+            const end = el.selectionEnd ?? start;
+            const next =
+                input.slice(0, start) + emoji + input.slice(end);
+            setInput(next);
+            requestAnimationFrame(() => {
+                el.focus();
+                const pos = start + emoji.length;
+                el.setSelectionRange(pos, pos);
+            });
+        },
+        [input]
+    );
+
+    useEffect(() => {
+        if (activeTab !== "messages") return;
+        const onKey = (e) => {
+            if (e.repeat) return;
+            const semicolon =
+                e.code === "Semicolon" || e.key === ";" || e.key === "؛";
+            if (!semicolon) return;
+            const osMod =
+                e.metaKey ||
+                e.ctrlKey ||
+                (typeof e.getModifierState === "function" &&
+                    (e.getModifierState("OS") ||
+                        e.getModifierState("Super")));
+            if (!osMod) return;
+            e.preventDefault();
+            setEmojiOpen((open) => !open);
+        };
+        window.addEventListener("keydown", onKey, true);
+        return () => window.removeEventListener("keydown", onKey, true);
+    }, [activeTab]);
+
+    useEffect(() => {
+        if (!emojiOpen) return;
+        const onDown = (e) => {
+            const t = e.target;
+            if (emojiPopoverRef.current?.contains(t)) return;
+            const smileBtn = t.closest?.("[data-emoji-toggle]");
+            if (smileBtn) return;
+            setEmojiOpen(false);
+        };
+        document.addEventListener("mousedown", onDown);
+        return () => document.removeEventListener("mousedown", onDown);
+    }, [emojiOpen]);
 
     const participants = useMemo(() => {
         const map = new Map();
@@ -353,6 +455,7 @@ export default function ChatRoomClient() {
             text,
         });
         setInput("");
+        setEmojiOpen(false);
     };
 
     const canSend = Boolean(
@@ -374,7 +477,7 @@ export default function ChatRoomClient() {
                                 <p className="mt-1.5 text-[13px] leading-snug text-[#64748b]">
                                     You are chatting as{" "}
                                     <span
-                                        className="font-semibold text-[#134e4a]"
+                                        className="font-semibold capitalize text-[#134e4a]"
                                         style={{ color: TEAL }}
                                     >
                                         {user.name?.trim() || "You"}
@@ -613,8 +716,49 @@ export default function ChatRoomClient() {
                                 className="flex items-end gap-3"
                             >
                                 <div className="relative min-w-0 flex-1 rounded-[22px] border border-[#e2e8f0] bg-white py-1 pl-4 pr-2 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.08)] transition-shadow focus-within:border-[#99f6e4] focus-within:shadow-[0_4px_20px_-6px_rgba(13,148,136,0.2)]">
+                                    {emojiOpen && (
+                                        <div
+                                            ref={emojiPopoverRef}
+                                            className="absolute bottom-[calc(100%+6px)] left-0 right-0 z-50 rounded-2xl border border-[#e8eaee] bg-white p-2 shadow-[0_12px_40px_-8px_rgba(15,23,42,0.18)]"
+                                            role="dialog"
+                                            aria-label="Emoji picker"
+                                        >
+                                            <div className="max-h-44 overflow-y-auto [scrollbar-width:thin]">
+                                                <div className="grid grid-cols-8 gap-0.5 p-1">
+                                                    {EMOJI_GRID.map((em) => (
+                                                        <button
+                                                            key={em}
+                                                            type="button"
+                                                            className="flex h-9 w-9 items-center justify-center rounded-lg text-lg leading-none transition-colors hover:bg-[#f1f5f9] active:scale-95"
+                                                            onClick={() => {
+                                                                insertEmoji(
+                                                                    em
+                                                                );
+                                                                setEmojiOpen(
+                                                                    false
+                                                                );
+                                                            }}
+                                                        >
+                                                            {em}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <p className="border-t border-[#f1f5f9] px-2 py-1.5 text-[10px] leading-snug text-[#94a3b8]">
+                                                <span className="font-medium text-[#64748b]">
+                                                    ⊞ + ;
+                                                </span>{" "}
+                                                or{" "}
+                                                <span className="font-medium text-[#64748b]">
+                                                    Ctrl + ;
+                                                </span>{" "}
+                                                · also click the smile icon
+                                            </p>
+                                        </div>
+                                    )}
                                     <div className="flex items-center gap-1">
                                         <input
+                                            ref={inputRef}
                                             type="text"
                                             value={input}
                                             onChange={(e) =>
@@ -627,8 +771,17 @@ export default function ChatRoomClient() {
                                         <div className="flex shrink-0 items-center gap-0.5 pr-1">
                                             <button
                                                 type="button"
-                                                className="rounded-xl p-2 text-[#94a3b8] transition-colors hover:bg-[#f8fafc] hover:text-[#64748b]"
-                                                aria-label="Emoji"
+                                                data-emoji-toggle
+                                                className={`rounded-xl p-2 transition-colors ${
+                                                    emojiOpen
+                                                        ? "bg-[#e8f7f4] text-teal-700"
+                                                        : "text-[#94a3b8] hover:bg-[#f8fafc] hover:text-[#64748b]"
+                                                }`}
+                                                aria-label="Emoji picker"
+                                                aria-expanded={emojiOpen}
+                                                onClick={() =>
+                                                    setEmojiOpen((o) => !o)
+                                                }
                                             >
                                                 <Smile
                                                     size={20}
