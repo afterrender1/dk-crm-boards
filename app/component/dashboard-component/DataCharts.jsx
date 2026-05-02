@@ -25,22 +25,22 @@ const data = [
 export default function DataCharts() {
     return (
         <div
-            className={`flex min-h-[320px] w-full min-w-0 max-w-full flex-col overflow-x-clip overflow-y-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm sm:min-h-[360px] md:min-h-[380px] ${inter.className}`}
+            className={`flex min-h-[260px] w-full min-w-0 max-w-full flex-col overflow-x-clip overflow-y-hidden rounded-xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm sm:min-h-[280px] md:min-h-[300px] ${inter.className}`}
         >
-            <div className="border-b border-slate-100/90 px-3 py-3 sm:px-6 sm:py-5">
-                <h3 className="text-base font-semibold tracking-tight text-slate-900 sm:text-lg">
+            <div className="border-b border-slate-100/90 px-2.5 py-2.5 sm:px-4 sm:py-3">
+                <h3 className="text-sm font-semibold tracking-tight text-slate-900 sm:text-base">
                     Revenue overview
                 </h3>
-                <p className="mt-1 text-xs leading-snug text-slate-500 sm:text-sm">
-                    Sample trend data — connect billing for live revenue.
+                <p className="mt-0.5 text-[11px] leading-snug text-slate-500 sm:text-xs">
+                    Sample trend — connect billing for live data.
                 </p>
             </div>
-            <div className="min-h-0 w-full min-w-0 flex-1 px-1 pb-3 pt-1 sm:px-4 sm:pb-6 sm:pt-2">
-                <div className="h-[240px] w-full min-w-0 sm:h-[280px] md:h-[300px] lg:h-[320px]">
+            <div className="min-h-0 w-full min-w-0 flex-1 px-1 pb-2 pt-1 sm:px-3 sm:pb-3 sm:pt-1.5">
+                <div className="h-[200px] w-full min-w-0 sm:h-[220px] md:h-[240px] lg:h-[260px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart
                             data={data}
-                            margin={{ top: 8, right: 12, left: 0, bottom: 4 }}
+                            margin={{ top: 6, right: 8, left: -18, bottom: 2 }}
                         >
                             <CartesianGrid
                                 strokeDasharray="3 3"
@@ -51,31 +51,32 @@ export default function DataCharts() {
                                 dataKey="name"
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fill: "#64748b", fontSize: 11 }}
-                                dy={8}
+                                tick={{ fill: "#64748b", fontSize: 10 }}
+                                dy={6}
                             />
                             <YAxis
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fill: "#64748b", fontSize: 11 }}
-                                width={36}
+                                tick={{ fill: "#64748b", fontSize: 10 }}
+                                width={32}
                             />
                             <Tooltip
                                 contentStyle={{
                                     backgroundColor: "rgba(255,255,255,0.96)",
-                                    borderRadius: "12px",
+                                    borderRadius: "10px",
                                     border: "1px solid #e2e8f0",
                                     boxShadow:
-                                        "0 18px 40px -12px rgb(15 23 42 / 0.15)",
-                                    padding: "10px 12px",
+                                        "0 12px 28px -8px rgb(15 23 42 / 0.12)",
+                                    padding: "8px 10px",
                                 }}
                                 labelStyle={{
                                     fontWeight: 600,
                                     color: "#0f172a",
-                                    marginBottom: 4,
+                                    marginBottom: 2,
+                                    fontSize: "11px",
                                 }}
                                 itemStyle={{
-                                    fontSize: "12px",
+                                    fontSize: "11px",
                                     fontWeight: 600,
                                     color: "#334155",
                                 }}
@@ -83,8 +84,8 @@ export default function DataCharts() {
                             <Legend
                                 iconType="circle"
                                 wrapperStyle={{
-                                    paddingTop: "16px",
-                                    fontSize: "11px",
+                                    paddingTop: "8px",
+                                    fontSize: "10px",
                                     fontWeight: 600,
                                     color: "#64748b",
                                 }}
@@ -94,28 +95,28 @@ export default function DataCharts() {
                                 dataKey="pv"
                                 name="Pipeline"
                                 stroke="#0d9488"
-                                strokeWidth={2.5}
+                                strokeWidth={2}
                                 dot={{
-                                    r: 3,
+                                    r: 2.5,
                                     fill: "#0d9488",
-                                    strokeWidth: 2,
+                                    strokeWidth: 1.5,
                                     stroke: "#fff",
                                 }}
-                                activeDot={{ r: 5, strokeWidth: 0 }}
+                                activeDot={{ r: 4, strokeWidth: 0 }}
                             />
                             <Line
                                 type="monotone"
                                 dataKey="uv"
                                 name="Volume"
                                 stroke="#6366f1"
-                                strokeWidth={2.5}
+                                strokeWidth={2}
                                 dot={{
-                                    r: 3,
+                                    r: 2.5,
                                     fill: "#6366f1",
-                                    strokeWidth: 2,
+                                    strokeWidth: 1.5,
                                     stroke: "#fff",
                                 }}
-                                activeDot={{ r: 5, strokeWidth: 0 }}
+                                activeDot={{ r: 4, strokeWidth: 0 }}
                             />
                         </LineChart>
                     </ResponsiveContainer>

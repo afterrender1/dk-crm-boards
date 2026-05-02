@@ -45,12 +45,12 @@ export default function CircleCharts() {
     if (isLoading) {
         return (
             <div
-                className={`flex min-h-[340px] items-center justify-center rounded-2xl border border-slate-200/80 bg-white/95 ring-1 ring-white/80 ${inter.className}`}
+                className={`flex min-h-[260px] items-center justify-center rounded-xl border border-slate-200/80 bg-white/95 ring-1 ring-white/80 ${inter.className}`}
             >
-                <div className="flex flex-col items-center gap-3">
-                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-teal-200 border-t-teal-600" />
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                        Loading chart
+                <div className="flex flex-col items-center gap-2">
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-200 border-t-teal-600" />
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                        Loading
                     </p>
                 </div>
             </div>
@@ -61,29 +61,29 @@ export default function CircleCharts() {
 
     return (
         <div
-            className={`flex min-h-[320px] w-full min-w-0 max-w-full flex-col overflow-x-clip overflow-y-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm sm:min-h-[360px] md:min-h-[380px] ${inter.className}`}
+            className={`flex min-h-[260px] w-full min-w-0 max-w-full flex-col overflow-x-clip overflow-y-hidden rounded-xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm sm:min-h-[280px] md:min-h-[300px] ${inter.className}`}
         >
-            <div className="border-b border-slate-100/90 px-3 py-3 sm:px-6 sm:py-5">
-                <h3 className="text-base font-semibold tracking-tight text-slate-900 sm:text-lg">
+            <div className="border-b border-slate-100/90 px-2.5 py-2.5 sm:px-4 sm:py-3">
+                <h3 className="text-sm font-semibold tracking-tight text-slate-900 sm:text-base">
                     Lead distribution
                 </h3>
-                <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-                    Status breakdown from your client records
+                <p className="mt-0.5 text-[11px] text-slate-500 sm:text-xs">
+                    Status breakdown from client records
                 </p>
             </div>
 
-            <div className="relative min-h-[220px] flex-1 px-2 pb-4 pt-2 sm:min-h-[240px]">
+            <div className="relative min-h-[180px] flex-1 px-1.5 pb-2 pt-1.5 sm:min-h-[200px]">
                 {!hasData ? (
-                    <div className="flex h-full min-h-[200px] flex-col items-center justify-center px-6 text-center">
-                        <p className="text-sm font-medium text-slate-600">
+                    <div className="flex h-full min-h-[160px] flex-col items-center justify-center px-4 text-center">
+                        <p className="text-xs font-medium text-slate-600 sm:text-sm">
                             No clients yet
                         </p>
-                        <p className="mt-2 max-w-[220px] text-xs leading-relaxed text-slate-400">
-                            Add clients to see how leads split across statuses.
+                        <p className="mt-1.5 max-w-[200px] text-[11px] leading-snug text-slate-400">
+                            Add clients to see status split.
                         </p>
                     </div>
                 ) : (
-                    <div className="relative mx-auto h-[220px] w-full max-w-[280px] min-w-0 sm:h-[240px]">
+                    <div className="relative mx-auto h-[180px] w-full max-w-[220px] min-w-0 sm:h-[200px] sm:max-w-[240px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
@@ -111,21 +111,21 @@ export default function CircleCharts() {
                                     contentStyle={{
                                         backgroundColor:
                                             "rgba(255,255,255,0.96)",
-                                        borderRadius: "12px",
+                                        borderRadius: "10px",
                                         border: "1px solid #e2e8f0",
                                         boxShadow:
-                                            "0 18px 40px -12px rgb(15 23 42 / 0.15)",
-                                        fontSize: "12px",
+                                            "0 12px 28px -8px rgb(15 23 42 / 0.12)",
+                                        fontSize: "11px",
                                         fontWeight: 600,
                                     }}
                                 />
                             </PieChart>
                         </ResponsiveContainer>
                         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-3xl font-semibold tabular-nums text-slate-900">
+                            <span className="text-2xl font-semibold tabular-nums text-slate-900 sm:text-3xl">
                                 {list.length}
                             </span>
-                            <span className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                            <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-widest text-slate-400">
                                 Total
                             </span>
                         </div>
@@ -134,22 +134,22 @@ export default function CircleCharts() {
             </div>
 
             {hasData && (
-                <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 border-t border-slate-100/90 px-4 py-3 sm:px-6">
+                <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 border-t border-slate-100/90 px-2 py-2 sm:px-3">
                     {statusDistribution.map((item, index) => (
                         <div
                             key={item.name}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-1.5"
                         >
                             <span
-                                className="h-2 w-2 shrink-0 rounded-full"
+                                className="h-1.5 w-1.5 shrink-0 rounded-full"
                                 style={{
                                     backgroundColor:
                                         COLORS[index % COLORS.length],
                                 }}
                             />
-                            <span className="text-xs font-medium text-slate-600">
+                            <span className="text-[10px] font-medium text-slate-600 sm:text-xs">
                                 {item.name}
-                                <span className="ml-1 tabular-nums text-slate-400">
+                                <span className="ml-0.5 tabular-nums text-slate-400">
                                     ({item.value})
                                 </span>
                             </span>
