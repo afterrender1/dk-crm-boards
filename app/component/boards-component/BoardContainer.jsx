@@ -184,6 +184,7 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
     if (!isReady) return null;
 
     return (
+        <div className="flex h-full min-h-0 min-w-0 flex-col">
         <DragDropContext
             onDragEnd={onDragEnd}
             nonce="unique-app-nonce"
@@ -320,6 +321,7 @@ const BoardContainer = React.memo(({ lists: initialLists, boardId, onUpdate }) =
                 onClose={() => setIsCommentSidebarOpen(false)}
             />
         </DragDropContext>
+        </div>
     );
 });
 

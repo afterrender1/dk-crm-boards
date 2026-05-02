@@ -42,7 +42,7 @@ export default function BoardPage() {
     // Loading State (SWR handled)
     if (isLoading) {
         return (
-            <div className={`${urbanist.className} flex h-screen items-center justify-center bg-[#1d2125]`}>
+            <div className={`${urbanist.className} flex min-h-0 flex-1 min-w-0 w-full max-w-full items-center justify-center bg-[#1d2125]`}>
                 <div className="flex flex-col items-center gap-4">
                     <div className="relative w-8 h-8">
                         <div className="absolute inset-0 rounded-full border-2 border-[#579dff]/20" />
@@ -59,7 +59,7 @@ export default function BoardPage() {
     // Error State (SWR handled)
     if (error || !board) {
         return (
-            <div className={`${urbanist.className} flex h-screen items-center justify-center bg-[#1d2125]`}>
+            <div className={`${urbanist.className} flex min-h-0 flex-1 min-w-0 w-full max-w-full items-center justify-center bg-[#1d2125]`}>
                 <div className="text-center space-y-4">
                     <div className="text-5xl">🍵</div>
                     <h2 className="text-xl font-bold text-[#b6c2cf]">Board Not Found</h2>
@@ -70,46 +70,53 @@ export default function BoardPage() {
     }
 
     return (
-        <div className={`${urbanist.className} ml-20 flex h-screen bg-[#1d2125] overflow-hidden text-[#b6c2cf]`}>
-            <main className="flex-1 flex flex-col min-w-0">
+        <div className={`${urbanist.className} flex min-h-0 flex-1 min-w-0 w-full max-w-full flex-col overflow-hidden overflow-x-clip bg-[#1d2125] text-[#b6c2cf]`}>
+            <main className="flex min-h-0 min-w-0 flex-1 flex-col">
 
                 {/* Premium Header */}
-                <header className="shrink-0 px-8 pt-8 pb-6 border-b border-white/5 bg-[#1d2125]/80 backdrop-blur-xl">
-                    <div className="flex justify-between items-end">
-                        <div className="space-y-1.5">
-                            <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.3em] text-[#579dff]/70 uppercase">
-                                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#579dff] animate-pulse" />
-                                Interactive CRM Board
+                <header className="shrink-0 border-b border-white/5 bg-[#1d2125]/80 px-4 pb-4 pt-4 backdrop-blur-xl sm:px-6 sm:pb-5 sm:pt-6 md:px-28 md:pb-6 md:pt-8">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:gap-x-6 sm:gap-y-3">
+                        <div className="min-w-0 space-y-1.5">
+                            <div className="flex min-w-0 items-center gap-2 text-[9px] font-black tracking-[0.2em] text-[#579dff]/70 uppercase sm:tracking-[0.3em]">
+                                <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-[#579dff] animate-pulse" />
+                                <span className="min-w-0 truncate">Interactive CRM Board</span>
                             </div>
-                            <h1 className="text-3xl font-bold tracking-tight text-[#b6c2cf]">
+                            <h1 className="wrap-break-word text-2xl font-bold tracking-tight text-[#b6c2cf] sm:text-3xl">
                                 {board.name}
                             </h1>
                             {board.description && (
-                                <p className="text-[#9fadbc] text-sm font-medium max-w-xl line-clamp-1 opacity-70 italic">
+                                <p className="max-w-xl text-sm font-medium italic leading-snug text-[#9fadbc] line-clamp-2 opacity-70 sm:line-clamp-1">
                                     {board.description}
                                 </p>
                             )}
                         </div>
 
-                        {/* Real-time Stats */}
-                        <div className="hidden md:flex items-center gap-8 pb-1">
-                            <div className="text-right">
-                                <p className="text-2xl font-light text-[#b6c2cf] leading-none">
+                        {/* Real-time Stats — shrink-0 + nowrap so the row never collapses */}
+                        <div className="flex shrink-0 items-center justify-start gap-5 border-t border-white/5 pt-3 sm:justify-end sm:border-t-0 sm:pt-0 sm:pb-1">
+                            <div className="text-left sm:text-right">
+                                <p className="tabular-nums text-xl font-light leading-none text-[#b6c2cf] sm:text-2xl">
                                     {board.lists?.length || 0}
                                 </p>
-                                <p className="text-[9px] font-black text-[#9fadbc]/50 uppercase tracking-widest mt-1.5">Lists</p>
+                                <p className="mt-1 whitespace-nowrap text-[9px] font-black uppercase tracking-wide text-[#9fadbc]/50 sm:tracking-widest">
+                                    Lists
+                                </p>
                             </div>
-                            <div className="w-px h-8 bg-white/10" />
-                            <div className="text-right">
-                                <p className="text-2xl font-light text-[#b6c2cf] leading-none">{totalCards}</p>
-                                <p className="text-[9px] font-black text-[#9fadbc]/50 uppercase tracking-widest mt-1.5">Total Cards</p>
+                            <div className="h-8 w-px shrink-0 bg-white/10" aria-hidden />
+                            <div className="text-left sm:text-right">
+                                <p className="tabular-nums text-xl font-light leading-none text-[#b6c2cf] sm:text-2xl">
+                                    {totalCards}
+                                </p>
+                                <p className="mt-1 whitespace-nowrap text-[9px] font-black uppercase tracking-wide text-[#9fadbc]/50 sm:tracking-widest">
+                                    <span className="sm:hidden">Cards</span>
+                                    <span className="hidden sm:inline">Total cards</span>
+                                </p>
                             </div>
                         </div>
                     </div>
                 </header>
 
                 {/* Board Area */}
-                <div className="flex-1 overflow-hidden">
+                <div className="min-h-0 flex-1 overflow-hidden">
                     <BoardContainer
                         lists={board.lists}
                         boardId={board.board_id}
