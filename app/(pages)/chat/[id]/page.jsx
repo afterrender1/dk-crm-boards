@@ -134,8 +134,8 @@ const ChatPage = () => {
                                         </div>
 
                                         <div className="text-[10px] text-gray-400 mt-1 px-1">
-                                            {msg.created_at 
-                                                ? new Date(msg.created_at).toLocaleTimeString([], { 
+                                            {msg.createdAt 
+                                                ? new Date(msg.createdAt).toLocaleTimeString([], { 
                                                     hour: 'numeric', 
                                                     minute: '2-digit' 
                                                   }) 
@@ -169,6 +169,8 @@ const ChatPage = () => {
                             >
                                 <Send size={20} />
                             </button>
+
+                          
                         </div>
                     </form>
                 </div>

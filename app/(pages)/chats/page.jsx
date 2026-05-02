@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 import { useUser } from '@/app/hooks/useUser';
-import { Plus, MessageSquare, Users, Clock, User } from 'lucide-react';
+import { Plus, MessageSquare, Users, Clock, User, Trash2 } from 'lucide-react';
 import { inter } from '@/app/fonts';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
@@ -11,6 +11,7 @@ const fetcher = (url) => fetch(url).then((res) => res.json());
 const AllChatsPage = () => {
     const { user } = useUser();
     const [isCreating, setIsCreating] = useState(false);
+    const [deletingId, setDeletingId] = useState(null);
 
     const { data, error, isLoading, mutate } = useSWR('/api/chat/rooms', fetcher, {
         revalidateOnFocus: false,
@@ -47,6 +48,33 @@ const AllChatsPage = () => {
         }
     };
 
+    const handleDeleteRoom = async (roomId, roomName) => {
+        if (!confirm(`Delete chat room "${roomName}"? This action cannot be undone.`)) {
+            return;
+        }
+
+        setDeletingId(roomId);
+        try {
+            const res = await fetch(`/api/chat/rooms/${roomId}`, {
+                method: 'DELETE',
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+                mutate(); // Refresh the list
+                alert("Chat room deleted successfully.");
+            } else {
+                alert(result.message || "Failed to delete room");
+            }
+        } catch (err) {
+            console.error("Delete Room Error:", err);
+            alert("Something went wrong while deleting the room.");
+        } finally {
+            setDeletingId(null);
+        }
+    };
+
     if (error) return <div className="p-10 text-red-500 text-center">Failed to load chats.</div>;
 
     return (
@@ -78,9 +106,10 @@ const AllChatsPage = () => {
             <div className="max-w-5xl mx-auto px-6 py-8">
                 {/* List Header */}
                 <div className="grid grid-cols-12 text-sm font-medium text-gray-500 px-4 pb-3 border-b">
-                    <div className="col-span-7">ROOM NAME</div>
-                    <div className="col-span-3">CREATED BY</div>
+                    <div className="col-span-6 md:col-span-7">ROOM NAME</div>
+                    <div className="col-span-3 hidden md:block">CREATED BY</div>
                     <div className="col-span-2 text-right">CREATED</div>
+                    <div className="col-span-1 text-right">ACTIONS</div>
                 </div>
 
                 {/* Loading State */}
@@ -99,61 +128,70 @@ const AllChatsPage = () => {
                 ) : (
                     <div className="mt-2 space-y-2">
                         {data?.rooms?.map((room) => (
-                            <Link 
+                            <div 
                                 key={room.room_id} 
-                                href={`/chat/${room.room_id}`}
-                                className="block group"
+                                className="bg-white hover:bg-gray-50 border border-transparent hover:border-gray-200 rounded-2xl p-5 transition-all flex items-center gap-5 group"
                             >
-                                <div className="bg-white hover:bg-gray-50 border border-transparent hover:border-gray-200 rounded-2xl p-5 transition-all flex items-center gap-5 group-hover:shadow-sm">
-                                    
-                                    {/* Icon */}
-                                    <div className="w-11 h-11 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-all">
-                                        <MessageSquare size={24} />
-                                    </div>
+                                {/* Icon */}
+                                <div className="w-11 h-11 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-all">
+                                    <MessageSquare size={24} />
+                                </div>
 
-                                    {/* Room Info */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-3">
-                                            <h2 className="text-lg font-semibold text-gray-900 truncate">
-                                                {room.name}
-                                            </h2>
-                                        </div>
-                                        <div className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                                            <Users size={15} className="text-gray-400" />
-                                            Team Discussion
-                                        </div>
-                                    </div>
-
-                                    {/* Created By */}
-                                    <div className="col-span-3 hidden md:block w-52">
-                                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                                            <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
-                                                <User size={14} />
-                                            </div>
-                                            <span className="truncate">
-                                                {room.creator?.name || 'System'}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Created Date */}
-                                    <div className="text-right text-sm text-gray-500 w-28">
-                                        {room.created_at 
-                                            ? new Date(room.created_at).toLocaleDateString('en-US', {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                year: 'numeric'
-                                              })
-                                            : '—'
-                                        }
-                                    </div>
-
-                                    {/* Arrow */}
-                                    <div className="text-gray-300 group-hover:text-purple-600 transition-colors">
-                                        →
+                                {/* Room Info */}
+                                <div className="flex-1 min-w-0">
+                                    <Link href={`/chat/${room.room_id}`} className="block">
+                                        <h2 className="text-lg font-semibold text-gray-900 truncate hover:text-purple-600 transition-colors">
+                                            {room.name}
+                                        </h2>
+                                    </Link>
+                                    <div className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                                        <Users size={15} className="text-gray-400" />
+                                        Team Discussion
                                     </div>
                                 </div>
-                            </Link>
+
+                                {/* Created By */}
+                                <div className="hidden md:block w-52">
+                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                                            <User size={14} />
+                                        </div>
+                                        <span className="truncate">
+                                            {room.creator?.name || 'System'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Created Date */}
+                                <div className="text-right text-sm text-gray-500 w-28">
+                                    {room.created_at 
+                                        ? new Date(room.created_at).toLocaleDateString('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                          })
+                                        : '—'
+                                    }
+                                </div>
+
+                                {/* Delete Button */}
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleDeleteRoom(room.room_id, room.name);
+                                    }}
+                                    disabled={deletingId === room.room_id}
+                                    className="p-3 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50"
+                                    title="Delete Chat Room"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+
+                                {/* Arrow for navigation */}
+                                <Link href={`/chat/${room.room_id}`} className="text-gray-300 group-hover:text-purple-600 transition-colors pl-2">
+                                    →
+                                </Link>
+                            </div>
                         ))}
                     </div>
                 )}
