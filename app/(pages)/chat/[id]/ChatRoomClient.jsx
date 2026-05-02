@@ -6,24 +6,103 @@ import React, {
     useLayoutEffect,
     useRef,
     useMemo,
+    Fragment,
 } from "react";
 import { useParams } from "next/navigation";
 import { useSocket } from "@/app/hooks/useSocket";
 import { useUser } from "@/app/hooks/useUser";
 import { useChatMessageNotifications } from "@/app/hooks/useChatMessageNotifications";
-import { Send, Paperclip, Smile, Bell, BellOff, X } from "lucide-react";
+import {
+    Send,
+    Paperclip,
+    Smile,
+    Bell,
+    BellOff,
+    X,
+    Clock,
+} from "lucide-react";
 import { inter } from "@/app/fonts";
 import gsap from "gsap";
 
 const TEAL = "#0d9488";
 const TEAL_SOFT = "#ccfbf1";
 
-const formatMessageTime = (dateString) => {
-    if (!dateString) return "Just now";
-    return new Date(dateString).toLocaleTimeString([], {
-        hour: "numeric",
+const startOfDay = (d) =>
+    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+
+const parseMsgDate = (dateString) => {
+    if (!dateString) return null;
+    const d = new Date(dateString);
+    return Number.isNaN(d.getTime()) ? null : d;
+};
+
+/** Full detail for tooltips / accessibility */
+const formatFullTimestamp = (dateString) => {
+    const d = parseMsgDate(dateString);
+    if (!d) return "—";
+    return d.toLocaleString("en-GB", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
         minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
     });
+};
+
+/** Single visible line: date context + time with seconds */
+const formatMessageMetaLine = (dateString) => {
+    const d = parseMsgDate(dateString);
+    if (!d) return "Just now";
+    const now = new Date();
+    const timePart = d.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+    });
+    if (startOfDay(d) === startOfDay(now)) {
+        return `Today · ${timePart}`;
+    }
+    const y = new Date(now);
+    y.setDate(y.getDate() - 1);
+    if (startOfDay(d) === startOfDay(y)) {
+        return `Yesterday · ${timePart}`;
+    }
+    const datePart = d.toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    });
+    return `${datePart} · ${timePart}`;
+};
+
+const formatDayDividerOnly = (d) => {
+    const now = new Date();
+    if (startOfDay(d) === startOfDay(now)) return "Today";
+    const y = new Date(now);
+    y.setDate(y.getDate() - 1);
+    if (startOfDay(d) === startOfDay(y)) return "Yesterday";
+    return d.toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+};
+
+const getDayDividerLabel = (dateString, prevDateString) => {
+    const d = parseMsgDate(dateString);
+    if (!d) return null;
+    if (!prevDateString) return formatDayDividerOnly(d);
+    const prev = parseMsgDate(prevDateString);
+    if (!prev || startOfDay(d) !== startOfDay(prev)) {
+        return formatDayDividerOnly(d);
+    }
+    return null;
 };
 
 const renderWithMentions = (text) => {
@@ -170,7 +249,9 @@ export default function ChatRoomClient() {
         if (activeTab !== "messages") return;
         const list = messagesListRef.current;
         if (!list) return;
-        const items = list.querySelectorAll(":scope > li");
+        const items = list.querySelectorAll(
+            ":scope > li[data-message-item]"
+        );
         const n = items.length;
         if (n === 0) {
             prevMessageCountRef.current = 0;
@@ -416,9 +497,9 @@ export default function ChatRoomClient() {
                             ) : (
                                 <ul
                                     ref={messagesListRef}
-                                    className="flex flex-col gap-7 py-2"
+                                    className="flex flex-col gap-5 py-2"
                                 >
-                                    {messages.map((msg) => {
+                                    {messages.map((msg, index) => {
                                         const isOwn =
                                             msg.user_id === user?.user_id;
                                         const key =
@@ -427,64 +508,98 @@ export default function ChatRoomClient() {
                                         const displayName = isOwn
                                             ? "You"
                                             : msg.sender?.name || "Team member";
-                                        const timeStr = formatMessageTime(
+                                        const metaLine = formatMessageMetaLine(
                                             msg.createdAt
+                                        );
+                                        const fullTs = formatFullTimestamp(
+                                            msg.createdAt
+                                        );
+                                        const prevMsg = messages[index - 1];
+                                        const dayLabel = getDayDividerLabel(
+                                            msg.createdAt,
+                                            prevMsg?.createdAt
                                         );
 
                                         return (
-                                            <li
-                                                key={key}
-                                                className={`flex gap-3 ${
-                                                    isOwn
-                                                        ? "flex-row-reverse"
-                                                        : "flex-row"
-                                                }`}
-                                            >
-                                                {!isOwn && (
-                                                    <div className="mt-6 h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-sm">
-                                                        <img
-                                                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.user_id}`}
-                                                            alt=""
-                                                            className="h-full w-full object-cover"
-                                                        />
-                                                    </div>
+                                            <Fragment key={key}>
+                                                {dayLabel && (
+                                                    <li
+                                                        className="flex list-none justify-center py-1"
+                                                        aria-hidden
+                                                    >
+                                                        <span className="rounded-full border border-[#e8eaee] bg-[#f8fafc] px-3.5 py-1 text-[11px] font-medium tracking-wide text-[#64748b] shadow-sm">
+                                                            {dayLabel}
+                                                        </span>
+                                                    </li>
                                                 )}
-
-                                                <div
-                                                    className={`flex min-w-0 max-w-[85%] flex-col ${
+                                                <li
+                                                    data-message-item
+                                                    className={`flex gap-3 ${
                                                         isOwn
-                                                            ? "items-end pl-8"
-                                                            : "items-start pr-4"
+                                                            ? "flex-row-reverse"
+                                                            : "flex-row"
                                                     }`}
                                                 >
-                                                    <p
-                                                        className={`mb-2 text-[11px] font-medium leading-none text-[#475569] sm:text-xs ${
-                                                            isOwn
-                                                                ? "text-right"
-                                                                : "text-left"
-                                                        }`}
-                                                    >
-                                                        {displayName}
-                                                        <span className="mx-1.5 font-normal text-[#94a3b8]">
-                                                            ·
-                                                        </span>
-                                                        <span className="font-normal text-[#64748b]">
-                                                            {timeStr}
-                                                        </span>
-                                                    </p>
+                                                    {!isOwn && (
+                                                        <div className="mt-7 h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-sm">
+                                                            <img
+                                                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.user_id}`}
+                                                                alt=""
+                                                                className="h-full w-full object-cover"
+                                                            />
+                                                        </div>
+                                                    )}
+
                                                     <div
-                                                        className={`rounded-[20px] px-4 py-3 text-[15px] leading-relaxed text-[#1e293b] wrap-anywhere ${
+                                                        className={`flex min-w-0 max-w-[88%] flex-col gap-1.5 ${
                                                             isOwn
-                                                                ? "rounded-br-md bg-[#e8e4f0]"
-                                                                : "rounded-bl-md border border-[#f1f5f9] bg-white shadow-[0_2px_8px_-2px_rgba(15,23,42,0.06)]"
+                                                                ? "items-end pl-6"
+                                                                : "items-start pr-4"
                                                         }`}
                                                     >
-                                                        {renderWithMentions(
-                                                            msg.text
-                                                        )}
+                                                        <span
+                                                            className={`px-1 text-[12px] font-semibold tracking-tight text-[#334155] ${
+                                                                isOwn
+                                                                    ? "text-right"
+                                                                    : "text-left"
+                                                            }`}
+                                                        >
+                                                            {displayName}
+                                                        </span>
+                                                        <div
+                                                            className={`rounded-[20px] px-4 py-3 text-[15px] leading-relaxed text-[#1e293b] wrap-anywhere ${
+                                                                isOwn
+                                                                    ? "rounded-br-md bg-[#e8e4f0]"
+                                                                    : "rounded-bl-md border border-[#f1f5f9] bg-white shadow-[0_2px_8px_-2px_rgba(15,23,42,0.06)]"
+                                                            }`}
+                                                        >
+                                                            {renderWithMentions(
+                                                                msg.text
+                                                            )}
+                                                        </div>
+                                                        <time
+                                                            dateTime={
+                                                                msg.createdAt ||
+                                                                undefined
+                                                            }
+                                                            title={fullTs}
+                                                            className={`flex items-center gap-1 px-1 text-[11px] tabular-nums leading-none text-[#94a3b8] ${
+                                                                isOwn
+                                                                    ? "flex-row-reverse text-right"
+                                                                    : ""
+                                                            }`}
+                                                        >
+                                                            <Clock
+                                                                className="shrink-0 opacity-70"
+                                                                size={12}
+                                                                strokeWidth={2}
+                                                                aria-hidden
+                                                            />
+                                                            <span>{metaLine}</span>
+                                                        </time>
                                                     </div>
-                                                </div>
-                                            </li>
+                                                </li>
+                                            </Fragment>
                                         );
                                     })}
                                 </ul>
