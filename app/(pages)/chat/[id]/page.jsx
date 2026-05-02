@@ -71,7 +71,7 @@ const ChatPage = () => {
                 {/* Chat Header */}
                 <div className="bg-white border-b px-4 py-4 flex items-center justify-between ">
                     <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <div className="w-9 h-9 bg-linear-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center shrink-0">
                             <span className="text-white font-bold text-xl">G</span>
                         </div>
                         <div>
@@ -107,7 +107,7 @@ const ChatPage = () => {
                                     className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} group`}
                                 >
                                     {!isOwnMessage && (
-                                        <div className="w-7 h-7 rounded-full overflow-hidden mr-2.5 flex-shrink-0 mt-0.5">
+                                        <div className="w-7 h-7 rounded-full overflow-hidden mr-2.5 shrink-0 mt-0.5">
                                             <img 
                                                 src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.user_id}`} 
                                                 alt="avatar" 
@@ -124,7 +124,7 @@ const ChatPage = () => {
                                         )}
 
                                         <div 
-                                            className={`px-4 py-2.5 rounded-3xl text-[15px] leading-relaxed break-words ${
+                                            className={`px-4 py-2.5 rounded-3xl text-[15px] leading-relaxed wrap-break-words ${
                                                 isOwnMessage 
                                                     ? 'bg-blue-600 text-white rounded-br-none' 
                                                     : 'bg-white border border-gray-100 shadow-sm rounded-bl-none'
