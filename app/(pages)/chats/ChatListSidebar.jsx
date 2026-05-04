@@ -90,7 +90,7 @@ export default function ChatListSidebar({ activeRoomId }) {
 
     if (error) {
         return (
-            <div className="flex min-h-[200px] flex-col items-center justify-center gap-2 p-4 text-center sm:p-6">
+            <div className="flex min-h-50 flex-col items-center justify-center gap-2 p-4 text-center sm:p-6">
                 <p className="text-sm font-medium text-red-600">
                     Couldn’t load conversations
                 </p>

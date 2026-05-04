@@ -48,7 +48,7 @@ export default function DashboardPage() {
                     className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(13,148,136,0.06),transparent)]"
                     aria-hidden
                 />
-                <div className="relative mx-auto max-w-[1700px] px-2.5 py-5 sm:px-4 sm:py-6 md:px-5">
+                <div className="relative mx-auto max-w-425 px-2.5 py-5 sm:px-4 sm:py-6 md:px-5">
                     <div className="mb-5 h-28 animate-pulse rounded-xl bg-white/80 ring-1 ring-slate-200/60" />
                     <div className="mb-5 grid gap-2 sm:grid-cols-3 sm:gap-3">
                         {[1, 2, 3].map((i) => (
@@ -83,7 +83,7 @@ export default function DashboardPage() {
                 aria-hidden
             />
 
-            <div className="relative mx-auto max-w-[1700px] px-2.5 pb-6 pt-3 sm:px-4 sm:pb-8 sm:pt-4 md:px-5">
+            <div className="relative mx-auto max-w-425 px-2.5 pb-6 pt-3 sm:px-4 sm:pb-8 sm:pt-4 md:px-5">
                 <header className="mb-4 flex flex-col gap-3 sm:mb-5 sm:gap-4 md:flex-row md:items-end md:justify-between">
                     <div className="min-w-0 flex-1">
                         <div className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-teal-200/60 bg-teal-50/80 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-teal-800">
@@ -116,7 +116,7 @@ export default function DashboardPage() {
                     </div>
 
                     {user ? (
-                        <div className="flex w-full shrink-0 items-center gap-2 rounded-xl border border-slate-200/80 bg-white/90 px-3 py-2 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm sm:w-auto sm:max-w-[240px]">
+                        <div className="flex w-full shrink-0 items-center gap-2 rounded-xl border border-slate-200/80 bg-white/90 px-3 py-2 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm sm:w-auto sm:max-w-60">
                             <img
                                 src={
                                     user.image ||
@@ -196,7 +196,7 @@ export default function DashboardPage() {
                         {user ? (
                             <CircleCharts />
                         ) : (
-                            <div className="flex h-full min-h-[240px] items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white/60 px-4 py-6 text-center text-xs text-slate-500 sm:text-sm">
+                            <div className="flex h-full min-h-60 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white/60 px-4 py-6 text-center text-xs text-slate-500 sm:text-sm">
                                 Lead distribution unlocks when you’re signed in.
                             </div>
                         )}

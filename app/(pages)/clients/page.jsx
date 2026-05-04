@@ -41,7 +41,7 @@ const Page = () => {
         </div>
       </header>
 
-      <main className="max-w-[1700px] mx-auto px-3 sm:px-5 md:px-6 lg:px-8 mt-4 sm:mt-6 md:mt-8">
+      <main className="max-w-425 mx-auto px-3 sm:px-5 md:px-6 lg:px-8 mt-4 sm:mt-6 md:mt-8">
 
         {/* Table Container */}
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden p-2 sm:p-3 md:p-4">

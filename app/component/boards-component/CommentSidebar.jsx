@@ -517,7 +517,7 @@ const CommentSidebar = ({ card, isOpen, onClose }) => {
 
             <div className="absolute inset-0 p-2 sm:p-4 lg:p-6">
                 <div
-                    className={`mx-auto grid h-full max-w-[1280px] grid-cols-1 overflow-hidden rounded-[24px] border shadow-2xl transition-all duration-200 md:grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_380px] xl:grid-cols-[minmax(0,1.3fr)_420px] ${scrollClass} ${isOpen ? 'scale-100' : 'scale-[0.98]'}`}
+                    className={`mx-auto grid h-full max-w-7xl grid-cols-1 overflow-hidden rounded-[24px] border shadow-2xl transition-all duration-200 md:grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_380px] xl:grid-cols-[minmax(0,1.3fr)_420px] ${scrollClass} ${isOpen ? 'scale-100' : 'scale-[0.98]'}`}
                     style={{
                         backgroundColor: COLORS.panel,
                         borderColor: COLORS.border,

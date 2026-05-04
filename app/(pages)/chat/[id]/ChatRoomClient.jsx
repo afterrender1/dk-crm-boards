@@ -514,7 +514,7 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                 className={
                     embedded
                         ? "relative mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col overflow-hidden rounded-lg border border-slate-200/70 bg-white/95 shadow-sm ring-1 ring-slate-200/40 backdrop-blur-sm sm:rounded-xl md:max-w-md md:rounded-2xl md:shadow-[0_20px_40px_-14px_rgba(15,23,42,0.1)] lg:max-w-lg"
-                        : "relative flex h-[calc(100dvh-2rem)] w-full max-w-[400px] flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/95 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.18),0_0_0_1px_rgba(15,23,42,0.04)] ring-1 ring-slate-200/50 backdrop-blur-sm sm:h-[min(680px,calc(100dvh-4rem))] sm:max-w-[420px]"
+                        : "relative flex h-[calc(100dvh-2rem)] w-full max-w-100 flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/95 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.18),0_0_0_1px_rgba(15,23,42,0.04)] ring-1 ring-slate-200/50 backdrop-blur-sm sm:h-[min(680px,calc(100dvh-4rem))] sm:max-w-105"
                 }
             >
                 <header className="shrink-0 border-b border-slate-100/90 bg-linear-to-b from-white via-white to-slate-50/40 px-3 pb-2 pt-2.5 sm:px-4 sm:pb-2.5 sm:pt-3 md:px-4">
@@ -651,7 +651,7 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                             style={{ WebkitOverflowScrolling: "touch" }}
                         >
                             {messages.length === 0 ? (
-                                <div className="flex h-full min-h-[220px] flex-col items-center justify-center px-6 text-center">
+                                <div className="flex h-full min-h-55 flex-col items-center justify-center px-6 text-center">
                                     <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-md ring-1 ring-slate-100">
                                         <MessageSquare
                                             className="text-teal-600"
@@ -662,7 +662,7 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                                     <p className="text-sm font-semibold text-slate-600">
                                         No messages yet
                                     </p>
-                                    <p className="mt-2 max-w-[260px] text-xs leading-relaxed text-slate-400">
+                                    <p className="mt-2 max-w-65 text-xs leading-relaxed text-slate-400">
                                         Say hello — your team will see messages
                                         here in real time.
                                     </p>

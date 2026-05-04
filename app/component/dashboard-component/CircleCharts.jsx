@@ -45,7 +45,7 @@ export default function CircleCharts() {
     if (isLoading) {
         return (
             <div
-                className={`flex min-h-[260px] items-center justify-center rounded-xl border border-slate-200/80 bg-white/95 ring-1 ring-white/80 ${inter.className}`}
+                className={`flex min-h-65 items-center justify-center rounded-xl border border-slate-200/80 bg-white/95 ring-1 ring-white/80 ${inter.className}`}
             >
                 <div className="flex flex-col items-center gap-2">
                     <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-200 border-t-teal-600" />
@@ -59,9 +59,10 @@ export default function CircleCharts() {
 
     const hasData = list.length > 0;
 
+    const newLocal = "relative min-h-45 flex-1 px-1.5 pb-2 pt-1.5 sm:min-h-50";
     return (
         <div
-            className={`flex min-h-[260px] w-full min-w-0 max-w-full flex-col overflow-x-clip overflow-y-hidden rounded-xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm sm:min-h-[280px] md:min-h-[300px] ${inter.className}`}
+            className={`flex min-h-65 w-full min-w-0 max-w-full flex-col overflow-x-clip overflow-y-hidden rounded-xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm sm:min-h-[280px] md:min-h-[300px] ${inter.className}`}
         >
             <div className="border-b border-slate-100/90 px-2.5 py-2.5 sm:px-4 sm:py-3">
                 <h3 className="text-sm font-semibold tracking-tight text-slate-900 sm:text-base">
@@ -72,18 +73,18 @@ export default function CircleCharts() {
                 </p>
             </div>
 
-            <div className="relative min-h-[180px] flex-1 px-1.5 pb-2 pt-1.5 sm:min-h-[200px]">
+            <div className={newLocal}>
                 {!hasData ? (
-                    <div className="flex h-full min-h-[160px] flex-col items-center justify-center px-4 text-center">
+                    <div className="flex h-full min-h-40 flex-col items-center justify-center px-4 text-center">
                         <p className="text-xs font-medium text-slate-600 sm:text-sm">
                             No clients yet
                         </p>
-                        <p className="mt-1.5 max-w-[200px] text-[11px] leading-snug text-slate-400">
+                        <p className="mt-1.5 max-w-50 text-[11px] leading-snug text-slate-400">
                             Add clients to see status split.
                         </p>
                     </div>
                 ) : (
-                    <div className="relative mx-auto h-[180px] w-full max-w-[220px] min-w-0 sm:h-[200px] sm:max-w-[240px]">
+                    <div className="relative mx-auto h-45 w-full max-w-55 min-w-0 sm:h-50 sm:max-w-60">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie

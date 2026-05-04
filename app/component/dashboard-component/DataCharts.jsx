@@ -25,7 +25,7 @@ const data = [
 export default function DataCharts() {
     return (
         <div
-            className={`flex min-h-[260px] w-full min-w-0 max-w-full flex-col overflow-x-clip overflow-y-hidden rounded-xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm sm:min-h-[280px] md:min-h-[300px] ${inter.className}`}
+            className={`flex min-h-65 w-full min-w-0 max-w-full flex-col overflow-x-clip overflow-y-hidden rounded-xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/40 ring-1 ring-white/80 backdrop-blur-sm sm:min-h-70 md:min-h-75 ${inter.className}`}
         >
             <div className="border-b border-slate-100/90 px-2.5 py-2.5 sm:px-4 sm:py-3">
                 <h3 className="text-sm font-semibold tracking-tight text-slate-900 sm:text-base">
@@ -36,7 +36,7 @@ export default function DataCharts() {
                 </p>
             </div>
             <div className="min-h-0 w-full min-w-0 flex-1 px-1 pb-2 pt-1 sm:px-3 sm:pb-3 sm:pt-1.5">
-                <div className="h-[200px] w-full min-w-0 sm:h-[220px] md:h-[240px] lg:h-[260px]">
+                <div className="h-50 w-full min-w-0 sm:h-55 md:h-60 lg:h-65">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart
                             data={data}
