@@ -14,17 +14,17 @@ const fetcher = (url) => fetch(url).then((res) => res.json());
    HELPERS
 ───────────────────────────────────────────────────────────── */
 const STATUS_CONFIG = {
-    'Planning':    { bg: 'bg-gray-100',    text: 'text-gray-600',    dot: 'bg-gray-400'   },
-    'In Progress': { bg: 'bg-emerald-50',  text: 'text-emerald-600', dot: 'bg-emerald-500' },
-    'Completed':   { bg: 'bg-blue-50',     text: 'text-blue-600',    dot: 'bg-blue-500'    },
-    'On Hold':     { bg: 'bg-amber-50',    text: 'text-amber-600',   dot: 'bg-amber-500'   },
+    'Planning': { bg: 'bg-gray-100', text: 'text-gray-600', dot: 'bg-gray-400' },
+    'In Progress': { bg: 'bg-emerald-50', text: 'text-emerald-600', dot: 'bg-emerald-500' },
+    'Completed': { bg: 'bg-blue-50', text: 'text-blue-600', dot: 'bg-blue-500' },
+    'On Hold': { bg: 'bg-amber-50', text: 'text-amber-600', dot: 'bg-amber-500' },
 };
 
 // BUG FIX #3 — three distinct priority colours
 const PRIORITY_CONFIG = {
-    'High':   { bar: 'bg-red-500',    label: 'text-red-600'    },
-    'Medium': { bar: 'bg-amber-400',  label: 'text-amber-600'  },
-    'Low':    { bar: 'bg-emerald-400',label: 'text-emerald-600'},
+    'High': { bar: 'bg-red-500', label: 'text-red-600' },
+    'Medium': { bar: 'bg-amber-400', label: 'text-amber-600' },
+    'Low': { bar: 'bg-emerald-400', label: 'text-emerald-600' },
 };
 
 const STATUSES = ["Planning", "In Progress", "Completed", "On Hold"];
@@ -33,27 +33,26 @@ const STATUSES = ["Planning", "In Progress", "Completed", "On Hold"];
    ROOT COMPONENT
 ───────────────────────────────────────────────────────────── */
 const ProjectsGrid = () => {
-    const [projects, setProjects]         = useState([]);
-    const [loading, setLoading]           = useState(true);
-    const [searchTerm, setSearchTerm]     = useState("");
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState(null);
 
-const CACHE_KEY = 'devskarnel_projects_v2';
-const {data , mutate} = useSWR('/api/project' , 
-    fetcher,
-    {
-        revalidateOnFocus: false,
-        dedupingInterval: 60000,
-    }
-)
+    const CACHE_KEY = 'devskarnel_projects_v2';
+    const { data, mutate } = useSWR('/api/project',
+        fetcher,
+        {
+            revalidateOnFocus: false,
+            dedupingInterval: 60000,
+        }
+    )
 
-const projectsData = useMemo(()=>
-{
-    if (Array.isArray(data)) return data;
-    return data?.projects || data?.data || [];
-}, [data]);
+    const projectsData = useMemo(() => {
+        if (Array.isArray(data)) return data;
+        return data?.projects || data?.data || [];
+    }, [data]);
 
     useEffect(() => {
         if (data) {
@@ -64,11 +63,11 @@ const projectsData = useMemo(()=>
 
     const filteredProjects = useMemo(() => projectsData.filter(p => {
         const q = searchTerm.toLowerCase();
-        const matchesSearch  = p.project_name.toLowerCase().includes(q) ||
-                               p.client_name.toLowerCase().includes(q) ||
-                               p.client_email.toLowerCase().includes(q) ||
-                               p.company_name.toLowerCase().includes(q);
-        const matchesStatus  = statusFilter === "All" || p.status === statusFilter;
+        const matchesSearch = p.project_name.toLowerCase().includes(q) ||
+            p.client_name.toLowerCase().includes(q) ||
+            p.client_email.toLowerCase().includes(q) ||
+            p.company_name.toLowerCase().includes(q);
+        const matchesStatus = statusFilter === "All" || p.status === statusFilter;
         return matchesSearch && matchesStatus;
     }), [searchTerm, statusFilter, projectsData]);
 
@@ -78,40 +77,40 @@ const projectsData = useMemo(()=>
     };
 
     return (
-        <div className={`px-3 py-4 sm:px-5 sm:py-6 md:px-8 md:py-8 lg:px-10 lg:py-10 rounded-t-3xl md:rounded-t-4xl bg-linear-to-b from-white to-gray-50/60 min-h-screen ${inter.className}`}>
+        <div className={`px-2 py-2 sm:px-4 sm:py-3 md:px-6 md:py-4 lg:px-8 lg:py-5 rounded-t-2xl md:rounded-t-3xl bg-linear-to-b from-white to-gray-50/60 min-h-screen ${inter.className}`}>
             <div className="max-w-7xl mx-auto">
 
                 {/* ── Header & Filters ── */}
-                <div className="mb-6 sm:mb-8 md:mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-5">
+                <div className="mb-3 sm:mb-4 md:mb-5 flex flex-col lg:flex-row lg:items-center justify-between gap-3 md:gap-4">
                     <div>
-                        <h1 className="text-lg sm:text-xl md:text-2xl font-extrabold text-gray-900 uppercase tracking-tight">
+                        <h1 className="text-sm sm:text-base md:text-lg font-extrabold text-gray-900 uppercase tracking-tight">
                             Project Pipeline
                         </h1>
-                        <p className="text-gray-500 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.14em] mt-1.5">
+                        <p className="text-gray-500 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.12em] mt-0.5">
                             {loading
                                 ? "Syncing..."
                                 : `Managing ${filteredProjects.length} assignment${filteredProjects.length !== 1 ? 's' : ''}`}
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row w-full lg:w-auto items-stretch sm:items-center gap-2.5 sm:gap-3">
+                    <div className="flex flex-col sm:flex-row w-full lg:w-auto items-stretch sm:items-center gap-2 sm:gap-2.5">
                         {/* Search */}
-                        <div className="relative w-full sm:w-72 md:w-80">
-                            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={14} />
+                        <div className="relative w-full sm:w-64 md:w-72">
+                            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={13} />
                             {searchTerm && (
                                 <button
                                     onClick={() => setSearchTerm("")}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-700 transition-colors"
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-700 transition-colors"
                                 >
-                                    <FiX size={14} />
+                                    <FiX size={13} />
                                 </button>
                             )}
                             <input
                                 type="text"
-                                placeholder="Search projects or clients…"
+                                placeholder="Search projects…"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-800 placeholder:text-gray-400 focus:border-gray-800 focus:ring-2 focus:ring-gray-200 outline-none transition-all"
+                                className="w-full pl-9 pr-8 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-800 placeholder:text-gray-400 focus:border-gray-800 focus:ring-1 focus:ring-gray-200 outline-none transition-all"
                             />
                         </div>
 
@@ -119,7 +118,7 @@ const projectsData = useMemo(()=>
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="w-full sm:w-auto pl-4 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 uppercase tracking-tight outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 transition-all cursor-pointer"
+                            className="w-full sm:w-auto pl-3 pr-9 py-2 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 uppercase tracking-tight outline-none focus:border-gray-800 focus:ring-1 focus:ring-gray-200 transition-all cursor-pointer"
                         >
                             {["All", ...STATUSES].map(s => (
                                 <option key={s} value={s}>{s}</option>
@@ -129,18 +128,18 @@ const projectsData = useMemo(()=>
                 </div>
 
                 {/* ── Grid ── */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
                     {loading ? (
                         [...Array(6)].map((_, i) => <SkeletonCard key={i} delay={i * 80} />)
                     ) : filteredProjects.length === 0 ? (
                         /* BUG FIX #6 — empty state */
-                        <div className="col-span-full flex flex-col items-center justify-center py-20 sm:py-24 text-gray-400 gap-3">
-                            <FiInbox size={40} strokeWidth={1.2} />
-                            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-gray-600">No projects found</p>
+                        <div className="col-span-full flex flex-col items-center justify-center py-12 sm:py-16 text-gray-400 gap-2.5">
+                            <FiInbox size={32} strokeWidth={1.2} />
+                            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-gray-600">No projects found</p>
                             {(searchTerm || statusFilter !== "All") && (
                                 <button
                                     onClick={() => { setSearchTerm(""); setStatusFilter("All"); }}
-                                    className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-gray-800 border border-gray-800 px-4 py-2 rounded-lg hover:bg-gray-900 hover:text-white transition-all"
+                                    className="mt-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-gray-800 border border-gray-800 px-3 py-1.5 rounded-lg hover:bg-gray-900 hover:text-white transition-all"
                                 >
                                     Clear filters
                                 </button>
@@ -175,7 +174,7 @@ const projectsData = useMemo(()=>
    PROJECT CARD
 ───────────────────────────────────────────────────────────── */
 const ProjectCard = ({ data, onUpdate, onEdit }) => {
-    const status   = STATUS_CONFIG[data.status]   || STATUS_CONFIG['Planning'];
+    const status = STATUS_CONFIG[data.status] || STATUS_CONFIG['Planning'];
     // BUG FIX #3 — correct priority colour per level
     const priority = PRIORITY_CONFIG[data.priority] || PRIORITY_CONFIG['Low'];
 
@@ -188,71 +187,71 @@ const ProjectCard = ({ data, onUpdate, onEdit }) => {
         : 'Not set';
 
     return (
-        <div className="group relative isolate overflow-visible rounded-3xl border border-white/80 bg-linear-to-b from-white via-white to-slate-50/80 p-4 sm:p-5 md:p-6 flex flex-col h-full shadow-[0_10px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-200/70 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(15,23,42,0.12)] hover:ring-slate-300/80">
-            <div className="pointer-events-none absolute -top-16 right-0 h-36 w-36 rounded-full bg-linear-to-br from-slate-200/40 to-transparent blur-2xl transition-opacity duration-300 group-hover:opacity-80 opacity-40" />
-            <div className="pointer-events-none absolute -bottom-20 -left-12 h-40 w-40 rounded-full bg-linear-to-tr from-emerald-100/60 to-transparent blur-2xl transition-opacity duration-300 group-hover:opacity-70 opacity-40" />
+        <div className="group relative isolate overflow-visible rounded-2xl border border-white/80 bg-linear-to-b from-white via-white to-slate-50/80 p-3 sm:p-3.5 md:p-4 flex flex-col h-full shadow-[0_8px_24px_rgba(15,23,42,0.05)] ring-1 ring-slate-200/70 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(15,23,42,0.08)] hover:ring-slate-300/80">
+            <div className="pointer-events-none absolute -top-12 right-0 h-28 w-28 rounded-full bg-linear-to-br from-slate-200/40 to-transparent blur-2xl transition-opacity duration-300 group-hover:opacity-80 opacity-40" />
+            <div className="pointer-events-none absolute -bottom-16 -left-10 h-32 w-32 rounded-full bg-linear-to-tr from-emerald-100/60 to-transparent blur-2xl transition-opacity duration-300 group-hover:opacity-70 opacity-40" />
 
             {/* Top row */}
-            <div className="relative z-10 flex justify-between items-center mb-4 sm:mb-5">
-                <div className="w-11 h-11 bg-white border border-slate-200 rounded-2xl flex items-center justify-center shadow-[0_4px_16px_rgba(15,23,42,0.08)] overflow-hidden">
+            <div className="relative z-10 flex justify-between items-center mb-2.5 sm:mb-3">
+                <div className="w-9 h-9 bg-white border border-slate-200 rounded-xl flex items-center justify-center shadow-[0_3px_12px_rgba(15,23,42,0.06)] overflow-hidden">
                     {data.logo_url
                         ? <img src={data.logo_url} alt={data.project_name} className="w-full h-full object-cover" />
-                        : <User size={18} className="text-slate-400" />
+                        : <User size={16} className="text-slate-400" />
                     }
                 </div>
-                <div className={`px-3 py-1.5 ${status.bg} ${status.text} rounded-full flex items-center gap-1.5 ring-1 ring-black/5 backdrop-blur`}>
-                    <span className={`w-1.5 h-1.5 ${status.dot} rounded-full animate-pulse`}></span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.14em]">{data.status}</span>
+                <div className={`px-2.5 py-1 ${status.bg} ${status.text} rounded-full flex items-center gap-1 ring-1 ring-black/5 backdrop-blur`}>
+                    <span className={`w-1 h-1 ${status.dot} rounded-full animate-pulse`}></span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.12em]">{data.status}</span>
                 </div>
             </div>
 
             {/* Content */}
-            <div className="relative z-10 flex-1 mb-4 sm:mb-5">
-                <h3 className="text-[15px] sm:text-base font-bold text-slate-900 leading-snug mb-2 tracking-tight line-clamp-1">{data.project_name}</h3>
-                <p className="text-xs text-slate-600/90 line-clamp-2 leading-relaxed">{data.description || 'No description provided.'}</p>
+            <div className="relative z-10 flex-1 mb-2.5 sm:mb-3">
+                <h3 className="text-[13px] sm:text-sm font-bold text-slate-900 leading-snug mb-1 tracking-tight line-clamp-1">{data.project_name}</h3>
+                <p className="text-xs text-slate-600/90 line-clamp-2 leading-tight">{data.description || 'No description provided.'}</p>
             </div>
 
             {/* Meta */}
-            <div className="relative z-10 space-y-3 mb-4 sm:mb-5 pt-3.5 sm:pt-4 border-t border-slate-100">
-                <div className="flex items-center gap-2 text-xs text-slate-600">
-                    <FiUser size={12} className="text-slate-400 shrink-0" />
-                    <span className="font-semibold text-slate-800 truncate">{data.client_name}</span>
+            <div className="relative z-10 space-y-2.5 mb-3 pt-2.5 sm:pt-3 border-t border-slate-100">
+                <div className="flex items-center gap-1.5 text-xs text-slate-600">
+                    <FiUser size={11} className="text-slate-400 shrink-0" />
+                    <span className="font-semibold text-slate-800 truncate text-[11px]">{data.client_name}</span>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                    <div className="rounded-xl border border-slate-200/80 bg-white/80 px-2.5 py-2">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Deadline</p>
-                        <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-700 font-semibold">
-                            <FiCalendar size={12} className="text-slate-400" />
+                <div className="grid grid-cols-2 gap-1.5">
+                    <div className="rounded-lg border border-slate-200/80 bg-white/80 px-2 py-1.5">
+                        <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-400">Deadline</p>
+                        <div className="mt-0.5 flex items-center gap-1 text-[10px] text-slate-700 font-semibold">
+                            <FiCalendar size={10} className="text-slate-400" />
                             <span className="truncate">{formattedDeadline}</span>
                         </div>
                     </div>
-                    <div className="rounded-xl border border-slate-200/80 bg-white/80 px-2.5 py-2">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Budget</p>
-                        <p className="mt-1 text-xs font-semibold text-slate-700 truncate">{formattedBudget}</p>
+                    <div className="rounded-lg border border-slate-200/80 bg-white/80 px-2 py-1.5">
+                        <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-400">Budget</p>
+                        <p className="mt-0.5 text-[10px] font-semibold text-slate-700 truncate">{formattedBudget}</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1">
                     {/* BUG FIX #3 — priority bar uses correct colour */}
-                    <div className={`w-1 h-3.5 rounded-full ${priority.bar}`}></div>
-                    <span className={`text-[10px] font-black uppercase tracking-[0.14em] ${priority.label}`}>
+                    <div className={`w-0.5 h-3 rounded-full ${priority.bar}`}></div>
+                    <span className={`text-[9px] font-black uppercase tracking-[0.1em] ${priority.label}`}>
                         {data.priority}
                     </span>
                 </div>
             </div>
 
             {/* Footer */}
-            <div className="relative z-10 flex justify-between items-center pt-3.5 sm:pt-4 border-t border-slate-100 mt-auto">
-                <div className="flex items-center gap-1.5">
+            <div className="relative z-10 flex justify-between items-center pt-2.5 sm:pt-3 border-t border-slate-100 mt-auto">
+                <div className="flex items-center gap-1">
                     <button
                         onClick={onEdit}
                         title="Edit project"
-                        className="p-2 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all duration-150"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all duration-150"
                     >
-                        <FiEdit3 size={15} />
+                        <FiEdit3 size={14} />
                     </button>
                     <StatusDropdown projectId={data.project_id} currentStatus={data.status} onUpdate={onUpdate} />
                 </div>
-                <div className="w-9 h-9 bg-linear-to-br from-slate-900 to-slate-700 rounded-full flex items-center justify-center text-[11px] font-semibold text-white select-none ring-2 ring-white shadow-sm">
+                <div className="w-8 h-8 bg-linear-to-br from-slate-900 to-slate-700 rounded-full flex items-center justify-center text-[10px] font-semibold text-white select-none ring-2 ring-white shadow-sm">
                     {data.client_name?.charAt(0).toUpperCase()}
                 </div>
             </div>
@@ -266,14 +265,14 @@ const ProjectCard = ({ data, onUpdate, onEdit }) => {
 const EditProjectModal = ({ project, onClose, onSuccess }) => {
     const [formData, setFormData] = useState({
         project_name: project.project_name || "",
-        description:  project.description  || "",
-        status:       project.status       || "Planning",
-        budget:       project.budget       || "",
-        deadline:     project.deadline ? project.deadline.split('T')[0] : "",
-        priority:     project.priority     || "Medium",
+        description: project.description || "",
+        status: project.status || "Planning",
+        budget: project.budget || "",
+        deadline: project.deadline ? project.deadline.split('T')[0] : "",
+        priority: project.priority || "Medium",
     });
     const [loading, setLoading] = useState(false);
-    const [error, setError]     = useState("");
+    const [error, setError] = useState("");
 
     const patch = (key) => (e) => setFormData(prev => ({ ...prev, [key]: e.target.value }));
 
@@ -283,9 +282,9 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
         setError("");
         try {
             const res = await fetch(`/api/project/${project.project_id}`, {
-                method:  'PUT',
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify(formData),
+                body: JSON.stringify(formData),
             });
             if (res.ok) {
                 onSuccess();
@@ -311,31 +310,31 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
         >
             <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transition-all duration-200 scale-100 max-h-[92vh] overflow-y-auto">
                 {/* Modal header */}
-                <div className="flex justify-between items-center px-5 sm:px-6 md:px-8 pt-5 sm:pt-6 md:pt-8 pb-4 sm:pb-5 md:pb-6 border-b border-gray-50">
+                <div className="flex justify-between items-center px-4 sm:px-5 md:px-6 pt-4 sm:pt-5 md:pt-6 pb-3 sm:pb-4 md:pb-5 border-b border-gray-50">
                     <div>
                         <h2 className="text-base font-extrabold uppercase tracking-tight text-gray-900">Edit Project</h2>
                         <p className="text-xs text-gray-500 font-medium mt-0.5 truncate max-w-xs">{project.project_name}</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-xl text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all"
+                        className="p-1.5 rounded-xl text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all"
                     >
                         <FiX size={18} />
                     </button>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSave} className="px-5 sm:px-6 md:px-8 py-5 sm:py-6 space-y-4">
+                <form onSubmit={handleSave} className="px-4 sm:px-5 md:px-6 py-4 sm:py-5 space-y-3">
                     {/* Project name */}
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">
+                        <label className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-gray-500 mb-1">
                             Project Name
                         </label>
                         <input
                             type="text"
                             required
                             placeholder="e.g. Redesign Homepage"
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 transition-all"
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-gray-800 focus:ring-1 focus:ring-gray-200 focus:bg-white text-xs font-medium text-gray-800 transition-all"
                             value={formData.project_name}
                             onChange={patch('project_name')}
                         />
@@ -343,36 +342,36 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
 
                     {/* Description */}
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">
+                        <label className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-gray-500 mb-1">
                             Description
                         </label>
                         <textarea
-                            rows={3}
+                            rows={2}
                             placeholder="Brief project overview…"
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 resize-none transition-all"
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-gray-800 focus:ring-1 focus:ring-gray-200 focus:bg-white text-xs font-medium text-gray-800 resize-none transition-all"
                             value={formData.description}
                             onChange={patch('description')}
                         />
                     </div>
 
                     {/* Budget & Deadline — BUG FIX #4: both now have border class */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         <div>
-                            <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">Budget ($)</label>
+                            <label className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-gray-500 mb-1">Budget ($)</label>
                             <input
                                 type="number"
                                 min={0}
                                 placeholder="0"
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 transition-all"
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-gray-800 focus:ring-1 focus:ring-gray-200 focus:bg-white text-xs font-medium text-gray-800 transition-all"
                                 value={formData.budget}
                                 onChange={patch('budget')}
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">Deadline</label>
+                            <label className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-gray-500 mb-1">Deadline</label>
                             <input
                                 type="date"
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 transition-all"
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-gray-800 focus:ring-1 focus:ring-gray-200 focus:bg-white text-xs font-medium text-gray-800 transition-all"
                                 value={formData.deadline}
                                 onChange={patch('deadline')}
                             />
@@ -380,11 +379,11 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
                     </div>
 
                     {/* Priority & Status */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         <div>
-                            <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">Priority</label>
+                            <label className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-gray-500 mb-1">Priority</label>
                             <select
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 transition-all cursor-pointer"
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-gray-800 focus:ring-1 focus:ring-gray-200 focus:bg-white text-xs font-medium text-gray-800 transition-all cursor-pointer"
                                 value={formData.priority}
                                 onChange={patch('priority')}
                             >
@@ -394,9 +393,9 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-1.5">Status</label>
+                            <label className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-gray-500 mb-1">Status</label>
                             <select
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-gray-800 focus:ring-2 focus:ring-gray-200 focus:bg-white text-sm font-medium text-gray-800 transition-all cursor-pointer"
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-gray-800 focus:ring-1 focus:ring-gray-200 focus:bg-white text-xs font-medium text-gray-800 transition-all cursor-pointer"
                                 value={formData.status}
                                 onChange={patch('status')}
                             >
@@ -407,24 +406,24 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
 
                     {/* Error */}
                     {error && (
-                        <p className="text-xs text-red-500 font-semibold bg-red-50 border border-red-100 rounded-lg px-4 py-3">
+                        <p className="text-xs text-red-500 font-semibold bg-red-50 border border-red-100 rounded-lg px-3 py-2">
                             {error}
                         </p>
                     )}
 
                     {/* Actions */}
-                    <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 pt-2">
+                    <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-2.5 pt-1.5">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-3.5 rounded-xl border border-gray-200 text-sm font-semibold uppercase tracking-[0.12em] text-gray-600 hover:bg-gray-50 transition-all"
+                            className="flex-1 py-2 rounded-lg border border-gray-200 text-xs font-semibold uppercase tracking-[0.1em] text-gray-600 hover:bg-gray-50 transition-all"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 py-3.5 bg-gray-900 text-white rounded-xl text-xs font-semibold uppercase tracking-[0.16em] hover:bg-black active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="flex-1 py-2 bg-gray-900 text-white rounded-lg text-xs font-semibold uppercase tracking-[0.12em] hover:bg-black active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                             {loading ? "Saving…" : "Save Changes"}
                         </button>
@@ -439,9 +438,9 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
    STATUS DROPDOWN  (PATCH)
 ───────────────────────────────────────────────────────────── */
 const StatusDropdown = ({ projectId, currentStatus, onUpdate }) => {
-    const [open, setOpen]           = useState(false);
-    const [updating, setUpdating]   = useState(false);
-    const menuRef                   = useRef(null);
+    const [open, setOpen] = useState(false);
+    const [updating, setUpdating] = useState(false);
+    const menuRef = useRef(null);
 
     useEffect(() => {
         const close = (e) => { if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false); };
@@ -455,9 +454,9 @@ const StatusDropdown = ({ projectId, currentStatus, onUpdate }) => {
         setUpdating(true);
         try {
             const res = await fetch(`/api/project/${projectId}`, {
-                method:  'PATCH',
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({ status: newStatus }),
+                body: JSON.stringify({ status: newStatus }),
             });
             if (res.ok) onUpdate();
         } catch (error) {
@@ -473,42 +472,40 @@ const StatusDropdown = ({ projectId, currentStatus, onUpdate }) => {
                 title="Change status"
                 disabled={updating}
                 onClick={() => setOpen(o => !o)}
-                className={`p-2 rounded-lg transition-all duration-150 ${
-                    open
+                className={`p-1.5 rounded-lg transition-all duration-150 ${open
                         ? 'bg-gray-900 text-white'
                         : updating
-                        ? 'text-gray-300 cursor-wait'
-                        : 'text-gray-400 hover:text-gray-900 hover:bg-gray-100'
-                }`}
+                            ? 'text-gray-300 cursor-wait'
+                            : 'text-gray-400 hover:text-gray-900 hover:bg-gray-100'
+                    }`}
             >
-                <FiMoreVertical size={16} />
+                <FiMoreVertical size={15} />
             </button>
 
             {open && (
-                <div className="absolute right-0 bottom-full mb-2.5 w-48 bg-white border border-gray-200 rounded-xl shadow-[0_8px_20px_rgba(2,6,23,0.1)] z-50 p-1.5">
-                    <p className="px-2.5 pt-1.5 pb-2 text-[10px] font-semibold text-gray-500 uppercase tracking-widest border-b border-gray-100">
+                <div className="absolute right-0 bottom-full mb-2 w-44 bg-white border border-gray-200 rounded-lg shadow-[0_6px_16px_rgba(2,6,23,0.08)] z-50 p-1">
+                    <p className="px-2 pt-1 pb-1.5 text-[9px] font-semibold text-gray-500 uppercase tracking-widest border-b border-gray-100">
                         Change Status
                     </p>
                     {STATUSES.map(s => {
-                        const cfg     = STATUS_CONFIG[s];
-                        const active  = currentStatus === s;
+                        const cfg = STATUS_CONFIG[s];
+                        const active = currentStatus === s;
                         return (
                             <button
                                 key={s}
                                 onClick={() => updateStatus(s)}
-                                className={`w-full flex items-center justify-between mt-1 rounded-lg px-2.5 py-2 text-[10px] font-medium uppercase tracking-[0.06em] transition-colors ${
-                                    active
+                                className={`w-full flex items-center justify-between mt-0.5 rounded-lg px-2 py-1.5 text-[9px] font-medium uppercase tracking-[0.05em] transition-colors ${active
                                         ? 'bg-gray-100 text-gray-900'
                                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                                }`}
+                                    }`}
                             >
-                                <div className="flex items-center gap-2.5">
-                                    <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`}></span>
+                                <div className="flex items-center gap-2">
+                                    <span className={`w-1 h-1 rounded-full ${cfg.dot}`}></span>
                                     {s}
                                 </div>
                                 {active
-                                    ? <FiCheck size={12} className="text-gray-900" />
-                                    : <FiCircle size={9} className="text-gray-300" />
+                                    ? <FiCheck size={11} className="text-gray-900" />
+                                    : <FiCircle size={8} className="text-gray-300" />
                                 }
                             </button>
                         );
@@ -524,18 +521,18 @@ const StatusDropdown = ({ projectId, currentStatus, onUpdate }) => {
 ───────────────────────────────────────────────────────────── */
 const SkeletonCard = ({ delay = 0 }) => (
     <div
-        className="bg-white border border-gray-100 p-6 rounded-2xl animate-pulse"
+        className="bg-white border border-gray-100 p-3.5 rounded-2xl animate-pulse"
         style={{ animationDelay: `${delay}ms` }}
     >
-        <div className="flex justify-between mb-6">
-            <div className="w-10 h-10 bg-gray-100 rounded-xl" />
-            <div className="w-20 h-6 bg-gray-100 rounded-full" />
+        <div className="flex justify-between mb-2.5">
+            <div className="w-9 h-9 bg-gray-100 rounded-lg" />
+            <div className="w-16 h-5 bg-gray-100 rounded-full" />
         </div>
-        <div className="h-5 bg-gray-100 rounded-lg w-3/4 mb-3" />
-        <div className="h-3 bg-gray-100 rounded-lg w-full mb-2" />
-        <div className="h-3 bg-gray-100 rounded-lg w-2/3 mb-8" />
-        <div className="pt-4 border-t border-gray-50 flex justify-between">
-            <div className="h-3 bg-gray-100 rounded-lg w-1/3" />
+        <div className="h-4 bg-gray-100 rounded-lg w-3/4 mb-1.5" />
+        <div className="h-2.5 bg-gray-100 rounded-lg w-full mb-1" />
+        <div className="h-2.5 bg-gray-100 rounded-lg w-2/3 mb-2" />
+        <div className="pt-2.5 border-t border-gray-50 flex justify-between">
+            <div className="h-2.5 bg-gray-100 rounded-lg w-1/3" />
             <div className="w-8 h-8 bg-gray-100 rounded-full" />
         </div>
     </div>
