@@ -135,11 +135,11 @@ const ProjectsGrid = () => {
                         /* BUG FIX #6 — empty state */
                         <div className="col-span-full flex flex-col items-center justify-center py-12 sm:py-16 text-gray-400 gap-2.5">
                             <FiInbox size={32} strokeWidth={1.2} />
-                            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-gray-600">No projects found</p>
+                            <p className="text-xs font-semibold uppercase tracking-widest text-gray-600">No projects found</p>
                             {(searchTerm || statusFilter !== "All") && (
                                 <button
                                     onClick={() => { setSearchTerm(""); setStatusFilter("All"); }}
-                                    className="mt-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-gray-800 border border-gray-800 px-3 py-1.5 rounded-lg hover:bg-gray-900 hover:text-white transition-all"
+                                    className="mt-1.5 text-xs font-semibold uppercase tracking-widest text-gray-800 border border-gray-800 px-3 py-1.5 rounded-lg hover:bg-gray-900 hover:text-white transition-all"
                                 >
                                     Clear filters
                                 </button>
@@ -233,7 +233,7 @@ const ProjectCard = ({ data, onUpdate, onEdit }) => {
                 <div className="flex items-center gap-1">
                     {/* BUG FIX #3 — priority bar uses correct colour */}
                     <div className={`w-0.5 h-3 rounded-full ${priority.bar}`}></div>
-                    <span className={`text-[9px] font-black uppercase tracking-[0.1em] ${priority.label}`}>
+                    <span className={`text-[9px] font-black uppercase tracking-widest ${priority.label}`}>
                         {data.priority}
                     </span>
                 </div>
@@ -416,7 +416,7 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-2 rounded-lg border border-gray-200 text-xs font-semibold uppercase tracking-[0.1em] text-gray-600 hover:bg-gray-50 transition-all"
+                            className="flex-1 py-2 rounded-lg border border-gray-200 text-xs font-semibold uppercase tracking-widest text-gray-600 hover:bg-gray-50 transition-all"
                         >
                             Cancel
                         </button>
