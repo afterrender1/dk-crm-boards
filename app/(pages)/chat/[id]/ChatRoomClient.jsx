@@ -323,7 +323,7 @@ function MessageItem({ msg, isOwn, user }) {
             {!isOwn && (
                 <div className="mb-1 h-8 w-8 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-md shadow-slate-200/50">
                     <img
-                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.user_id}`}
+                        src={`${msg.sender.image || "https://w7.pngwing.com/pngs/490/157/png-transparent-male-avatar-boy-face-man-user-flat-classy-users-icon.png"}`}
                         alt=""
                         className="h-full w-full object-cover"
                     />
@@ -335,18 +335,18 @@ function MessageItem({ msg, isOwn, user }) {
                 className={`flex min-w-0 max-w-[78%] flex-col gap-1 sm:max-w-[72%] ${isOwn ? "items-end" : "items-start"
                     }`}
             >
-                <span className={`px-1 text-[11.5px] font-semibold tracking-tight text-slate-500 ${isOwn ? "text-right" : "text-left"}`}>
-                    {displayName}
-                </span>
+               
 
                 <div ref={bubbleRef} className="relative">
                     <div
                         className={`rounded-[18px] px-4 py-2.5 text-[14px] leading-relaxed text-slate-800 antialiased wrap-anywhere sm:rounded-[20px] sm:text-[14.5px] ${isOwn
-                            ? "rounded-br-[6px] bg-linear-to-br from-emerald-50/80 to-indigo-50/60 ring-1 ring-violet-200/25 shadow-sm"
-                            : "rounded-bl-[6px] border border-slate-200/40 bg-white shadow-md shadow-slate-200/30 ring-1 ring-white/80"
+                            ? "rounded-br-[6px] bg-linear-to-br from-emerald-50/80 to-green-100/90 ring-1 ring-violet-200/25 "
+                            : "rounded-bl-[6px] bg-linear-to-br from-gray-100/90 to-gray-200/90 border border-slate-200/40 bg-white shadow-md shadow-slate-200/30 ring-1 ring-white/80"
                             }`}
                     >
                         {renderWithMentions(msg.text)}
+                        {console.log(msg.sender.image)
+                        }
                     </div>
                 </div>
 
@@ -356,6 +356,9 @@ function MessageItem({ msg, isOwn, user }) {
                     className={`flex items-center gap-1 px-1 text-[10.5px] tabular-nums leading-none text-slate-400 ${isOwn ? "flex-row-reverse" : ""}`}
                 >
                     <Clock className="shrink-0 opacity-60" size={11} strokeWidth={2} aria-hidden />
+                     <span className={`px-1 text-[11.5px] font-semibold tracking-tight text-slate-500 ${isOwn ? "text-right" : "text-left"}`}>
+                    {displayName}
+                </span>
                     <span>{metaLine}</span>
                 </time>
             </div>
@@ -674,7 +677,7 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
             <div
                 className={
                     embedded
-                        ? "relative mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col overflow-hidden rounded-lg border border-slate-200/70 bg-white/95 shadow-sm ring-1 ring-slate-200/40 backdrop-blur-sm sm:rounded-xl md:max-w-md md:rounded-2xl md:shadow-[0_20px_40px_-14px_rgba(15,23,42,0.1)] lg:max-w-lg"
+                        ? "relative mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col overflow-hidden rounded-lg border border-slate-200/70 bg-white/95 shadow-sm ring-1 ring-slate-200/40 backdrop-blur-sm sm:rounded-xl md:max-w-md md:rounded-2xl md:shadow-[0_20px_40px_-14px_rgba(15,23,42,0.1)] lg:max-w-4xl"
                         : "relative flex h-[calc(100dvh-2rem)] w-full max-w-100 flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/95 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.18),0_0_0_1px_rgba(15,23,42,0.04)] ring-1 ring-slate-200/50 backdrop-blur-sm sm:h-[min(680px,calc(100dvh-4rem))] sm:max-w-105"
                 }
             >

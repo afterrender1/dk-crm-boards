@@ -10,7 +10,7 @@ export async function GET(req) {
 
         const history = await Message.findAll({
             where: { room_id },
-            include: [{ model: User, as: 'sender', attributes: ['name'] }],
+            include: [{ model: User, as: 'sender', attributes: ['name' , 'image'] }],
             order: [['createdAt', 'ASC']]
         });
 
