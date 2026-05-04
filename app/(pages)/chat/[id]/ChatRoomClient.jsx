@@ -724,7 +724,7 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                                                     )}
 
                                                     <div
-                                                        className={`flex min-w-0 max-w-[88%] flex-col gap-1.5 sm:max-w-[80%] md:max-w-[75%] ${
+                                                        className={`flex min-w-0 max-w-[88%] flex-col gap-1.5 sm:max-w-[80%] md:max-w-[85%] ${
                                                             isOwn
                                                                 ? "items-end pl-4 sm:pl-6"
                                                                 : "items-start pr-2 sm:pr-4"
@@ -742,8 +742,8 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                                                         <div
                                                             className={`rounded-[20px] px-3.5 py-2.5 text-[14px] leading-relaxed text-slate-800 antialiased wrap-anywhere sm:rounded-[22px] sm:px-4 sm:py-3 sm:text-[15px] ${
                                                                 isOwn
-                                                                    ? "rounded-br-lg bg-linear-to-br from-violet-100/90 to-indigo-100/80 text-slate-900 shadow-sm ring-1 ring-violet-200/40"
-                                                                    : "rounded-bl-lg border border-slate-200/70 bg-white shadow-md shadow-slate-200/25 ring-1 ring-white/80"
+                                                                    ? "rounded-br-lg bg-linear-to-br from-green-100/40 to-indigo-100/50 text-slate-900  ring-1 ring-violet-200/20"
+                                                                    : "rounded-bl-lg border bg-linear-to-br from-gray-100/40 to-indigo-100/50 border-slate-200/30 bg-white shadow-md shadow-slate-200/25 ring-1 ring-white/80"
                                                             }`}
                                                         >
                                                             {renderWithMentions(
