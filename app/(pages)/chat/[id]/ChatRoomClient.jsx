@@ -954,7 +954,7 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                                 value={editText}
                                 onChange={(e) => setEditText(e.target.value)}
                                 className="w-full rounded-xl border border-slate-200/80 bg-white px-4 py-3 text-sm text-slate-800 outline-none focus:border-teal-300/60 focus:shadow-[0_0_0_3px_rgba(13,148,136,0.12)] focus:ring-teal-100"
-                                rows={4}
+                                rows={10}
                                 autoFocus
                             />
                             <p className="mt-2 text-xs text-slate-400">
