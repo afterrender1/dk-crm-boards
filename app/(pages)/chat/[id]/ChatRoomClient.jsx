@@ -520,6 +520,7 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                     user_id: uid,
                     name: m.sender?.name || `Member ${uid}`,
                     isSelf: uid === user?.user_id,
+                    image : m.sender?.image 
                 });
             }
         }
@@ -911,17 +912,20 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                             {participants.map((p) => (
                                 <li
                                     key={p.user_id}
-                                    className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-white/95 px-3.5 py-3 shadow-sm shadow-slate-200/30 ring-1 ring-white/60"
+                                    className="flex items-center gap-3 rounded-2xl border-b border-slate-200/70 bg-white/95 px-3.5 py-3 shadow-sm shadow-slate-200/30 ring-1 ring-white/60"
                                 >
                                     <div className="h-10 w-10 overflow-hidden rounded-full ring-2 ring-slate-100 shadow-sm">
                                         <img
-                                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${p.user_id}`}
+                                            src={`${p.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPQHstFutlfl8tgZAtY8nDWucSWEvFM5AETQ&s"}`}
                                             alt=""
                                             className="h-full w-full object-cover"
                                         />
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <p className="truncate text-sm font-semibold capitalize text-slate-800">
+                                        <p className="truncate text-sm font-semibold capitalize text-slate-800" onClick={()=> {
+                                            console.log(participants)
+                                            
+                                        }}>
                                             {p.name}
                                             {p.isSelf && (
                                                 <span className="ml-2 text-xs font-medium" style={{ color: TEAL }}>
