@@ -79,7 +79,7 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <div className="sm:col-span-2">
                                 <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Assign Client</label>
-                                <select name="client_id" value={formData.client_id} onChange={handleChange} required className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer text-xs md:text-xs hover:border-slate-300">
+                                <select name="client_id" value={formData.client_id} onChange={handleChange} required className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md focus:border-[#5FC8DB] focus:ring-4 focus:ring-[#5FC8DB]/20 outline-none transition-all appearance-none cursor-pointer text-xs md:text-xs hover:border-slate-300">
                                     <option value="">Choose Client</option>
                                     {clients.map(client => (
                                         <option className='rounded' key={client.client_id} value={client.client_id}>{client.full_name}</option>
@@ -89,17 +89,17 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
 
                             <div className="sm:col-span-2">
                                 <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Project Name</label>
-                                <input type="text" name="project_name" value={formData.project_name} onChange={handleChange} required placeholder="Enter project title" className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 placeholder:text-slate-350 text-xs md:text-xs transition-all hover:border-slate-300" />
+                                <input type="text" name="project_name" value={formData.project_name} onChange={handleChange} required placeholder="Enter project title" className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-[#5FC8DB] focus:ring-4 focus:ring-[#5FC8DB]/20 placeholder:text-slate-350 text-xs md:text-xs transition-all hover:border-slate-300" />
                             </div>
 
                             <div>
                                 <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Budget ($)</label>
-                                <input type="number" name="budget" value={formData.budget} onChange={handleChange} placeholder="0.00" className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-xs md:text-xs transition-all hover:border-slate-300" />
+                                <input type="number" name="budget" value={formData.budget} onChange={handleChange} placeholder="0.00" className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-[#5FC8DB] focus:ring-4 focus:ring-[#5FC8DB]/20 text-xs md:text-xs transition-all hover:border-slate-300" />
                             </div>
 
                             <div>
                                 <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Priority Level</label>
-                                <select name="priority" value={formData.priority} onChange={handleChange} className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 cursor-pointer text-xs md:text-xs transition-all hover:border-slate-300 appearance-none">
+                                <select name="priority" value={formData.priority} onChange={handleChange} className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-[#5FC8DB] focus:ring-4 focus:ring-[#5FC8DB]/20 cursor-pointer text-xs md:text-xs transition-all hover:border-slate-300 appearance-none">
                                     <option value="Low">Low</option>
                                     <option value="Medium">Medium</option>
                                     <option value="High">High</option>
@@ -108,27 +108,27 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
 
                             <div>
                                 <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Start Date</label>
-                                <input type="date" name="start_date" value={formData.start_date} onChange={handleChange} required className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-xs md:text-xs transition-all hover:border-slate-300" />
+                                <input type="date" name="start_date" value={formData.start_date} onChange={handleChange} required className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-[#5FC8DB] focus:ring-4 focus:ring-[#5FC8DB]/20 text-xs md:text-xs transition-all hover:border-slate-300" />
                             </div>
 
                             <div>
                                 <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Deadline</label>
-                                <input type="date" name="deadline" value={formData.deadline} onChange={handleChange} required className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-xs md:text-xs transition-all hover:border-slate-300" />
+                                <input type="date" name="deadline" value={formData.deadline} onChange={handleChange} required className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-[#5FC8DB] focus:ring-4 focus:ring-[#5FC8DB]/20 text-xs md:text-xs transition-all hover:border-slate-300" />
                             </div>
 
                             <div className="sm:col-span-2">
                                 <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Brief Description</label>
-                                <textarea name="description" value={formData.description} onChange={handleChange} rows="2" className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 resize-none text-xs md:text-xs transition-all hover:border-slate-300" placeholder="Outline project scope..."></textarea>
+                                <textarea name="description" value={formData.description} onChange={handleChange} rows="2" className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-[#5FC8DB] focus:ring-4 focus:ring-[#5FC8DB]/20 resize-none text-xs md:text-xs transition-all hover:border-slate-300" placeholder="Outline project scope..."></textarea>
                             </div>
                             <div className="sm:col-span-2">
                                 <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Logo URL</label>
-                                <input type="text" name="logo_url" value={formData.logo_url} onChange={handleChange} className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-xs md:text-xs transition-all hover:border-slate-300" placeholder="Enter logo URL..." />
+                                <input type="text" name="logo_url" value={formData.logo_url} onChange={handleChange} className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-[#5FC8DB] focus:ring-4 focus:ring-[#5FC8DB]/20 text-xs md:text-xs transition-all hover:border-slate-300" placeholder="Enter logo URL..." />
                             </div>
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-2 pt-2">
                             <button type="button" onClick={onClose} className="flex-1 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md font-semibold text-[10px] md:text-xs tracking-widest hover:bg-slate-50 transition-all text-slate-700">Cancel</button>
-                            <button type="submit" disabled={isSubmitting} className="flex-1 py-1.5 md:py-2 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-md font-semibold text-[10px] md:text-xs tracking-widest shadow-lg shadow-blue-200 hover:shadow-blue-300 transition-all active:scale-95 disabled:opacity-30">
+                            <button type="submit" disabled={isSubmitting} className="flex-1 py-1.5 md:py-2 bg-linear-to-r from-[#5FC8DB] to-[#5FC8DB]/80 hover:from-[#5FC8DB]/90 hover:to-[#5FC8DB]/70 text-white rounded-md font-semibold text-[10px] md:text-xs tracking-widest shadow-lg shadow-[#5FC8DB]/30 hover:shadow-[#5FC8DB]/40 transition-all active:scale-95 disabled:opacity-30">
                                 {isSubmitting ? 'Syncing...' : 'Save Project'}
                             </button>
                         </div>
@@ -136,7 +136,7 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
 
                 {/* RIGHT SIDE: Client Context */}
-                <div className="flex-1 bg-linear-to-br from-blue-50 to-indigo-50 p-3 md:p-5 flex flex-col order-first md:order-last border-l border-slate-100">
+                <div className="flex-1 bg-linear-to-br from-[#5FC8DB]/10 to-[#5FC8DB]/5 p-3 md:p-5 flex flex-col order-first md:order-last border-l border-slate-100">
                     <div className="hidden md:flex justify-end mb-4">
                         <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors"><FiX size={20} /></button>
                     </div>
@@ -147,7 +147,7 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
                         {selectedClient ? (
                             <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-500">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-10 h-10 bg-blue-600 text-white rounded-md flex items-center justify-center text-sm font-semibold">
+                                    <div className="w-10 h-10 bg-[#5FC8DB] text-white rounded-md flex items-center justify-center text-sm font-semibold">
                                         {selectedClient.full_name.charAt(0)}
                                     </div>
                                     <div>
@@ -178,11 +178,11 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
 
 const DetailItem = ({ icon, label, value, isLink }) => (
     <div className="flex items-start gap-2">
-        <div className="mt-0.5 text-blue-600 shrink-0 opacity-60">{icon}</div>
+        <div className="mt-0.5 text-[#5FC8DB] shrink-0 opacity-60">{icon}</div>
         <div className="min-w-0">
             <p className="text-[0.65rem] md:text-[0.75rem] font-medium text-slate-600 uppercase tracking-widest mb-0.5">{label}</p>
             {isLink && value !== 'None' ? (
-                <a href={value} target="_blank" className="text-xs font-normal text-blue-600 hover:underline break-all">{value}</a>
+                <a href={value} target="_blank" className="text-xs font-normal text-[#5FC8DB] hover:underline break-all">{value}</a>
             ) : (
                 <p className="text-xs font-normal text-slate-800">{value}</p>
             )}

@@ -69,12 +69,12 @@ const AddClientFormModal = ({ isOpen, onClose }) => {
         <div ref={overlayRef} className={`fixed inset-0 z-100 flex items-center justify-center bg-slate-900/30 backdrop-blur-sm p-4 ${inter.className}`}>
             <div ref={modalRef} className="bg-white w-full max-w-2xl rounded-xl shadow-[0_25px_50px_rgba(0,0,0,0.15)] overflow-hidden border border-slate-200/80">
 
-                <div className="px-4 md:px-6 py-3 md:py-4 border-b border-slate-100 flex justify-between items-center bg-linear-to-r from-blue-50 to-indigo-50">
+                <div className="px-4 md:px-6 py-3 md:py-4 border-b border-slate-100 flex justify-between items-center bg-linear-to-r from-[#5FC8DB]/10 to-[#5FC8DB]/5">
                     <div>
                         <h2 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Register New Client</h2>
                         <p className="text-xs md:text-sm text-slate-500 font-normal mt-1">Create new client record to manage future interactions</p>
                     </div>
-                    <button onClick={onClose} className="cursor-pointer w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full hover:bg-blue-100 transition-all text-slate-400 hover:text-blue-600 border border-transparent hover:border-blue-200 shrink-0">
+                    <button onClick={onClose} className="cursor-pointer w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full hover:bg-[#5FC8DB]/15 transition-all text-slate-400 hover:text-[#5FC8DB] border border-transparent hover:border-[#5FC8DB]/30 shrink-0">
                         <RxCross1 size={16} />
                     </button>
                 </div>
@@ -137,7 +137,7 @@ const AddClientFormModal = ({ isOpen, onClose }) => {
                     {/* Footer - Fixed Button Style */}
                     <div className="flex justify-end items-center gap-2 md:gap-3 pt-2 border-t border-slate-100 mt-2">
                         <button type="button" onClick={onClose} className="text-[10px] md:text-xs font-semibold uppercase text-slate-600 rounded-md cursor-pointer px-3 md:px-4 py-1.5 md:py-2 hover:bg-slate-100 hover:text-slate-800 tracking-widest transition-all">Cancel</button>
-                        <button type="submit" disabled={isLoading} className="bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-3 md:px-4 cursor-pointer py-1.5 md:py-2 rounded-md text-[10px] md:text-xs font-semibold uppercase tracking-widest shadow-lg shadow-blue-200 hover:shadow-blue-300 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50">
+                        <button type="submit" disabled={isLoading} className="bg-linear-to-r from-[#5FC8DB] to-[#5FC8DB]/80 hover:from-[#5FC8DB]/90 hover:to-[#5FC8DB]/70 text-white px-3 md:px-4 cursor-pointer py-1.5 md:py-2 rounded-md text-[10px] md:text-xs font-semibold uppercase tracking-widest shadow-lg shadow-[#5FC8DB]/30 hover:shadow-[#5FC8DB]/40 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50">
                             {isLoading ? <FaFilesPinwheel className="animate-spin" /> : "Authorize & Sync"}
                         </button>
                     </div>
@@ -150,29 +150,29 @@ const AddClientFormModal = ({ isOpen, onClose }) => {
 /* Redesigned Input Components for better visibility */
 const Input = ({ label, ...props }) => (
     <div className="group space-y-0.5">
-        <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 transition-colors group-focus-within:text-blue-600">
+        <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 transition-colors group-focus-within:text-[#5FC8DB]">
             {label}
         </label>
         <input
             {...props}
-            className="w-full bg-white border border-slate-200 rounded-md px-2.5 md:px-3 py-1.5 md:py-2 text-slate-900 text-xs md:text-xs font-normal placeholder-slate-350 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all hover:border-slate-300"
+            className="w-full bg-white border border-slate-200 rounded-md px-2.5 md:px-3 py-1.5 md:py-2 text-slate-900 text-xs md:text-xs font-normal placeholder-slate-350 outline-none focus:border-[#5FC8DB] focus:ring-4 focus:ring-[#5FC8DB]/20 transition-all hover:border-slate-300"
         />
     </div>
 );
 
 const Select = ({ label, options, ...props }) => (
     <div className="group space-y-0.5">
-        <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 uppercase tracking-widest transition-colors group-focus-within:text-blue-600">
+        <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 uppercase tracking-widest transition-colors group-focus-within:text-[#5FC8DB]">
             {label}
         </label>
         <div className="relative">
             <select
                 {...props}
-                className="w-full bg-white border border-slate-200 rounded-md px-2.5 md:px-3 py-1.5 md:py-2 text-slate-900 text-xs md:text-xs font-normal outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 appearance-none cursor-pointer transition-all hover:border-slate-300"
+                className="w-full bg-white border border-slate-200 rounded-md px-2.5 md:px-3 py-1.5 md:py-2 text-slate-900 text-xs md:text-xs font-normal outline-none focus:border-[#5FC8DB] focus:ring-4 focus:ring-[#5FC8DB]/20 appearance-none cursor-pointer transition-all hover:border-slate-300"
             >
                 {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
             </select>
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:text-[#5FC8DB] transition-colors">
                 <FiChevronDown size={14} />
             </div>
         </div>
