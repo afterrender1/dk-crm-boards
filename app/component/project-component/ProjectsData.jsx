@@ -7,6 +7,7 @@ import {
 } from "react-icons/fi";
 import { User } from 'lucide-react';
 import useSWR from 'swr';
+import { toast } from 'sonner';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -289,6 +290,7 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
             if (res.ok) {
                 onSuccess();
                 onClose();
+                toast.success("Project updated successfully!");
             } else {
                 setError("Failed to update. Please try again.");
             }
@@ -458,7 +460,10 @@ const StatusDropdown = ({ projectId, currentStatus, onUpdate }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus }),
             });
-            if (res.ok) onUpdate();
+            if (res.ok) {
+                onUpdate();
+                toast.success(`Status updated to "${newStatus}"`);
+            }
         } catch (error) {
             console.error("Status update error:", error);
         } finally {

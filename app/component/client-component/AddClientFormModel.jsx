@@ -5,6 +5,7 @@ import { RxCross1 } from "react-icons/rx";
 import { FaFilesPinwheel } from "react-icons/fa6";
 import { FiChevronDown } from "react-icons/fi"; // For custom select arrow
 import gsap from 'gsap';
+import { toast } from 'sonner';
 
 const AddClientFormModal = ({ isOpen, onClose }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +52,7 @@ const AddClientFormModal = ({ isOpen, onClose }) => {
                 body: JSON.stringify(formData)
             });
             if (res.ok) {
+                toast.success("Client created successfully!");
                 setIsLoading(false);
                 onClose();
             } else {

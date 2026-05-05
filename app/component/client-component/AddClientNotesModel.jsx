@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { FiX, FiMessageSquare } from 'react-icons/fi';
 import { SlNote } from "react-icons/sl";
+import { toast } from 'sonner';
 
 
 const AddClientNotesModal = ({ clientId, isOpen, onClose, onSuccess }) => {
@@ -25,6 +26,7 @@ const AddClientNotesModal = ({ clientId, isOpen, onClose, onSuccess }) => {
                 setNote("");
                 onSuccess(); // Refresh the timeline
                 onClose();   // Close modal
+                toast.success("Note added successfully!");
             }
         } catch (error) {
             console.error("Failed to add note:", error);

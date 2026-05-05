@@ -9,6 +9,7 @@ import { GrEdit } from "react-icons/gr";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
+import { toast } from 'sonner';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 const getClientAvatar = (client) =>
@@ -46,7 +47,11 @@ const ClientsDataTable = () => {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
-            if (res.ok) await mutate();
+            if (res.ok) {
+                await mutate();
+                setSelectedClient(null);
+                toast.success("Client deleted successfully!");
+            }
         } catch (error) {
             console.log(error);
         }
@@ -67,6 +72,7 @@ const ClientsDataTable = () => {
             if (res.ok) {
                 await mutate();
                 setIsEditModalOpen(false);
+                toast.success("Client updated successfully!");
             }
         } catch (error) {
             console.error("Update error:", error);

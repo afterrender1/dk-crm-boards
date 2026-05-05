@@ -73,8 +73,8 @@ const SignupPage = () => {
     )
 
     return (
-        <div className={`min-h-screen flex items-center justify-center p-4 select-none ${inter?.className}`}>
-            <div className="bg-[#f6f4f4] w-full max-w-105 rounded-2xl p-8">
+        <div className={`min-h-screen bg-[#F3F5F7] flex items-center justify-center p-4 select-none ${inter?.className}`}>
+            <div className="bg-[#ffffff] w-full max-w-105 rounded-2xl p-8">
 
                 {/* Logo & Brand */}
                 <div className="flex flex-col items-center mb-5">
