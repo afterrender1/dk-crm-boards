@@ -64,10 +64,10 @@ const ProjectsGrid = () => {
 
     const filteredProjects = useMemo(() => projectsData.filter(p => {
         const q = searchTerm.toLowerCase();
-        const matchesSearch = p.project_name.toLowerCase().includes(q) ||
-            p.client_name.toLowerCase().includes(q) ||
-            p.client_email.toLowerCase().includes(q) ||
-            p.company_name.toLowerCase().includes(q);
+        const matchesSearch = (p.project_name || "").toLowerCase().includes(q) ||
+            (p.client_name || "").toLowerCase().includes(q) ||
+            (p.client_email || "").toLowerCase().includes(q) ||
+            (p.company_name || "").toLowerCase().includes(q);
         const matchesStatus = statusFilter === "All" || p.status === statusFilter;
         return matchesSearch && matchesStatus;
     }), [searchTerm, statusFilter, projectsData]);
@@ -474,10 +474,10 @@ const StatusDropdown = ({ projectId, currentStatus, onUpdate }) => {
                 disabled={updating}
                 onClick={() => setOpen(o => !o)}
                 className={`p-1 rounded-md transition-all duration-150 ${open
-                        ? 'bg-[#5FC8DB] text-white'
-                        : updating
-                            ? 'text-gray-300 cursor-wait'
-                            : 'text-gray-400 hover:text-gray-900 hover:bg-gray-100'
+                    ? 'bg-[#5FC8DB] text-white'
+                    : updating
+                        ? 'text-gray-300 cursor-wait'
+                        : 'text-gray-400 hover:text-gray-900 hover:bg-gray-100'
                     }`}
             >
                 <FiMoreVertical size={13} />
@@ -496,8 +496,8 @@ const StatusDropdown = ({ projectId, currentStatus, onUpdate }) => {
                                 key={s}
                                 onClick={() => updateStatus(s)}
                                 className={`w-full flex items-center justify-between mt-0.5 rounded-md px-2 py-1 text-[8px] font-medium uppercase tracking-tight transition-colors ${active
-                                        ? 'bg-[#5FC8DB]/15 text-[#5FC8DB]'
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                    ? 'bg-[#5FC8DB]/15 text-[#5FC8DB]'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                     }`}
                             >
                                 <div className="flex items-center gap-1.5">
