@@ -89,7 +89,7 @@ const ClientsDataTable = () => {
 
     return (
         <>
-            <div className="w-full rounded-xl border border-gray-100 bg-white p-1.5">
+            <div className="w-full rounded-xl  bg-white p-1.5">
                 <div className="overflow-x-auto">
                     <Table className={`${inter.className} min-w-225 text-xs`}>
                         <TableCaption className="text-[11px] text-gray-400 pt-2">

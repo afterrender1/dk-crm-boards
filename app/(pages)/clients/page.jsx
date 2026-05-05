@@ -3,7 +3,6 @@ import AddClientFormModal from '@/app/component/client-component/AddClientFormMo
 import ClientsDataTable from '@/app/component/client-component/ClientsDataTable';
 import React, { useState } from 'react'
 import { inter } from '@/app/fonts';
-import { gsap } from "gsap";
 
 const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,7 +11,7 @@ const Page = () => {
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className={`min-h-screen bg-[#f8f9fa] ${inter.className} pb-10 sm:pb-14 md:pb-20`}>
+    <div className={`min-h-screen bg-[#f7f7f7] ${inter.className} pb-10 sm:pb-14 md:pb-20`}>
 
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-3 sm:px-5 md:px-6 py-3 sm:py-4 md:py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
@@ -44,7 +43,7 @@ const Page = () => {
       <main className="max-w-425 mx-auto px-3 sm:px-5 md:px-6 lg:px-8 mt-4 sm:mt-6 md:mt-8">
 
         {/* Table Container */}
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden p-2 sm:p-3 md:p-4">
+        <div className="bg-white  rounded-xl overflow-hidden p-2 sm:p-3 md:p-4">
           <div className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b border-gray-100 bg-gray-50/60 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2.5 sm:gap-3">
             <h3 className="font-semibold text-gray-800 text-sm sm:text-base">Recent Clients</h3>
             <div className="flex gap-2">
