@@ -12,7 +12,7 @@ import Message from "./Message";
 
 
 Client.hasMany(Project, { foreignKey: "client_id" });
-Project.belongsTo(Client, { foreignKey: "client_id" });
+Project.belongsTo(Client, { foreignKey: "client_id" , onDelete: "CASCADE"});
 
 // 2. Board & Lists (Better version)
 Board.hasMany(List, {

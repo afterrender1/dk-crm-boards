@@ -178,7 +178,7 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
 
 const DetailItem = ({ icon, label, value, isLink }) => (
     <div className="flex items-start gap-2">
-        <div className="mt-0.5 text-blue-600 flex-shrink-0 opacity-60">{icon}</div>
+        <div className="mt-0.5 text-blue-600 shrink-0 opacity-60">{icon}</div>
         <div className="min-w-0">
             <p className="text-[0.65rem] md:text-[0.75rem] font-medium text-slate-600 uppercase tracking-widest mb-0.5">{label}</p>
             {isLink && value !== 'None' ? (
