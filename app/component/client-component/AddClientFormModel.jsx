@@ -14,7 +14,7 @@ const AddClientFormModal = ({ isOpen, onClose }) => {
 
     const [formData, setFormData] = useState({
         full_name: '',
-        profile_image_url : "",
+        profile_image_url: "",
         gender: 'Male',
         email: '',
         phone_number: '',
@@ -66,29 +66,29 @@ const AddClientFormModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     return (
-        <div ref={overlayRef} className={`fixed inset-0 z-100 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 ${inter.className}`}>
-            <div ref={modalRef} className="bg-white w-full max-w-2xl rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden border border-slate-200">
+        <div ref={overlayRef} className={`fixed inset-0 z-100 flex items-center justify-center bg-slate-900/30 backdrop-blur-sm p-4 ${inter.className}`}>
+            <div ref={modalRef} className="bg-white w-full max-w-2xl rounded-xl shadow-[0_25px_50px_rgba(0,0,0,0.15)] overflow-hidden border border-slate-200/80">
 
-                <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white">
+                <div className="px-4 md:px-6 py-3 md:py-4 border-b border-slate-100 flex justify-between items-center bg-linear-to-r from-blue-50 to-indigo-50">
                     <div>
-                        <h2 className="text-4xl font-bold text-slate-900 tracking-tight">Register New Client</h2>
-                        <p className="text-sm text-black/90  mt-0.5">Create new client record to manage future interactions</p>
+                        <h2 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Register New Client</h2>
+                        <p className="text-xs md:text-sm text-slate-500 font-normal mt-1">Create new client record to manage future interactions</p>
                     </div>
-                    <button onClick={onClose} className="cursor-pointer w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-50 transition-all text-slate-400 hover:text-slate-900 border border-transparent hover:border-slate-100">
-                        <RxCross1 size={18} />
+                    <button onClick={onClose} className="cursor-pointer w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full hover:bg-blue-100 transition-all text-slate-400 hover:text-blue-600 border border-transparent hover:border-blue-200 shrink-0">
+                        <RxCross1 size={16} />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-8 space-y-2 max-h-[80vh] overflow-y-auto custom-scrollbar">
+                <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-1 max-h-[80vh] overflow-y-auto custom-scrollbar">
 
                     {/* PERSONAL INFORMATION SECTION */}
-                    <div className="space-y-5">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="w-1 h-4 bg-slate-900 rounded-full"></div>
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                            <div className="w-1 h-3 bg-linear-to-b from-blue-600 to-blue-500 rounded-full"></div>
 
-                            <h3 className="text-[0.9rem] text-black">Personal Information</h3>
+                            <h3 className="text-xs md:text-sm font-medium text-slate-800">Personal Information</h3>
                         </div>
-                        <div className="grid md:grid-cols-2 gap-2 ">
+                        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-2">
                             <Input label="Full Name *" name="full_name" value={formData.full_name} onChange={handleChange} placeholder="First and last name" required />
                             <Input label="Email Address *" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="name@company.com" required />
                             <Input label="Profile Image Url" name="profile_image_url" type="text" value={formData.profile_image_url} onChange={handleChange} placeholder="http://" required />
@@ -98,12 +98,12 @@ const AddClientFormModal = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* BUSINESS DETAILS SECTION */}
-                    <div className="pt-4 space-y-5">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="w-1 h-4 bg-slate-900 rounded-full"></div>
-                            <h3 className="text-[0.9rem]    text-black">Business Context</h3>
+                    <div className="pt-2 space-y-2">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                            <div className="w-1 h-3 bg-linear-to-b from-blue-600 to-blue-500 rounded-full"></div>
+                            <h3 className="text-xs md:text-sm font-medium text-slate-800">Business Context</h3>
                         </div>
-                        <div className="grid md:grid-cols-2 gap-2">
+                        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-2">
                             <Input label="Company Name" name="company_name" value={formData.company_name} onChange={handleChange} placeholder="Legal business name" />
                             <Input label="Website URL" name="website_url" type="url" value={formData.website_url} onChange={handleChange} placeholder="https://www.example.com" />
                             <Input label="Phone Number" name="phone_number" value={formData.phone_number} onChange={handleChange} placeholder="+92 3XX XXXXXXX" />
@@ -121,13 +121,13 @@ const AddClientFormModal = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* LOCATION SECTION */}
-                    <div className="pt-4 space-y-5">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="w-1 h-4 bg-slate-900 rounded-full"></div>
+                    <div className="pt-2 space-y-2">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                            <div className="w-1 h-3 bg-linear-to-b from-blue-600 to-blue-500 rounded-full"></div>
 
-                            <h3 className="text-[0.9rem] text-black">Geographic Data</h3>
+                            <h3 className="text-xs md:text-sm font-medium text-slate-800">Geographic Data</h3>
                         </div>
-                        <div className="grid md:grid-cols-3 gap-2">
+                        <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-2">
                             <Input label="Country" name="country" value={formData.country} onChange={handleChange} placeholder="Pakistan" />
                             <Input label="State / Province" name="state" value={formData.state} onChange={handleChange} placeholder="Sindh" />
                             <Input label="City" name="city" value={formData.city} onChange={handleChange} placeholder="Karachi" />
@@ -135,9 +135,9 @@ const AddClientFormModal = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Footer - Fixed Button Style */}
-                    <div className="flex justify-end items-center gap-6 pt-2 border-t border-slate-50 mt-4">
-                        <button type="button" onClick={onClose} className="text-xs font-bold uppercase text-black rounded-sm cursor-pointer  px-6 py-4 hover:bg-gray-100 hover:text-slate-900 tracking-widest transition-all">Cancel</button>
-                        <button type="submit" disabled={isLoading} className="bg-slate-900 hover:bg-black text-white px-6 cursor-pointer py-4 rounded-sm text-xs font-bold uppercase tracking-widest shadow-xl shadow-slate-200 hover:shadow-slate-300 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50">
+                    <div className="flex justify-end items-center gap-2 md:gap-3 pt-2 border-t border-slate-100 mt-2">
+                        <button type="button" onClick={onClose} className="text-[10px] md:text-xs font-semibold uppercase text-slate-600 rounded-md cursor-pointer px-3 md:px-4 py-1.5 md:py-2 hover:bg-slate-100 hover:text-slate-800 tracking-widest transition-all">Cancel</button>
+                        <button type="submit" disabled={isLoading} className="bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-3 md:px-4 cursor-pointer py-1.5 md:py-2 rounded-md text-[10px] md:text-xs font-semibold uppercase tracking-widest shadow-lg shadow-blue-200 hover:shadow-blue-300 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50">
                             {isLoading ? <FaFilesPinwheel className="animate-spin" /> : "Authorize & Sync"}
                         </button>
                     </div>
@@ -149,31 +149,31 @@ const AddClientFormModal = ({ isOpen, onClose }) => {
 
 /* Redesigned Input Components for better visibility */
 const Input = ({ label, ...props }) => (
-    <div className="group space-y-1.5">
-        <label className="block text-[0.8rem] font-bold text-black/70   transition-colors ">
+    <div className="group space-y-0.5">
+        <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 transition-colors group-focus-within:text-blue-600">
             {label}
         </label>
         <input
             {...props}
-            className="w-full bg-white border border-slate-300 rounded-sm px-4 py-3 text-slate-900 text-sm font-medium placeholder-slate-300 outline-none focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all"
+            className="w-full bg-white border border-slate-200 rounded-md px-2.5 md:px-3 py-1.5 md:py-2 text-slate-900 text-xs md:text-xs font-normal placeholder-slate-350 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all hover:border-slate-300"
         />
     </div>
 );
 
 const Select = ({ label, options, ...props }) => (
-    <div className="group space-y-1.5">
-        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest transition-colors group-focus-within:text-slate-900">
+    <div className="group space-y-0.5">
+        <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 uppercase tracking-widest transition-colors group-focus-within:text-blue-600">
             {label}
         </label>
         <div className="relative">
             <select
                 {...props}
-                className="w-full bg-white border border-slate-300 rounded-sm px-4 py-3 text-slate-900 text-sm font-semibold outline-none focus:border-slate-900 appearance-none cursor-pointer transition-all"
+                className="w-full bg-white border border-slate-200 rounded-md px-2.5 md:px-3 py-1.5 md:py-2 text-slate-900 text-xs md:text-xs font-normal outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 appearance-none cursor-pointer transition-all hover:border-slate-300"
             >
                 {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
             </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                <FiChevronDown size={16} />
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                <FiChevronDown size={14} />
             </div>
         </div>
     </div>
