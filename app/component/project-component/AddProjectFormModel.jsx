@@ -62,25 +62,24 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
     };
 
     return (
-        <div className={`fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 ${inter.className}`}>
-            {/* Modal Container - Pure White Theme */}
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col md:flex-row border border-gray-300">
+        <div className={`fixed inset-0 bg-slate-900/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 ${inter.className}`}>
+            {/* Modal Container */}
+            <div className="bg-white rounded-xl shadow-[0_25px_50px_rgba(0,0,0,0.15)] w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col md:flex-row border border-slate-200/80">
 
                 {/* LEFT SIDE: Form */}
-                <div className="flex-[1.5] p-4 md:p-8 lg:p-10 overflow-y-auto border-r border-gray-100">
-                    <div className="flex justify-between items-center mb-8">
+                <div className="flex-[1.5] p-3 md:p-5 overflow-y-auto border-r border-slate-100">
+                    <div className="flex justify-between items-center mb-3">
                         <div>
-                            <h2 className="text-2xl font-black text-black  tracking-tight">New Project</h2>
-                            {/* <p className="text-gray-400 text-xs font-bold  tracking-widest mt-1">Devskarnel CRM System</p> */}
+                            <h2 className="text-lg md:text-xl font-semibold text-slate-900 tracking-tight">New Project</h2>
                         </div>
-                        <button onClick={onClose} className="md:hidden p-2 text-black"><FiX size={24} /></button>
+                        <button onClick={onClose} className="md:hidden p-1.5 text-slate-600 hover:text-slate-900 transition-colors"><FiX size={20} /></button>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <form onSubmit={handleSubmit} className="space-y-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <div className="sm:col-span-2">
-                                <label className="block text-[0.8rem] font-black text-black   mb-2">Assign Client</label>
-                                <select name="client_id" value={formData.client_id} onChange={handleChange} required className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:border-black outline-none transition-all appearance-none cursor-pointer  text-sm">
+                                <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Assign Client</label>
+                                <select name="client_id" value={formData.client_id} onChange={handleChange} required className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer text-xs md:text-xs hover:border-slate-300">
                                     <option value="">Choose Client</option>
                                     {clients.map(client => (
                                         <option className='rounded' key={client.client_id} value={client.client_id}>{client.full_name}</option>
@@ -89,18 +88,18 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
                             </div>
 
                             <div className="sm:col-span-2">
-                                <label className="block text-[0.8rem] font-black text-black   mb-2">Project Name</label>
-                                <input type="text" name="project_name" value={formData.project_name} onChange={handleChange} required placeholder="Enter project title" className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg outline-none focus:border-black placeholder:text-gray-300  text-sm transition-all" />
+                                <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Project Name</label>
+                                <input type="text" name="project_name" value={formData.project_name} onChange={handleChange} required placeholder="Enter project title" className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 placeholder:text-slate-350 text-xs md:text-xs transition-all hover:border-slate-300" />
                             </div>
 
                             <div>
-                                <label className="block text-[0.8rem] font-black text-black   mb-2">Budget ($)</label>
-                                <input type="number" name="budget" value={formData.budget} onChange={handleChange} placeholder="0.00" className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg outline-none focus:border-black  text-sm transition-all" />
+                                <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Budget ($)</label>
+                                <input type="number" name="budget" value={formData.budget} onChange={handleChange} placeholder="0.00" className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-xs md:text-xs transition-all hover:border-slate-300" />
                             </div>
 
                             <div>
-                                <label className="block text-[0.8rem] font-black text-black   mb-2">Priority Level</label>
-                                <select name="priority" value={formData.priority} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg outline-none focus:border-black cursor-pointer  text-sm">
+                                <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Priority Level</label>
+                                <select name="priority" value={formData.priority} onChange={handleChange} className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 cursor-pointer text-xs md:text-xs transition-all hover:border-slate-300 appearance-none">
                                     <option value="Low">Low</option>
                                     <option value="Medium">Medium</option>
                                     <option value="High">High</option>
@@ -108,56 +107,56 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
                             </div>
 
                             <div>
-                                <label className="block text-[0.8rem] font-black text-black   mb-2">Start Date</label>
-                                <input type="date" name="start_date" value={formData.start_date} onChange={handleChange} required className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg outline-none focus:border-black  text-sm transition-all" />
+                                <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Start Date</label>
+                                <input type="date" name="start_date" value={formData.start_date} onChange={handleChange} required className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-xs md:text-xs transition-all hover:border-slate-300" />
                             </div>
 
                             <div>
-                                <label className="block text-[0.8rem] font-black text-black   mb-2">Deadline</label>
-                                <input type="date" name="deadline" value={formData.deadline} onChange={handleChange} required className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg outline-none focus:border-black  text-sm transition-all" />
+                                <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Deadline</label>
+                                <input type="date" name="deadline" value={formData.deadline} onChange={handleChange} required className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-xs md:text-xs transition-all hover:border-slate-300" />
                             </div>
 
                             <div className="sm:col-span-2">
-                                <label className="block text-[0.8rem] font-black text-black   mb-2">Brief Description</label>
-                                <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg outline-none focus:border-black resize-none  text-sm transition-all" placeholder="Outline project scope..."></textarea>
+                                <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Brief Description</label>
+                                <textarea name="description" value={formData.description} onChange={handleChange} rows="2" className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 resize-none text-xs md:text-xs transition-all hover:border-slate-300" placeholder="Outline project scope..."></textarea>
                             </div>
                             <div className="sm:col-span-2">
-                                <label className="block text-[0.8rem] font-black text-black   mb-2">Logo URL</label>
-                                <input type="text" name="logo_url" value={formData.logo_url} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg outline-none focus:border-black  text-sm transition-all" placeholder="Enter logo URL..." />
+                                <label className="block text-[0.65rem] md:text-[0.75rem] font-medium text-slate-700 mb-0.5">Logo URL</label>
+                                <input type="text" name="logo_url" value={formData.logo_url} onChange={handleChange} className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-xs md:text-xs transition-all hover:border-slate-300" placeholder="Enter logo URL..." />
                             </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                            <button type="button" onClick={onClose} className="flex-1 py-4 bg-white border border-gray-300 rounded-lg font-black  text-[0.8rem] tracking-widest hover:bg-gray-50 transition-all">Cancel</button>
-                            <button type="submit" disabled={isSubmitting} className="flex-2 py-4 bg-black/80 text-white rounded-lg font-black  text-[0.8rem] tracking-widest hover:bg-gray-800 transition-all active:scale-[0.98] disabled:opacity-30">
+                        <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                            <button type="button" onClick={onClose} className="flex-1 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md font-semibold text-[10px] md:text-xs tracking-widest hover:bg-slate-50 transition-all text-slate-700">Cancel</button>
+                            <button type="submit" disabled={isSubmitting} className="flex-1 py-1.5 md:py-2 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-md font-semibold text-[10px] md:text-xs tracking-widest shadow-lg shadow-blue-200 hover:shadow-blue-300 transition-all active:scale-95 disabled:opacity-30">
                                 {isSubmitting ? 'Syncing...' : 'Save Project'}
                             </button>
                         </div>
                     </form>
                 </div>
 
-                {/* RIGHT SIDE: Client Context (Also White) */}
-                <div className="flex-1 bg-gray-50/30 p-4 md:p-8 lg:p-10 flex flex-col order-first md:order-last">
-                    <div className="hidden md:flex justify-end mb-10">
-                        <button onClick={onClose} className="text-gray-300 hover:text-black transition-colors"><FiX size={28} /></button>
+                {/* RIGHT SIDE: Client Context */}
+                <div className="flex-1 bg-linear-to-br from-blue-50 to-indigo-50 p-3 md:p-5 flex flex-col order-first md:order-last border-l border-slate-100">
+                    <div className="hidden md:flex justify-end mb-4">
+                        <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors"><FiX size={20} /></button>
                     </div>
 
-                    <div className="space-y-8 h-full">
-                        <p className="text-[0.8rem] font-black text-gray-400  tracking-[0.3em]">Client Information</p>
+                    <div className="space-y-4 h-full">
+                        <p className="text-[0.65rem] md:text-[0.75rem] font-medium text-slate-600 uppercase tracking-widest">Client Information</p>
 
                         {selectedClient ? (
-                            <div className="space-y-8 animate-in fade-in slide-in-from-right-2 duration-500">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-black text-white rounded-lg flex items-center justify-center text-xl font-black">
+                            <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-500">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-10 h-10 bg-blue-600 text-white rounded-md flex items-center justify-center text-sm font-semibold">
                                         {selectedClient.full_name.charAt(0)}
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-black  text-black leading-none">{selectedClient.full_name}</h4>
-                                        <p className="text-[9px] text-gray-400 font-bold  tracking-widest mt-1.5">{selectedClient.company_name || 'Individual'}</p>
+                                        <h4 className="text-sm md:text-base font-semibold text-slate-900 leading-none">{selectedClient.full_name}</h4>
+                                        <p className="text-[0.65rem] md:text-[0.75rem] text-slate-600 font-normal tracking-widest mt-0.5">{selectedClient.company_name || 'Individual'}</p>
                                     </div>
                                 </div>
 
-                                <div className="space-y-6 pt-8 border-t border-gray-100">
+                                <div className="space-y-3 pt-4 border-t border-slate-200">
                                     <DetailItem icon={<FiMail />} label="Email Address" value={selectedClient.email} />
                                     <DetailItem icon={<FiGlobe />} label="Location" value={`${selectedClient.city}, ${selectedClient.country}`} />
                                     <DetailItem icon={<FiBriefcase />} label="Website" value={selectedClient.website_url || 'None'} isLink />
@@ -165,9 +164,9 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
 
                             </div>
                         ) : (
-                            <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20">
-                                <FiUser size={40} className="mb-4" />
-                                <p className="text-[0.8rem] font-black ">No Client Selected</p>
+                            <div className="flex-1 flex flex-col items-center justify-center text-center opacity-40">
+                                <FiUser size={32} className="mb-2 text-slate-400" />
+                                <p className="text-[0.65rem] md:text-[0.75rem] font-medium text-slate-600">No Client Selected</p>
                             </div>
                         )}
                     </div>
@@ -178,14 +177,14 @@ const AddProjectFormModal = ({ isOpen, onClose, onSuccess }) => {
 };
 
 const DetailItem = ({ icon, label, value, isLink }) => (
-    <div className="flex items-start gap-4">
-        <div className="mt-1 text-black opacity-30">{icon}</div>
-        <div>
-            <p className="text-[9px] font-black text-gray-400  tracking-widest mb-1">{label}</p>
+    <div className="flex items-start gap-2">
+        <div className="mt-0.5 text-blue-600 flex-shrink-0 opacity-60">{icon}</div>
+        <div className="min-w-0">
+            <p className="text-[0.65rem] md:text-[0.75rem] font-medium text-slate-600 uppercase tracking-widest mb-0.5">{label}</p>
             {isLink && value !== 'None' ? (
-                <a href={value} target="_blank" className="text-xs font-bold text-black hover:underline break-all">{value}</a>
+                <a href={value} target="_blank" className="text-xs font-normal text-blue-600 hover:underline break-all">{value}</a>
             ) : (
-                <p className="text-xs font-bold text-black">{value}</p>
+                <p className="text-xs font-normal text-slate-800">{value}</p>
             )}
         </div>
     </div>
