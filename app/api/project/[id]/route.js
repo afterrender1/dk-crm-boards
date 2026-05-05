@@ -52,6 +52,7 @@ export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import { Project } from "@/models";
+import { connectDB } from "@/config/sequelize";
 
 export async function PUT(req, { params }) {
   try {
@@ -73,25 +74,52 @@ export async function PUT(req, { params }) {
   }
 }
 export async function PATCH(req, { params }) {
-    try {
-        const { id } = await params;
-        const data = await req.json();
+  try {
+    const { id } = await params;
+    const data = await req.json();
 
-        if (Object.keys(data).length === 0) {
-            return NextResponse.json({ message: "No data provided" }, { status: 400 });
-        }
-
-        const [affectedRows] = await Project.update(data, {
-            where: { project_id: id },
-        });
-
-        if (affectedRows === 0) {
-            return NextResponse.json({ message: "Project not found" }, { status: 404 });
-        }
-
-        return NextResponse.json({ message: "Data updated successfully", affectedRows });
-
-    } catch (error) {
-        return NextResponse.json({ message: "Error while updating project", error: error.message }, { status: 500 });
+    if (Object.keys(data).length === 0) {
+      return NextResponse.json({ message: "No data provided" }, { status: 400 });
     }
+
+    const [affectedRows] = await Project.update(data, {
+      where: { project_id: id },
+    });
+
+    if (affectedRows === 0) {
+      return NextResponse.json({ message: "Project not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Data updated successfully", affectedRows });
+
+  } catch (error) {
+    return NextResponse.json({ message: "Error while updating project", error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req, { params }) {
+  try {
+    await connectDB(); // Database se connect karna zaroori hai
+    const { id } = await params;
+
+    // Sequelize mein delete karne ke liye .destroy() use hota hai
+    const deletedCount = await Project.destroy({
+      where: { project_id: id },
+    });
+
+    // Agar 0 rows delete hui, iska matlab project nahi mila
+    if (deletedCount === 0) {
+      return NextResponse.json(
+        { message: "Project not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ message: "Project deleted successfully" });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Error while deleting project", error: error.message },
+      { status: 500 }
+    );
+  }
 }
