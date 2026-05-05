@@ -315,7 +315,7 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-1.5 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all flex-shrink-0"
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all shrink-0"
                     >
                         <FiX size={16} />
                     </button>
