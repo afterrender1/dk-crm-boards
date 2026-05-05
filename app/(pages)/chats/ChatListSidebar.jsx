@@ -11,6 +11,7 @@ import {
     Trash2,
     Sparkles,
 } from "lucide-react";
+import { toast } from "sonner";
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function ChatListSidebar({ activeRoomId }) {
@@ -42,6 +43,7 @@ export default function ChatListSidebar({ activeRoomId }) {
             const result = await res.json();
             if (result.success) {
                 mutate();
+                toast.success("Chat room created successfully!");
                 const id = result.createdChatRoom?.room_id;
                 if (id) router.push(`/chats/${id}`);
             } else {
@@ -74,6 +76,7 @@ export default function ChatListSidebar({ activeRoomId }) {
 
             if (result.success) {
                 mutate();
+                toast.success("Chat room deleted successfully!");
                 if (String(activeRoomId) === String(roomId)) {
                     router.push("/chats");
                 }

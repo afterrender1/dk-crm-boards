@@ -12,6 +12,7 @@ import { inter } from '../fonts';
 import Image from 'next/image';
 import { useUser } from '../hooks/useUser';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 const Sidebar = () => {
     const pathname = usePathname();
     const [isHovered, setIsHovered] = useState(false);
@@ -58,7 +59,7 @@ const Sidebar = () => {
             });
 
             const data = await res.json();
-
+toast.loading("Logging out...");
             if (data.success) {
 
                 window.location.href = '/login';

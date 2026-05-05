@@ -8,6 +8,7 @@ import CreateNewBoardFormModel from './CreateNewBoardFormModel'
 import { useRouter } from 'next/navigation'
 import useSWR from 'swr'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
@@ -52,6 +53,9 @@ const AllBoards = () => {
             const res = await fetch(`/api/boards/${boardId}`, {
                 method: 'DELETE'
             });
+            if (res.ok) {
+                toast.success("Board deleted successfully!");
+            }
 
             if (!res.ok) {
                 const data = await res.json();

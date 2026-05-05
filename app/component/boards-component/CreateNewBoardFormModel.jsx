@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { inter } from '@/app/fonts';
+import { toast } from 'sonner';
 
 const CreateNewBoardFormModel = ({ isOpen, onClose, onSuccess }) => {
     const [formData, setFormData] = useState({
@@ -54,6 +55,8 @@ const CreateNewBoardFormModel = ({ isOpen, onClose, onSuccess }) => {
             }
 
             setSuccess('Board created successfully!');
+            toast.success("Board created successfully!");
+
             setFormData({
                 name: '',
                 description: '',

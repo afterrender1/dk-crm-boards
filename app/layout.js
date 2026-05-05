@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import ClientLayout from "./ClientLayout";
 import "./globals.css";
 
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
         className="flex min-h-dvh min-w-0 flex-col overflow-x-clip"
       >
         <ClientLayout>{children}</ClientLayout>
+        <Toaster />
       </body>
     </html>
   );
