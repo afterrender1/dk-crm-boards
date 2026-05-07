@@ -18,6 +18,10 @@ const Message = sequelize.define('Message', {
     text: {
         type: DataTypes.TEXT,
         allowNull: false,
+    },
+    isEdited : {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
     }
 }, { tableName: 'messages', timestamps: true });
 
