@@ -56,6 +56,25 @@ const ProjectsGrid = () => {
     }, [data]);
 
     useEffect(() => {
+        if (isEditModalOpen) {
+            // Disable scroll on both html and body
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+        } else {
+            // Re-enable scroll
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+        }
+
+        // Cleanup on unmount
+        return () => {
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+        };
+    }, [isEditModalOpen])
+
+
+    useEffect(() => {
         if (data) {
             setProjects(projectsData);
             setLoading(false);
@@ -344,7 +363,7 @@ const EditProjectModal = ({ project, onClose, onSuccess }) => {
                             Description
                         </label>
                         <textarea
-                            rows={2}
+                            rows={5}
                             placeholder="Brief project overview…"
                             className="w-full px-2.5 md:px-3 py-1.5 md:py-2 bg-white border border-slate-200 rounded-md outline-none focus:border-[#5FC8DB] focus:ring-2 focus:ring-[#5FC8DB]/20 text-xs font-normal text-gray-800 resize-none transition-all"
                             value={formData.description}
