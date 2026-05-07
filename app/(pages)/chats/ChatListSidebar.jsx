@@ -148,11 +148,10 @@ export default function ChatListSidebar({ activeRoomId }) {
                                 <li key={room.room_id} className="group relative">
                                     <Link
                                         href={`/chats/${room.room_id}`}
-                                        className={`flex items-center gap-3 px-3 py-2.5 pr-11 transition-colors sm:px-4 sm:py-3 sm:pr-12 ${
-                                            isActive
+                                        className={`flex items-center gap-3 px-3 py-2.5 pr-11 transition-colors sm:px-4 sm:py-3 sm:pr-12 ${isActive
                                                 ? "bg-teal-50/80"
                                                 : "hover:bg-slate-50"
-                                        }`}
+                                            }`}
                                     >
                                         <div className="relative shrink-0">
                                             <img
