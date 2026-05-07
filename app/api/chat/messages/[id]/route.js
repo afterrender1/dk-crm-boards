@@ -26,6 +26,7 @@ export async function PUT(req, { params }) {
 
         // Update the message
         message.text = text.trim();
+        message.isEdited = true;
         await message.save();
 
         return NextResponse.json({

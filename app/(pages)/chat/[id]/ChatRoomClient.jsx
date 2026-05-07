@@ -335,7 +335,7 @@ function MessageItem({ msg, isOwn, user }) {
                 className={`flex min-w-0 max-w-[78%] flex-col gap-1 sm:max-w-[72%] ${isOwn ? "items-end" : "items-start"
                     }`}
             >
-               
+
 
                 <div ref={bubbleRef} className="relative">
                     <div
@@ -345,8 +345,7 @@ function MessageItem({ msg, isOwn, user }) {
                             }`}
                     >
                         {renderWithMentions(msg.text)}
-                        {console.log(msg.sender.image)
-                        }
+
                     </div>
                 </div>
 
@@ -356,10 +355,11 @@ function MessageItem({ msg, isOwn, user }) {
                     className={`flex items-center gap-1 px-1 text-[10.5px] tabular-nums leading-none text-slate-400 ${isOwn ? "flex-row-reverse" : ""}`}
                 >
                     <Clock className="shrink-0 opacity-60" size={11} strokeWidth={2} aria-hidden />
-                     <span className={`px-1 text-[11.5px] font-semibold tracking-tight text-slate-500 ${isOwn ? "text-right" : "text-left"}`}>
-                    {displayName}
-                </span>
+                    <span className={`px-1 text-[11.5px] font-semibold tracking-tight text-slate-500 ${isOwn ? "text-right" : "text-left"}`}>
+                        {displayName}
+                    </span>
                     <span>{metaLine}</span>
+                    {msg.isEdited && <span className="text-slate-400 italic text-[10px]">(edited)</span>}
                 </time>
             </div>
 
@@ -520,7 +520,7 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                     user_id: uid,
                     name: m.sender?.name || `Member ${uid}`,
                     isSelf: uid === user?.user_id,
-                    image : m.sender?.image 
+                    image: m.sender?.image
                 });
             }
         }
@@ -922,9 +922,9 @@ export default function ChatRoomClient({ roomId: roomIdProp, embedded = false })
                                         />
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <p className="truncate text-sm font-semibold capitalize text-slate-800" onClick={()=> {
+                                        <p className="truncate text-sm font-semibold capitalize text-slate-800" onClick={() => {
                                             console.log(participants)
-                                            
+
                                         }}>
                                             {p.name}
                                             {p.isSelf && (
