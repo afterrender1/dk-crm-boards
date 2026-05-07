@@ -12,7 +12,7 @@ import Message from "./Message";
 
 
 Client.hasMany(Project, { foreignKey: "client_id" });
-Project.belongsTo(Client, { foreignKey: "client_id" , onDelete: "CASCADE"});
+Project.belongsTo(Client, { foreignKey: "client_id", onDelete: "CASCADE" });
 
 Board.hasMany(List, {
     foreignKey: "board_id",
@@ -51,19 +51,16 @@ Description.belongsTo(Card, {
     as: "card"
 })
 
-Client.hasMany(ClientNote, { foreignKey: "client_id" , onDelete: "CASCADE"});
+Client.hasMany(ClientNote, { foreignKey: "client_id", onDelete: "CASCADE" });
 ClientNote.belongsTo(Client, { foreignKey: "client_id" });
 
 User.hasMany(ChatRoom, { foreignKey: "created_by" });
 ChatRoom.belongsTo(User, { foreignKey: "created_by", as: "creator" });
 
-// ChatRoom -> Messages
 ChatRoom.hasMany(Message, { foreignKey: "room_id", onDelete: 'CASCADE' });
 Message.belongsTo(ChatRoom, { foreignKey: "room_id" });
 
-// User -> Messages (Sender)
 User.hasMany(Message, { foreignKey: "user_id" });
 Message.belongsTo(User, { foreignKey: "user_id", as: "sender" });
 
-// 2. Export everything
 export { Client, ClientNote, Project, Board, List, Card, Comment, Description, User, Message, ChatRoom };   
