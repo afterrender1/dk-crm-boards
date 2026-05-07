@@ -31,10 +31,11 @@ export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import { ClientNote } from "@/models";
+import { connectDB } from "@/config/sequelize";
 
 export async function POST(req, { params }) {
   try {
-    const {id} = await params;
+    const { id } = await params;
     const { note } = await req.json();
 
     if (!note) {
@@ -51,4 +52,40 @@ export async function POST(req, { params }) {
   } catch (error) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
+}
+
+
+export async function DELETE(req, { params }) {
+  try {
+    await connectDB();
+    const { id } = await params;
+    const note = await ClientNote.findOne({
+      where: {
+        note_id: id
+      }
+    });
+
+    if (!note) {
+      return NextResponse.json({
+        success: false,
+        message: "client not found"
+      }, { status: 404 })
+    }
+
+    const deletedClientNote = await note.destroy();
+    return NextResponse.json({
+      success: true,
+      message: "note deleted success",
+      deletedClientNote
+    }, { status: 200 })
+
+
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      message: "server error",
+      error: error.message
+    }, { status: 500 })
+  }
+
 }

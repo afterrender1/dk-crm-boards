@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { inter } from '@/app/fonts';
 import {
   FiMail, FiPhone, FiGlobe, FiMapPin,
-  FiPlus, FiArrowUpRight, FiClock, FiArrowLeft
+  FiPlus, FiArrowUpRight, FiClock, FiArrowLeft, FiTrash2
 } from "react-icons/fi";
 import { useParams, useRouter } from 'next/navigation';
 import AddClientNotesModal from '@/app/component/client-component/AddClientNotesModel';
@@ -26,7 +26,10 @@ const UI = {
 const fetcher = (url) => fetch(url).then(res => res.json());
 
 const ClientProfile = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isAddNoteOpen, setIsAddNoteOpen] = useState(false);
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [buttonPosition, setButtonPosition] = useState(null);
 
   const { id } = useParams();
   const router = useRouter();
@@ -42,6 +45,54 @@ const ClientProfile = () => {
       errorRetryInterval: 5000,
     }
   );
+
+  const handleOpenNoteMenu = (note, event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setButtonPosition({
+      left: rect.left,
+      top: rect.top,
+      bottom: rect.bottom,
+      right: rect.right,
+    });
+    setSelectedNote(note);
+    setIsNoteModalOpen(true);
+  };
+
+  const handleCloseNoteMenu = () => {
+    setIsNoteModalOpen(false);
+    setSelectedNote(null);
+    setButtonPosition(null);
+  };
+
+  const handleDeleteNote = async () => {
+    if (!selectedNote) return;
+    try {
+      const response = await fetch(`/api/notes/${selectedNote.note_id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        mutate();
+        handleCloseNoteMenu();
+      }
+    } catch (err) {
+      console.error('Failed to delete note:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (isNoteModalOpen) {
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, [isNoteModalOpen]);
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center bg-slate-50  text-[10px] uppercase tracking-widest text-slate-400">Syncing...</div>;
 
@@ -86,8 +137,10 @@ const ClientProfile = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            {/* <button className={`${UI.btn.secondary} p-2.5 rounded-lg`} title="Edit Profile"><FiEdit3 size={16} /></button> */}
-            <button onClick={() => setIsModalOpen(true)} className={`${UI.btn.primary} px-4 py-2 rounded-lg text-xs  flex items-center gap-2`}>
+            <button
+              onClick={() => setIsAddNoteOpen(true)}
+              className={`${UI.btn.primary} px-4 py-2 rounded-lg text-xs flex items-center gap-2`}
+            >
               <FiPlus /> New Note
             </button>
           </div>
@@ -95,8 +148,8 @@ const ClientProfile = () => {
 
         <AddClientNotesModal
           clientId={id}
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          isOpen={isAddNoteOpen}
+          onClose={() => setIsAddNoteOpen(false)}
           onSuccess={() => mutate()}
         />
 
@@ -137,24 +190,81 @@ const ClientProfile = () => {
                     {notes.map((n) => (
                       <div key={n.note_id} className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-1 before:w-0.5 before:h-full before:bg-slate-100 last:before:h-4">
                         <div className="absolute left-0.75 top-1 w-2 h-2 rounded-full bg-[#65D1E5] ring-4 ring-white" />
-                        <div className="mb-1 text-[10px]  text-slate-400 flex items-center gap-2 uppercase tracking-widest">
-                          {/* <FiClock size={10} /> {new Date(n.created_at).toLocaleDateString()} */}
+                        <div className="mb-1 text-[10px] text-slate-400 flex items-center gap-2 uppercase tracking-widest">
+                          <FiClock size={10} /> {new Date(n.created_at).toLocaleDateString()}
                         </div>
-                        <p className="text-sm text-slate-700 leading-relaxed font-medium">{n.note}</p>
+                        <div className="relative group">
+                          <p className="text-sm bg-gray-100/50 py-3 px-3 rounded-lg text-slate-700 leading-relaxed font-medium pr-10">
+                            {n.note}
+                          </p>
+                          <button
+                            onClick={(e) => handleOpenNoteMenu(n, e)}
+                            className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-700 py-1 px-2 rounded text-sm"
+                          >
+                            ...
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <div className="text-center py-20">
-                    <p className="text-xs  text-slate-300 uppercase tracking-widest">No entries yet.</p>
+                    <p className="text-xs text-slate-300 uppercase tracking-widest">No entries yet.</p>
                   </div>
                 )}
               </div>
             </div>
           </div>
         </div>
+
+        {/* Note Actions Modal */}
+        <NoteMenu
+          isOpen={isNoteModalOpen}
+          note={selectedNote}
+          position={buttonPosition}
+          onClose={handleCloseNoteMenu}
+          onDelete={handleDeleteNote}
+        />
       </div>
     </div>
+  );
+};
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* COMPONENTS */
+/* ─────────────────────────────────────────────────────────────────── */
+
+const NoteMenu = ({ isOpen, note, position, onClose, onDelete }) => {
+  if (!isOpen || !note || !position) return null;
+
+  return (
+    <>
+      {/* Backdrop to close */}
+      <div
+        className="fixed inset-0 z-40"
+        onClick={onClose}
+      />
+
+      {/* Dropdown Menu */}
+      <div
+        className="fixed bg-white border border-slate-200 rounded-lg shadow-lg z-50 p-1 w-32"
+        style={{
+          left: `${position.left}px`,
+          top: `${position.bottom + 8}px`,
+        }}
+      >
+        <button
+          onClick={() => {
+            onDelete();
+            onClose();
+          }}
+          className="w-full flex items-center gap-2 px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-md text-xs font-medium transition-colors"
+        >
+          <FiTrash2 size={12} />
+          Delete Note
+        </button>
+      </div>
+    </>
   );
 };
 
@@ -175,3 +285,4 @@ const IconData = ({ icon, label, value, isLink }) => (
 );
 
 export default ClientProfile;
+
