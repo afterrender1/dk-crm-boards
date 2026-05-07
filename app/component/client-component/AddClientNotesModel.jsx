@@ -49,7 +49,7 @@ const AddClientNotesModal = ({ clientId, isOpen, onClose, onSuccess }) => {
             <div className="relative w-full max-w-md bg-white rounded-lg shadow-2xl shadow-slate-900/20 overflow-hidden transform transition-all border border-slate-100">
 
                 {/* Header */}
-                <div className="px-8 pt-8 pb-4 flex justify-between items-center">
+                <div className="p-4 flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-[#57CAD9]/10 rounded-2xl flex items-center justify-center text-[#57CAD9]">
                             <SlNote size={20} />
