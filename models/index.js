@@ -14,7 +14,6 @@ import Message from "./Message";
 Client.hasMany(Project, { foreignKey: "client_id" });
 Project.belongsTo(Client, { foreignKey: "client_id" , onDelete: "CASCADE"});
 
-// 2. Board & Lists (Better version)
 Board.hasMany(List, {
     foreignKey: "board_id",
     as: "lists",
@@ -52,7 +51,7 @@ Description.belongsTo(Card, {
     as: "card"
 })
 
-Client.hasMany(ClientNote, { foreignKey: "client_id" });
+Client.hasMany(ClientNote, { foreignKey: "client_id" , onDelete: "CASCADE"});
 ClientNote.belongsTo(Client, { foreignKey: "client_id" });
 
 User.hasMany(ChatRoom, { foreignKey: "created_by" });
