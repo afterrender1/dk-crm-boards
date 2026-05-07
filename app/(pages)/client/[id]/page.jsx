@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { inter } from '@/app/fonts';
 import {
   FiMail, FiPhone, FiGlobe, FiMapPin,
-  FiEdit3, FiPlus, FiArrowUpRight, FiClock, FiArrowLeft
+  FiPlus, FiArrowUpRight, FiClock, FiArrowLeft
 } from "react-icons/fi";
 import { useParams, useRouter } from 'next/navigation';
 import AddClientNotesModal from '@/app/component/client-component/AddClientNotesModel';
+import useSWR from 'swr';
 
 const UI = {
   text: {
@@ -22,50 +23,32 @@ const UI = {
   card: 'bg-white border border-slate-100 rounded-xl overflow-hidden'
 };
 
+const fetcher = (url) => fetch(url).then(res => res.json());
+
 const ClientProfile = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { id } = useParams();
   const router = useRouter();
-  console.log(id);
 
-  const fetchClient = useCallback(async (showLoading = true) => {
-    if (showLoading) setLoading(true);
-    try {
-      const res = await fetch(`/api/client/${id}`);
-
-      if (res.status === 404) {
-        setError("Client not found");
-        setData(null);
-        return;
-      }
-
-      if (!res.ok) throw new Error("Server error");
-
-      const result = await res.json();
-      setData(result);
-      setError(null);
-    } catch (err) {
-      console.error("Fetch error:", err);
-      setError("Failed to load data");
-    } finally {
-      setLoading(false);
+  const { data, error, isLoading, mutate } = useSWR(
+    id ? `/api/client/${id}` : null,
+    fetcher,
+    {
+      revalidateOnFocus: true,
+      dedupingInterval: 60000,
+      shouldRetryOnError: true,
+      errorRetryCount: 3,
+      errorRetryInterval: 5000,
     }
-  }, [id]);
+  );
 
-  useEffect(() => {
-    fetchClient();
-  }, [fetchClient]);
-
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50  text-[10px] uppercase tracking-widest text-slate-400">Syncing...</div>;
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center bg-slate-50  text-[10px] uppercase tracking-widest text-slate-400">Syncing...</div>;
 
   // Handle 404 or Error State
   if (error || !data) return (
     <div className={`min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center ${inter.className}`}>
-      <h2 className="text-2xl  text-slate-900 uppercase tracking-tighter mb-2">{error || "No Record"}</h2>
+      <h2 className="text-2xl  text-slate-900 uppercase tracking-tighter mb-2">{error?.message || "No Record"}</h2>
       <p className="text-slate-400 text-xs  uppercase tracking-widest mb-6">The requested client ID does not exist in our system.</p>
       <button
         onClick={() => router.push('/clients')}
@@ -114,7 +97,7 @@ const ClientProfile = () => {
           clientId={id}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onSuccess={() => fetchClient(false)} // Silent refresh (no loading screen)
+          onSuccess={() => mutate()}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
