@@ -35,12 +35,28 @@ const Toaster = ({
           "--normal-bg": "var(--popover)",
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
+          "--success-bg": "hsl(142.1 76.2% 36.3%)",
+          "--success-text": "hsl(142.1 70.6% 97.3%)",
+          "--success-border": "hsl(142.1 76.2% 36.3%)",
+          "--error-bg": "hsl(0 84.2% 60.2%)",
+          "--error-text": "hsl(0 0% 100%)",
+          "--error-border": "hsl(0 84.2% 60.2%)",
+          "--warning-bg": "hsl(38.6 92.1% 50.2%)",
+          "--warning-text": "hsl(0 0% 3.6%)",
+          "--warning-border": "hsl(38.6 92.1% 50.2%)",
+          "--info-bg": "hsl(217.2 91.2% 59.8%)",
+          "--info-text": "hsl(0 0% 100%)",
+          "--info-border": "hsl(217.2 91.2% 59.8%)",
           "--border-radius": "var(--radius)"
         }
       }
       toastOptions={{
         classNames: {
           toast: "cn-toast",
+          success: "!bg-green-600 !text-white !border-green-600",
+          error: "!bg-red-600 !text-white !border-red-600",
+          warning: "!bg-amber-500 !text-black !border-amber-500",
+          info: "!bg-blue-600 !text-white !border-blue-600",
         },
       }}
       {...props} />
