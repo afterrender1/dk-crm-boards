@@ -66,9 +66,9 @@ const ClientProfile = () => {
       <div className="max-w-5xl mx-auto">
 
         {/* ACTION BAR */}
-        <div className="bg-white p-4 shadow-sm rounded-lg flex justify-between items-center mb-6">
+        <div className="bg-white p-4 rounded-lg flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full border-4 border-[#65D1E5] shrink-0 overflow-hidden shadow-sm bg-slate-100">
+            <div className="w-12 h-12 rounded-full border-4 border-[#65D1E5] shrink-0 overflow-hidden  bg-slate-100">
               <img src={client.profile_image_url || (
                 client.gender === "Male" ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxz7qJ9pU6Xj2EJKaRDVz-9Bd0xh2LnMklGw&s"
                   : "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/user-female-icon.png"
@@ -102,7 +102,7 @@ const ClientProfile = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <div className="md:col-span-4 space-y-4">
-            <div className={` shadow-sm ${UI.card} p-5`}>
+            <div className={` ${UI.card} p-5`}>
               <h2 className={`${UI.text.label} mb-4 flex items-center justify-between`}>
                 Contact Points <FiArrowUpRight className="opacity-30" />
               </h2>
@@ -114,7 +114,7 @@ const ClientProfile = () => {
               </div>
             </div>
 
-            <div className={` shadow-sm ${UI.card} p-5 bg-emerald-950`}>
+            <div className={` ${UI.card} p-5 bg-emerald-950`}>
               <h2 className="text-[10px]  uppercase tracking-widest text-emerald-500 mb-3">Lifecycle</h2>
               <p className="text-sm font-medium text-black/80 leading-relaxed">
                 Stage: <span className="text-[#65D1E5] ">{client.lead_stage}</span>.
@@ -125,7 +125,7 @@ const ClientProfile = () => {
           </div>
 
           <div className="md:col-span-8">
-            <div className={`shadow-sm ${UI.card} h-full`}>
+            <div className={` ${UI.card} h-full`}>
               <div className="px-6 py-4 border-b border-slate-50 flex justify-between items-center bg-white sticky top-0">
                 <h2 className={UI.text.label}>Activity Timeline</h2>
                 <span className="text-[10px] font-mono text-slate-300">Total Entries: {notes.length}</span>
@@ -138,7 +138,7 @@ const ClientProfile = () => {
                       <div key={n.note_id} className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-1 before:w-0.5 before:h-full before:bg-slate-100 last:before:h-4">
                         <div className="absolute left-0.75 top-1 w-2 h-2 rounded-full bg-[#65D1E5] ring-4 ring-white" />
                         <div className="mb-1 text-[10px]  text-slate-400 flex items-center gap-2 uppercase tracking-widest">
-                          <FiClock size={10} /> {new Date(n.created_at).toLocaleDateString()}
+                          {/* <FiClock size={10} /> {new Date(n.created_at).toLocaleDateString()} */}
                         </div>
                         <p className="text-sm text-slate-700 leading-relaxed font-medium">{n.note}</p>
                       </div>
